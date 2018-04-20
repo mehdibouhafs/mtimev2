@@ -14,3 +14,17 @@
 .white {
   background-color: white;
 }
+
+.alert-md-color {
+  background-color: rgba(234, 35, 2, 0.72);
+  border-color: rgba(234, 35, 2, 0.72);
+  color: #fff;
+}
+
+.error {
+  color: red;
+}
+
+tr:hover {
+  background-color: #f2f2f2;
+}

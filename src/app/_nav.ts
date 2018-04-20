@@ -59,4 +59,9 @@ export const navigation = [
     url: '/activityProject/new-activity-project',
     icon: 'icon-puzzle'
   },
+  {
+    name: 'Mes activitees',
+    url: '/activityProject/my-activities',
+    icon: 'icon-puzzle'
+  },
 ];

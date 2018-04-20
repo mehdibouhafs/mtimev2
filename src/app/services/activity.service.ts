@@ -11,8 +11,12 @@ export class ActivityService{
 
   constructor(private authenticationService:AuthenticationService,private  http:HttpClient){}
 
-  getActivities(page:number,size:number){
-    return this.http.get(this.host+"/findActivities?size="+size+"&page="+page,{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
+  getMyActivitiesByMc(mc:string,page:number,size:number){
+    return this.http.get(this.host+"/findMyActivitiesByMc?username="+this.authenticationService.getUserName()+"&motCle="+mc+"&size="+size+"&page="+page,{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
+  }
+
+  getAllActivitiesByMc(mc:string,page:number,size:number){
+    return this.http.get(this.host+"/findMyActivitiesByMc?motCle="+mc+"&size="+size+"&page="+page,{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
   }
 
   saveActivity(activity:Activity){
@@ -36,16 +40,36 @@ export class ActivityService{
     return moment(date).tz("Africa/Casablanca").format('DD/MM/YYYY HH:mm:ss');
   }
 
-  diffBetwenTwoDate(dteStrt:Date,dteEnd:Date){
+  diffBetwenTwoDateInMinutes(dteStrt:Date,dteEnd:Date){
     var dateDeb = this.formatDate(dteStrt);
      var dateFin = this.formatDate(dteEnd);
-
-     var ms = moment(dateFin,"DD/MM/YYYY HH:mm:ss").diff(moment(dateDeb,"DD/MM/YYYY HH:mm:ss"));
+     var ms = moment(dateFin,"DD/MM/YYYY HH:mm").diff(moment(dateDeb,"DD/MM/YYYY HH:mm"));
      var d = moment.duration(ms);
+    console.log("duration as Hours " + d.asHours());
+    console.log("duration as Minutes " + d.asMinutes());
+    console.log("duration as seconde " + d.asSeconds());
      var s = Math.floor(d.asHours()) + moment.utc(ms).format(":mm:ss");
+    return d.asMinutes();
 
+  }
+
+  diffBetwenTwoDateFormated(dteStrt:Date,dteEnd:Date){
+    var dateDeb = this.formatDate(dteStrt);
+    var dateFin = this.formatDate(dteEnd);
+    var ms = moment(dateFin,"DD/MM/YYYY HH:mm").diff(moment(dateDeb,"DD/MM/YYYY HH:mm"));
+    var d = moment.duration(ms);
+    var s = Math.floor(d.asHours()) + moment.utc(ms).format(":mm:ss");
     return s;
 
+  }
+
+  testDateBeforeNow(dteStrt:Date,dteEnd:Date){
+      var now = new Date();
+      if((dteStrt <= now) && (dteEnd <= now)){
+        return true;
+      }else{
+        return false;
+      }
   }
 
 

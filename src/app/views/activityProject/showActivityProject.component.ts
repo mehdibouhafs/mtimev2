@@ -5,17 +5,14 @@ import {ActivityProject} from "../../model/model.activityProject";
 import {ActivityService} from "../../services/activity.service";
 import * as moment from "moment-timezone";
 @Component({
-  templateUrl: 'editActivityProject.component.html'
+  templateUrl: 'showActivityProject.component.html'
 })
-export class EditActivityProjectComponent implements OnInit{
-  mode:number=1;
+export class ShowActivityProjectComponent implements OnInit{
   activityProject : ActivityProject = new ActivityProject();
   idActivityProject :number;
 
-  constructor(private activityService:ActivityService,private  autehntificationService:AuthenticationService,private activateRoute:ActivatedRoute){
-
+  constructor(private activityService:ActivityService,private  autehntificationService:AuthenticationService,private activateRoute:ActivatedRoute,private router:Router){
     this.idActivityProject = this.activateRoute.snapshot.params['id'];
-
   }
 
   ngOnInit(){
@@ -30,16 +27,11 @@ export class EditActivityProjectComponent implements OnInit{
         });
   }
 
-  onEditActivityProject() {
-    this.activityService.updateActivity(this.activityProject)
-      .subscribe((data: ActivityProject) => {
-        console.log("ok " + data);
-        this.activityProject = data;
-        this.mode = 2;
-      }), err => {
-      console.log(JSON.parse(err.body).message);
-    };
+  onShowAllMyActivities(){
+    this.router.navigate(["/activityProject/my-activities/"]);
   }
+
+
 
 
 }

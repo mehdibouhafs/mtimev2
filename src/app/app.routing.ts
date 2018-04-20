@@ -38,7 +38,7 @@ export const routes: Routes = [
       },
       {
         path: 'activityProject',
-        loadChildren: './views/activityProject/activityProject.module#ActivityProjectModule'
+        loadChildren: './views/activity/activity.module#ActivityModule'
       },
     ]
   },

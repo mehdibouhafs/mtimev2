@@ -1,0 +1,102 @@
+<div class="animated fadeIn">
+  <div class="col-sm-9 offset-md-2">
+    <div class="card">
+      <div class="card-header" [ngStyle]="{'background-color':activityRecouvrement.statut=== true ?'rgb(135, 243, 158)':'rgb(158, 225, 251)'}">
+        <i class="fa fa-edit"></i>Détail de l'activité
+      </div>
+      <form class="form-horizontal" #f="ngForm" (ngSubmit)="onSaveActivityRecouvrement(f.value)">
+        <div class="card-body">
+          <div class="row">
+            <div class="form-group col-sm-6">
+              <label class="control-label" ><strong>Date de début:</strong></label>
+              <label><span class="badge badge-warning">{{activityRecouvrement.dteStrt | date: 'dd/MM/yyyy HH:mm'}}</span></label>
+            </div>
+
+            <div class="form-group col-sm-6">
+              <label class="control-label" ><strong>Date de fin:&nbsp;</strong></label>
+              <label><span class="badge badge-warning">{{activityRecouvrement.dteEnd | date: 'dd/MM/yyyy HH:mm'}}</span></label>
+            </div>
+          </div><!--/.row-->
+
+          <div class="row">
+            <div class="form-group col-sm-6">
+              <label class="control-label" ><strong>Id:</strong></label>
+              <label>{{activityRecouvrement.id }}</label>
+            </div>
+
+            <div class="form-group col-sm-6">
+              <label class="control-label" ><strong>Durée (Min):&nbsp;</strong></label>
+              <label>{{activityRecouvrement.durtion }}</label>
+            </div>
+          </div><!--/.row-->
+
+          <div class="row">
+            <div class="form-group col-sm-6">
+              <div class="form-group">
+                <label class="control-label"><strong>Client:</strong></label>
+                <label>{{activityRecouvrement.customer.code}}</label>
+              </div>
+
+            </div>
+
+            <div class="form-group col-sm-6">
+              <label class="control-label"><strong>Projet:</strong></label>
+              <label>{{activityRecouvrement.project.prjId}}</label>
+            </div>
+
+          </div>
+
+          <div class="row">
+            <div class="form-group col-sm-6">
+              <div class="form-group">
+                <label class="control-label" ><strong>Lieu:</strong></label>
+                <label>{{activityRecouvrement.lieu}}</label>
+              </div>
+
+            </div>
+
+            <div class="form-group col-sm-6">
+              <label class="control-label" ><strong>Nature de l'activité:</strong> </label>
+              <label>{{activityRecouvrement.nature}}</label>
+            </div>
+
+          </div>
+
+          <div class="form-group">
+            <label class="control-label" for="comments1"><strong>Commentaire:</strong></label>
+            <textarea minlength="1"  id="comments1" name="comments1"  rows="9" class="form-control" placeholder="Content.." style="margin-top: 0px; margin-bottom: 0px; height: 56px;" disabled>{{activityRecouvrement.comments}}</textarea>
+          </div>
+
+          <div class="row">
+            <div class="form-group col-sm-6">
+              <label class="col-form-label"><strong>Statut:</strong></label>
+              <div class="col-form-label">
+                <div class="form-check form-check-inline mr-1">
+                  <input class="form-check-input" type="radio" id="inline-radio1" [value]="true" [(ngModel)]="activityRecouvrement.statut" name="inline-radios" disabled><!---[attr.disabled]="disabledStatut"-->
+                  <label class="form-check-label" for="inline-radio1">Réalisé</label>
+                </div>
+                <div class="form-check form-check-inline mr-1">
+                  <input class="form-check-input" type="radio" id="inline-radio2" [value]="false" [(ngModel)]="activityRecouvrement.statut" name="inline-radios" disabled>
+                  <label class="form-check-label" for="inline-radio2">Planifié</label>
+                </div>
+
+              </div>
+            </div>
+
+            <div class="form-group col-sm-6">
+              <label class="control-label" ><strong>Ville:</strong></label>
+              <label>{{activityRecouvrement.ville}}</label>
+            </div>
+          </div>
+
+
+        </div><!--/.col-->
+        <div class="card-footer" [ngStyle]="{'background-color':activityRecouvrement.statut=== true ?'rgb(135, 243, 158)':'rgb(158, 225, 251)'}">
+          <button (click)="onShowAllMyActivities()"  class="btn btn-sm btn-primary"><i class="fa fa-dot-circle-o"></i> Afficher tout </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+

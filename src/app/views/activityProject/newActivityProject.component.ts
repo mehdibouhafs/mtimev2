@@ -11,6 +11,7 @@ import {Customer} from "../../model/model.customer";
 import {Router} from "@angular/router";
 import {ProjectService} from "../../services/project.service";
 import {DateTimeAdapter} from "ng-pick-datetime";
+import * as moment from "moment-timezone";
 
 @Component({
   selector:"app-new-activtyProject",
@@ -23,14 +24,15 @@ export class NewActivityProjectComponent implements OnInit,OnDestroy {
   activityProject : ActivityProject = new ActivityProject();
   frmName:any;
   mode:number=1;
-  //appHeaderComponent: AppHeaderComponent;
   message : string;
-
   customers : any;
   projects : any;
-  idclient : any;
+  currentDate : Date = new Date();
+  disabledStatut:boolean = false;
+  dureeFormated : string;
+  error:number = 0;
+  returnedError : string;
 
-  public selectedMoment = new Date();
 
   //activityProject.dteStrt = new Date(); //new Date(2010, 11, 28, 14, 57);
   //activityProject.dteEnd = new Date(); //new Date(2010, 11, 28, 14, 57);
@@ -48,18 +50,17 @@ export class NewActivityProjectComponent implements OnInit,OnDestroy {
 
   }
 
-  ngOnInit(){
+  ngOnInit() {
     this.loadCustomers();
     this.activityProject.user.username = this.authenticationService.getUserName();
-    //this.activityProject.dteEnd = new Date();
     this.activityProject.dteStrt = new Date();
-    console.log("date init " +this.activityProject.dteStrt);
+    this.activityProject.statut = false;
+    this.activityProject.ville = "Fes";
     this.activityProject.statut = true;
-    this.activityProject.ville="Fes";
-    this.activityProject.statut=true;
     this.activityProject.nature = "Projet";
-    this.activityProject.lieu ="Client";
+    this.activityProject.lieu = "Client";
     this.activityProject.typeActivite = "Activité projet";
+    this.activityProject.comments = "Teste";
   }
 
   teste(){
@@ -72,8 +73,28 @@ export class NewActivityProjectComponent implements OnInit,OnDestroy {
       },err=>{
         this.authenticationService.logout();
         this.router.navigateByUrl('/pages/login');
+
       });
   }
+
+  onDatesChanged(){
+    console.log("onDatesChanged ");
+    if(this.activityProject.dteStrt != null && this.activityProject.dteEnd !=null){
+      if (this.activityService.testDateBeforeNow(this.activityProject.dteStrt,this.activityProject.dteEnd) == true ){
+
+        this.error = 0;
+
+      }else{
+        console.log("esle");
+        this.activityProject.statut = false;
+        this.disabledStatut = true;
+        this.error = 1;
+
+      }
+    }
+  }
+
+
 
   loadCustomers(){
     this.customerService.getCustomers().subscribe(
@@ -100,15 +121,21 @@ export class NewActivityProjectComponent implements OnInit,OnDestroy {
   }
 
   onSaveActivityProject(){
-
+    console.log(" project " + JSON.stringify(this.activityProject.project));
+    this.dureeFormated = this.activityService.diffBetwenTwoDateFormated(this.activityProject.dteStrt,this.activityProject.dteEnd);
     console.log("Activity Project " +JSON.stringify(this.activityProject));
-    console.log("diff " + this.activityService.diffBetwenTwoDate(this.activityProject.dteStrt,this.activityProject.dteEnd));
+    console.log("diffBetwenTwoDateInMinutes " + this.activityService.diffBetwenTwoDateInMinutes(this.activityProject.dteStrt,this.activityProject.dteEnd));
     //this.activityProject.dteStrt = new Date(this.activityService.formatDate(this.activityProject.dteStrt));
     //this.activityProject.dteEnd = new Date(this.activityService.formatDate(this.activityProject.dteEnd));
     console.log("Date SAved "+this.activityProject.dteStrt);
-      this.activityService.saveActivity(this.activityProject)
-        .subscribe((data :ActivityProject)=>{
-          this.activityProject = data;
+    this.activityProject.hrStrt = moment(this.activityProject.dteStrt).format("HH:mm");
+    this.activityProject.hrEnd =  moment(this.activityProject.dteEnd).format("HH:mm");
+    this.activityProject.durtion =  this.activityService.diffBetwenTwoDateInMinutes(this.activityProject.dteStrt,this.activityProject.dteEnd);
+    console.log("duration " +  this.activityProject.durtion );
+    this.activityService.saveActivity(this.activityProject)
+        .subscribe((data )=>{
+        console.log("ok resp " + JSON.stringify(data));
+          //this.activityProject = data;
           this.mode=2;
          /* const toast= this.notificationService.success("Confirmation d'ajout", "ActivyProject ajouté avec succès", {
             timeOut: 7000,
@@ -122,9 +149,12 @@ export class NewActivityProjectComponent implements OnInit,OnDestroy {
           /*toast.clickIcon.subscribe((event) => {
             console.log("test");
           });*/
-        }),err=>{
-        console.log(JSON.parse(err.body).message);
-      }
+        },(err:any)=>{
+         console.log("error " + JSON.stringify(err));
+         this.returnedError = err.error.message;
+         this.error = 2;
+
+      });
   }
 
 

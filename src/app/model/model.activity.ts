@@ -8,7 +8,7 @@ export class Activity {
   dteEnd:Date;
   hrStrt:string;
   hrEnd:string;
-  duration:string;
+  durtion:number;
   user : User;
   customer:Customer;
   nature:string;

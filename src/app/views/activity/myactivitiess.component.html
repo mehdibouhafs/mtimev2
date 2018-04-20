@@ -1,0 +1,184 @@
+<div class="animated fadeIn">
+  <!--/.row-->
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-header">
+          <i class="fa fa-align-justify"></i> Mes activitées
+        </div>
+        <div class="card-body">
+          <div class="form-group row">
+            <div class="col-md-4">
+              <div class="input-group">
+                <input id="input2-group2" name="input2-group2" class="form-control" placeholder="Mot Clé" type="text" [(ngModel)]="motCle">
+                <span class="input-group-append">
+                          <button type="button" class="btn btn-primary"  (click)="chercher()"><i class="fa fa-search"></i> Chercher</button>
+                        </span>
+              </div>
+            </div>
+          </div>
+          <form class="form-horizontal" #f="ngForm" id="form" (ngSubmit)="onSaveActivity(f.value)"></form>
+          <table class="table table-sm">
+            <thead>
+            <tr >
+              <th>Nature</th>
+              <th>Date</th>
+              <th>Durée</th>
+              <th>Client</th>
+              <th>Statut</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr (click)="myModal.show();selectActivity(a)" *ngFor="let a of pageActivities?.content | paginate: {
+                                                      id: 'activities',
+                                                      itemsPerPage: itemsPerPage,
+                                                      currentPage: currentPage,
+                                                      totalItems: pageActivities?.totalElements}">
+              <td>{{a.nature}}</td>
+              <td style="width: 19%"><span class="badge badge-pill badge-info">{{a.dteStrt | date:"dd/MM/yy HH:mm"}}~{{a.dteEnd |date:"dd/MM/yy HH:mm"}}</span> </td>
+              <td>{{a.durtion}}</td>
+              <td>{{a.customer.name}}</td>
+              <td>{{a.statut}}</td>
+              <td><a (click)="onEditMyActivity(a)"><i class="fa fa-edit "></i> </a></td>
+              <td>
+                <button
+                  class="btn btn-primary"
+                  mwlConfirmationPopover
+                  [popoverTitle]="popoverTitle"
+                  [popoverMessage]="popoverMessage"
+                  placement="left"
+                  (confirm)="onDeleteMyActivity(a)"
+                  (cancel)="cancelClicked = true">
+                  <i class="fa fa-trash "></i>
+                </button>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+          <pagination-controls
+            class="mypagination"
+            id="activities"
+            (pageChange)="gotoPage($event)"
+            maxSize="15"
+            directionLinks="true"
+            autoHide="true"
+            previousLabel="Précédant"
+            nextLabel="Suivant"
+            screenReaderPaginationLabel="Pagination"
+            screenReaderPageLabel="page"
+            screenReaderCurrentLabel="Vous etes sur la page">
+          </pagination-controls>
+          <div class="col-xs-12 col-12 d-sm-down-none">
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <!--/.col-->
+  </div>
+  <div bsModal #myModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog " [ngClass]="{'modal-success':activityProject.statut=== true ?" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Détail de l'activité</h4>
+          <button type="button" class="close" (click)="myModal.hide()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+              <form class="form-horizontal" #f="ngForm" (ngSubmit)="onSaveActivityProject(f.value)">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="form-group col-sm-6">
+                      <label class="control-label" ><strong>Date de début:</strong></label>
+                      <label><span class="badge badge-warning">{{activity.dteStrt | date: 'dd/MM/yyyy HH:mm'}}</span></label>
+                    </div>
+
+                    <div class="form-group col-sm-6">
+                      <label class="control-label" ><strong>Date de fin:&nbsp;</strong></label>
+                      <label><span class="badge badge-warning">{{activity.dteEnd | date: 'dd/MM/yyyy HH:mm'}}</span></label>
+                    </div>
+                  </div><!--/.row-->
+
+                  <div class="row">
+                    <div class="form-group col-sm-6">
+                      <label class="control-label" ><strong>Id:</strong></label>
+                      <label>{{activity.id }}</label>
+                    </div>
+
+                    <div class="form-group col-sm-6">
+                      <label class="control-label" ><strong>Durée (Min):&nbsp;</strong></label>
+                      <label>{{activity.durtion }}</label>
+                    </div>
+                  </div><!--/.row-->
+
+                  <div class="row">
+                    <div class="form-group col-sm-6">
+                      <div class="form-group">
+                        <label class="control-label"><strong>Client:</strong></label>
+                        <label>{{activity.customer.code}}</label>
+                      </div>
+
+                    </div>
+
+                    <div class="form-group col-sm-6">
+                      <label class="control-label"><strong>Projet:</strong></label>
+                      <label>{{activity.id}}</label>
+                    </div>
+
+                  </div>
+
+                  <div class="row">
+                    <div class="form-group col-sm-6">
+                      <div class="form-group">
+                        <label class="control-label" ><strong>Lieu:</strong></label>
+                        <label>{{activity.lieu}}</label>
+                      </div>
+
+                    </div>
+
+                    <div class="form-group col-sm-6">
+                      <label class="control-label" ><strong>Nature de l'activité:</strong> </label>
+                      <label>{{activity.nature}}</label>
+                    </div>
+
+                  </div>
+
+                  <div class="form-group">
+                    <label class="control-label" for="comments1"><strong>Commentaire:</strong></label>
+                    <textarea minlength="1"  id="comments1" name="comments1"  rows="9" class="form-control" placeholder="Content.." style="margin-top: 0px; margin-bottom: 0px; height: 56px;" disabled>{{activity.comments}}</textarea>
+                  </div>
+
+                  <div class="row">
+                    <div class="form-group col-sm-6">
+                      <label class="col-form-label"><strong>Statut:</strong></label>
+                      <div class="col-form-label">
+                        <div class="form-check form-check-inline mr-1">
+                          <input class="form-check-input" type="radio" id="inline-radio1" [value]="true" [(ngModel)]="activity.statut" name="inline-radios" disabled><!---[attr.disabled]="disabledStatut"-->
+                          <label class="form-check-label" for="inline-radio1">Réalisé</label>
+                        </div>
+                        <div class="form-check form-check-inline mr-1">
+                          <input class="form-check-input" type="radio" id="inline-radio2" [value]="false" [(ngModel)]="activity.statut" name="inline-radios" disabled>
+                          <label class="form-check-label" for="inline-radio2">Planifié</label>
+                        </div>
+
+                      </div>
+                    </div>
+
+                    <div class="form-group col-sm-6">
+                      <label class="control-label" ><strong>Ville:</strong></label>
+                      <label>{{activity.ville}}</label>
+                    </div>
+                  </div>
+                </div><!--/.col-->
+              </form>
+
+          </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="myModal.hide()">Fermer</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+</div>
