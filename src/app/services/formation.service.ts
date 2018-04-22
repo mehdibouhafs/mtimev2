@@ -18,7 +18,7 @@ export class FormationService {
 
   saveFormation(formation:Formation){
 
-    return this.http.post(this.host+'/formations',formation,{headers: new HttpHeaders({'Authorization': this.autehntificationService.getToken()})});
+    return this.http.post(this.host+'/formations', formation,{headers: new HttpHeaders({'Authorization': this.autehntificationService.getToken()})});
 
   }
 

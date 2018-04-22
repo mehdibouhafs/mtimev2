@@ -2,6 +2,7 @@
   <!--/.row-->
   <div class="row">
     <div class="col-lg-12">
+
       <div class="card">
         <div class="card-header">
           <i class="fa fa-align-justify"></i> Formations
@@ -26,31 +27,12 @@
               <th>Date début</th>
               <th>Date de fin</th>
               <th>Certifiante</th>
+              <th></th>
+              <th></th>
+              <th></th>
             </tr>
             </thead>
             <tbody>
-            <tr>
-              <td>Auto</td>
-              <td>
-                <div class="form-group">
-                  <input minlength="4" id="formationName" name="frmName" #formationName="ngModel" [(ngModel)]="formation.frmName" class="form-control" size="16" type="text" required>
-                  <div *ngIf="formationName.invalid && (formationName.dirty || formationName.touched)"
-                       class="alert alert-danger">
-                    <div *ngIf="formationName.errors.required">
-                      FormationName is required.
-                    </div>
-                    <div *ngIf="formationName.errors.minlength">
-                      Name must be at least 4 characters long.
-                    </div>
-                  </div>
-                </div>
-              </td>
-              <td><input id="dateDebut" form="form" class="form-control input-sm" name="dateStrt"  [(ngModel)]="formation.dateStrt" size="16" type="date" required></td>
-              <td><input id="dateFin" form="form" class="form-control input-sm" name="dateEnd"  [(ngModel)]="formation.dateEnd"  size="16" type="date" required></td>
-              <td> <button form="form"  type="submit" [disabled]="!f.valid"  class="btn btn-primary btn-xs" ><i class="fa fa-dot-circle-o"></i> Submit</button></td>
-              <td></td>
-              <td></td>
-            </tr>
                 <tr *ngFor="let f of pageFormations?.content | paginate: {
                                                       id: 'formations',
                                                       itemsPerPage: itemsPerPage,
@@ -62,23 +44,48 @@
                   <td><span class="badge badge-pill badge-info">{{f?.dateEnd}}</span></td>
                   <td><span [ngClass]="{'badge badge-pill badge-success':f.hasCertif,'badge badge-pill badge-warning':!f.hasCertif}"> &nbsp;{{f.hasCertif}}&nbsp;</span>
                   </td>
-                  <td><a (click)="onEditFormation(f.id)"><i class="fa fa-edit "></i> </a></td>
                   <td>
-                  <button
-                    class="btn btn-primary"
-                    mwlConfirmationPopover
-                    [popoverTitle]="popoverTitle"
-                    [popoverMessage]="popoverMessage"
-                    placement="left"
-                    (confirm)="onDeleteFormation(f)"
-                    (cancel)="cancelClicked = true">
-                    <i class="fa fa-trash "></i>
-                  </button>
+                    <div class="avatars">
+                      <div *ngFor="let p of f?.participants" class="avatar avatar-xs">
+                        <img src="assets/img/avatars/stage01.jpg" class="img-avatar" alt="admin@bootstrapmaster.com">
+                      </div>
+                      <button type="button" class="badge badge-info" [disabled]="f?.participants.length==0" data-toggle="modal" (click)="doChargerModal(f); smallModal.show();">
+                        <b>+{{f?.participants.length}}</b>
+                      </button>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="btn-group" dropdown>
+                      <button dropdownToggle type="button" class="btn btn-primary btn-sm dropdown-toggle">
+                        <i class="fa fa-bars fa-lg"></i><span class="caret"></span>
+                      </button>
+                      <ul *dropdownMenu class="dropdown-menu" role="menu">
+                        <li role="menuitem"><button class="dropdown-item" (click)="onEditFormation(f.id)">Modifier</button></li>
+                        <li role="menuitem">
+                          <button type="button" class="dropdown-item" data-toggle="modal" (click)="doDeleteFormation(f); dangerModal.show();">
+                            Supprimer
+                          </button>
+                        </li>
+                      </ul>
+                    </div>
+                  </td>
+                  <td>
+                    <button
+                      class="btn btn-primary"
+                      mwlConfirmationPopover
+                      [popoverTitle]="popoverTitle"
+                      [popoverMessage]="popoverMessage"
+                      placement="left"
+                      (confirm)="onDeleteFormation(f)"
+                      (cancel)="cancelClicked = true">
+                      <i class="fa fa-trash "></i>
+                    </button>
                   </td>
                 </tr>
 
             </tbody>
           </table>
+
           <pagination-controls
             class="mypagination"
             id="formations"
@@ -102,3 +109,29 @@
     <!--/.col-->
   </div>
 </div>
+
+<div bsModal #smallModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{selectedFormation?.frmName}}</h4>
+        <button type="button" class="close" (click)="smallModal.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <ul class="list-group">
+          <li *ngFor="let p of selectedFormation?.participants" class="list-group-item">
+            <img height="30" width="30" class="img-avatar" src="assets/img/avatars/stage01.jpg"/>
+            <b>{{p.firstName}} {{p.lastName}}</b>
+          </li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="smallModal.hide()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<delete-modal bsModal #dangerModal="bs-modal" [modal]="dangerModal" [todeleted]="selectedFormation" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></delete-modal>

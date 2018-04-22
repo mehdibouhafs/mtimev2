@@ -11,11 +11,12 @@
           </div>
         </div>
         <div
-             class="card-body">
+          class="card-body">
           <form class="form-horizontal" #f="ngForm" (ngSubmit)="onEditFormation(f.value)">
             <div class="form-group">
               <label class="control-label" for="formationName">Formation Name:</label>
-              <input minlength="4" id="formationName" name="frmName" #formationName="ngModel" [(ngModel)]="formation.frmName" class="form-control" size="16" type="text" required>
+              <input minlength="4" id="formationName" name="frmName" #formationName="ngModel"
+                     [(ngModel)]="formation.frmName" class="form-control" size="16" type="text" required>
               <div *ngIf="formationName.invalid && (formationName.dirty || formationName.touched)"
                    class="alert alert-danger">
                 <div *ngIf="formationName.errors.required">
@@ -29,16 +30,45 @@
 
             <div class="form-group">
               <label class="control-label" for="dateDebut">Date début:</label>
-              <input id="dateDebut" class="form-control" name="dateStrt"  [(ngModel)]="formation.dateStrt" size="16" type="date" required>
+              <input id="dateDebut" class="form-control" name="dateStrt" [(ngModel)]="formation.dateStrt" size="16"
+                     type="date" required>
             </div>
 
             <div class="form-group">
               <label class="control-label" for="dateFin">Date de fin:</label>
-              <input id="dateFin" class="form-control" name="dateEnd"  [(ngModel)]="formation.dateEnd"  size="16" type="date" required>
+              <input id="dateFin" class="form-control" name="dateEnd" [(ngModel)]="formation.dateEnd" size="16"
+                     type="date" required>
+            </div>
+
+            <div class="form-group">
+              <label class="control-label">Participants :</label>
+              <ng-select [items]="users"
+                         name="participants"
+                         bindLabel="username"
+                         multiple="true"
+                         [(ngModel)]="selectedUsers"
+                         loadingText="Chargement ..."
+                         placeholder="Selectionner participants"
+                         required>
+
+
+                <ng-template ng-option-tmp let-item="item" let-index="index">
+                  <img height="25" width="25" class="img-avatar" [src]="link+'stage01.jpg'"/>
+                  <b>{{item.username}}</b>
+                </ng-template>
+
+              </ng-select>
+
+              <p>
+                Nombre participants selectionnés : {{selectedUsers.length}}
+              </p>
+
             </div>
 
             <div class="form-actions">
-              <button [disabled]="!f.valid" type="submit" class="btn btn-primary"><i class="fa fa-dot-circle-o"></i> Submit</button>
+              <button [disabled]="!f.valid" type="submit" class="btn btn-primary"><i class="fa fa-dot-circle-o"></i>
+                Submit
+              </button>
               <button type="reset" class="btn  btn-danger"><i class="fa fa-ban"></i> Reset</button>
             </div>
           </form>
@@ -61,33 +91,55 @@
           </div>
         </div>
         <div
-             class="card-body">
-          <form class="form-horizontal" #f="ngForm" (ngSubmit)="onSaveFormation(f.value)">
+          class="card-body">
 
-            <div class="form-group">
-              <label class="control-label" for="formationName">Id Formation:</label>
-              <label>{{formation.id}}</label>
-            </div>
+          <div class="form-group">
+            <label class="control-label" for="formationName">Id Formation:</label>
+            <label>{{formation.id}}</label>
+          </div>
 
-            <div class="form-group">
-              <label class="control-label" for="formationName">Formation Name:</label>
-              <label>{{formation.frmName}}</label>
-            </div>
+          <div class="form-group">
+            <label class="control-label" for="formationName">Formation Name:</label>
+            <label>{{formation.frmName}}</label>
+          </div>
 
-            <div class="form-group">
-              <label class="control-label" for="dateDebut">Date début:</label>
-              <label>{{formation.dateStrt | date  }}</label>
-            </div>
+          <div class="form-group">
+            <label class="control-label" for="dateDebut">Date début:</label>
+            <label>{{formation.dateStrt | date }}</label>
+          </div>
 
-            <div class="form-group">
-              <label class="control-label" for="dateFin">Date de fin:</label>
-              <label>{{formation.dateEnd | date }}</label>
-            </div>
+          <div class="form-group">
+            <label class="control-label" for="dateFin">Date de fin:</label>
+            <label>{{formation.dateEnd | date }}</label>
+          </div>
 
-            <div class="form-actions">
-              <button (click)="mode=1" class="btn btn-primary" >Nouvelle Formation</button>
-            </div>
-          </form>
+          <div class="form-group">
+            <label class="control-label">Les participants : </label>
+            <table class="table table-striped table-sm">
+              <thead>
+              <tr>
+                <th>Numéro</th>
+                <th>Username</th>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Service</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let p of selectedUsers; let i=index;">
+                <td>{{i+1}}</td>
+                <td>{{p.username}}</td>
+                <td>{{p.lastName}}</td>
+                <td>{{p.firstName}}</td>
+                <td>{{p.service.servName}}</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" (click)="toNewFormation()" class="btn btn-primary">Nouvelle Formation</button>
+          </div>
         </div>
       </div>
     </div> <!--/.col-->

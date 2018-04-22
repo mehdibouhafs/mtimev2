@@ -3,6 +3,8 @@ import {FormationService} from "../../services/formation.service";
 import {Formation} from "../../model/model.formation";
 import {AuthenticationService} from "../../services/authentification.service";
 import {NotificationsService} from "angular2-notifications";
+import {User} from "../../model/model.user";
+import {UserService} from "../../services/user.service";
 
 @Component({
   selector:"app-new-formation",
@@ -17,6 +19,9 @@ export class NewFormationComponent implements OnInit{
   mode:number=1;
   //appHeaderComponent: AppHeaderComponent;
   message : string;
+  users: any;
+  selectedUsers = [];
+  link : string = "assets/img/avatars/";
 
 
   campuses : Array<object> = new Array(6); // initialise the array with an empty object
@@ -27,9 +32,10 @@ export class NewFormationComponent implements OnInit{
     this.campuses.push({});
   }
 
-  constructor(private formationService:FormationService,private  autehntificationService:AuthenticationService,private notificationService: NotificationsService) {
+  constructor(private formationService:FormationService, private userService:UserService , private  autehntificationService:AuthenticationService,private notificationService: NotificationsService) {
 
   }
+
 
   public options = {
     position: ["bottom", "right"],
@@ -47,7 +53,14 @@ export class NewFormationComponent implements OnInit{
   }
 
   ngOnInit(){
+     this.userService.getAllUsers()
+       .subscribe(data => {
+         this.users = data;
+       }, err => {
+         console.log(err);
+       });
   }
+
 
 
 
@@ -64,10 +77,25 @@ export class NewFormationComponent implements OnInit{
     this.iconCollapse = this.isCollapsed ? "icon-arrow-down" : "icon-arrow-up";
   }
 
+  toModeOne() {
+    this.mode = 1;
+    this.formation = new Formation();
+    this.selectedUsers = [];
+  }
+
   onSaveFormation(){
+
+     console.log(this.selectedUsers);
+
+     this.selectedUsers.forEach(val => {
+       this.formation.participants.push(val);
+     });
+
+     console.log(JSON.stringify(this.formation));
 
       this.formationService.saveFormation(this.formation)
         .subscribe((data :Formation)=>{
+          console.log(data);
           this.formation = data;
           this.mode=2;
           const toast= this.notificationService.success("Confirmation d'ajout", "Formation ajouté avec succès", {
@@ -79,12 +107,12 @@ export class NewFormationComponent implements OnInit{
           //this.appHeaderComponent = new AppHeaderComponent(null,null,this.notificationService);
           //this.appHeaderComponent.lunchSuccessFunction(this.notificationService);
 
-          toast.clickIcon.subscribe((event) => {
-            console.log("test");
-          });
-        }),err=>{
-        console.log(JSON.parse(err.body).message);
-      }
+          //toast.clickIcon.subscribe((event) => {
+          //  console.log("test");
+          //});
+        },err=>{
+          console.log(JSON.parse(err.body).message);
+        });
   }
 
 

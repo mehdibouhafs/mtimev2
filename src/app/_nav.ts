@@ -1,3 +1,6 @@
+import {UserService} from "./services/user.service";
+import {OnInit} from "@angular/core";
+
 export const navigation = [
   {
     name: 'Dashboard',
@@ -11,6 +14,11 @@ export const navigation = [
   {
     title: true,
     name: 'Formations'
+  },
+  {
+    name: 'Mes Formation',
+    url: '/formation/my-formation',
+    icon: 'icon-puzzle'
   },
   {
     name: 'New Formation',
@@ -60,3 +68,5 @@ export const navigation = [
     icon: 'icon-puzzle'
   },
 ];
+
+

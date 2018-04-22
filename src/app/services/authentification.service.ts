@@ -29,6 +29,7 @@ export class AuthenticationService{
     this.imgProfil = jwtHelper.decodeToken(this.jwtToken).sub;
     localStorage.setItem('imgProfil',this.imgProfil+".jpg");
     localStorage.setItem('name',this.imgProfil);
+    localStorage.setItem('roles', this.roles.toString());
   }
 
   loadToken(){
@@ -85,6 +86,12 @@ export class AuthenticationService{
       if(r.authority == 'ADMIN') return true;
     }
     return false;
+  }
+
+  getRoles() {
+    if(this.roles == null)
+      return [];
+    return this.roles;
   }
 
   saveTask(task){

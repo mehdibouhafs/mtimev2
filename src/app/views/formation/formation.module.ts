@@ -2,7 +2,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import {
-  BsDropdownModule, CarouselModule, CollapseModule, PaginationModule, PopoverModule, ProgressbarModule,
+  BsDropdownModule, CarouselModule, CollapseModule, ModalModule, PaginationModule, PopoverModule, ProgressbarModule,
   TooltipModule
 } from "ngx-bootstrap";
 import {FormationRoutingModule} from "./formation-routing.module";
@@ -19,6 +19,10 @@ import {AppHeaderComponent} from "../../components/app-header/app-header.compone
 import {AppModule} from "../../app.module";
 import {AppHeaderModule} from "../../components/app-header/app-header.module";
 import {MultipleFormationComponent} from "./multipleFormation.component";
+import {NgSelectModule} from "@ng-select/ng-select";
+import {UserService} from "../../services/user.service";
+import {MyFormationComponent} from "./myformation.component";
+import {CustomModalModule} from "../modal/modal.module";
 
 
 
@@ -40,6 +44,9 @@ import {MultipleFormationComponent} from "./multipleFormation.component";
       confirmButtonType: 'danger' // set defaults here
     }),
     SimpleNotificationsModule.forRoot(),
+    NgSelectModule,
+    ModalModule.forRoot(),
+    CustomModalModule
 
 
   ],
@@ -48,7 +55,8 @@ import {MultipleFormationComponent} from "./multipleFormation.component";
     AllFormationComponent,
     EditFormationComponent,
     MultipleFormationComponent,
+    MyFormationComponent
   ],
-  providers: [FormationService]
+  providers: [FormationService, UserService]
 })
 export class FormationModule { }

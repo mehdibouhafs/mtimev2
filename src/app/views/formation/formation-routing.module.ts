@@ -4,6 +4,7 @@ import {NewFormationComponent} from "./newFormation.component";
 import {AllFormationComponent} from "./allFormation.component";
 import {EditFormationComponent} from "./editFormation.component";
 import {MultipleFormationComponent} from "./multipleFormation.component";
+import {MyFormationComponent} from "./myformation.component";
 
 
 const routes: Routes = [
@@ -13,6 +14,13 @@ const routes: Routes = [
       title: 'Formation'
     },
     children: [
+      {
+        path: 'my-formation',
+        component: MyFormationComponent,
+        data: {
+          title: 'my-formation'
+        }
+      },
       {
         path: 'nouvelle-formation',
         component: NewFormationComponent,

@@ -5,6 +5,4 @@ export class User{
   firstName:string;
   lastName:string;
   autorisations: Array<Authorisation>;
-
-
 }

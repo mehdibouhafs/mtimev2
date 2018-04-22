@@ -3,13 +3,12 @@ import {FormationService} from "../../services/formation.service";
 import {AuthenticationService} from "../../services/authentification.service";
 import {Router} from "@angular/router";
 import {Formation} from "../../model/model.formation";
-
+import {UserService} from "../../services/user.service";
 
 @Component({
-  templateUrl: 'allFormation.component.html'
+  templateUrl: 'myformation.component.html'
 })
-export class AllFormationComponent implements OnInit{
-
+export class MyFormationComponent implements OnInit{
   pageFormations: any;
   motCle:string="";
   currentPage : number = 1;
@@ -24,9 +23,8 @@ export class AllFormationComponent implements OnInit{
   public cancelClicked: boolean = false;
 
   formation : Formation = new Formation();
-  selectedFormation: Formation;
 
-  constructor(private formationService:FormationService,private  autehntificationService:AuthenticationService,private router:Router ) { }
+  constructor(private userService:UserService,private  autehntificationService:AuthenticationService,private router:Router ) { }
 
   isCollapsed: boolean = false;
   iconCollapse: string = "icon-arrow-up";
@@ -43,7 +41,7 @@ export class AllFormationComponent implements OnInit{
   doSearch(){
     console.log("motCle " + this.motCle);
 
-    this.formationService.getFormations(this.motCle,this.currentPage,this.size).subscribe(
+    this.userService.findMyFormations(this.motCle,this.currentPage,this.size).subscribe(
       data=>{
         this.pageFormations = data;
         this.pages = new Array(data["totalPages"]);
@@ -56,38 +54,9 @@ export class AllFormationComponent implements OnInit{
       });
   }
 
-  doChargerModal(formation: Formation) {
-    this.selectedFormation = formation;
-  }
-
-  doDeleteFormation(formation: Formation) {
-    this.selectedFormation = formation;
-  }
-
   gotoPage(page:number){
-      this.currentPage = page;
-      this.doSearch();
+    this.currentPage = page;
+    this.doSearch();
   }
-
-  onEditFormation(id:number){
-    this.router.navigate(["/formation/edit-formation/",id]);
-    //this.router.navigateByUrl('/formation/edit-formation/'+id);
-  }
-
-  onDeleteFormation(formation:Formation){
-
-        this.formationService.deleteFormation(formation.id)
-          .subscribe(data => {
-            this.pageFormations.content.splice(
-              this.pageFormations.content.indexOf(formation), 1
-            )
-          }, err => {
-            console.log("err");
-          });
-
-  }
-
-
-
 
 }

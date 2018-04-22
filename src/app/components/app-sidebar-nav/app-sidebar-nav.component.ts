@@ -1,5 +1,4 @@
 import { Component, ElementRef, Input, OnInit, Renderer2 } from '@angular/core';
-
 // Import navigation elements
 import { navigation } from './../../_nav';
 
@@ -20,9 +19,14 @@ import { navigation } from './../../_nav';
       </ul>
     </nav>`
 })
-export class AppSidebarNavComponent {
+export class AppSidebarNavComponent implements OnInit {
 
   public navigation = navigation;
+  //public navigation = [];
+
+  ngOnInit() {
+
+  }
 
   public isDivider(item) {
     return item.divider ? true : false
@@ -32,10 +36,10 @@ export class AppSidebarNavComponent {
     return item.title ? true : false
   }
 
-  constructor() { }
 }
 
 import { Router } from '@angular/router';
+import {AuthenticationService} from "../../services/authentification.service";
 
 @Component({
   selector: 'app-sidebar-nav-item',
