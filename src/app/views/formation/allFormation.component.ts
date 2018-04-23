@@ -1,14 +1,17 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {FormationService} from "../../services/formation.service";
 import {AuthenticationService} from "../../services/authentification.service";
 import {Router} from "@angular/router";
 import {Formation} from "../../model/model.formation";
+import {BsModalRef, BsModalService} from "ngx-bootstrap";
 
 
 @Component({
   templateUrl: 'allFormation.component.html'
 })
 export class AllFormationComponent implements OnInit{
+
+  @ViewChild('smallModal') dangerModal;
 
   pageFormations: any;
   motCle:string="";
@@ -17,6 +20,8 @@ export class AllFormationComponent implements OnInit{
   totalElement:number;
   size : number = 5;
   pages: Array<number>;
+
+
 
   public popoverTitle: string = 'Suppression de la formation';
   public popoverMessage: string = "<b>Est vous sure de vouloir supprimer cette formation </b>";
@@ -85,6 +90,11 @@ export class AllFormationComponent implements OnInit{
             console.log("err");
           });
 
+  }
+
+  detectModal() {
+
+    return this.dangerModal.show();
   }
 
 

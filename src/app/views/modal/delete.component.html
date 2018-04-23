@@ -11,7 +11,7 @@
         <p>Êtes-vous sûre de vouloir suuprimer {{todeleted?.frmName}}</p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="modal?.hide()">Non</button>
+        <button type="button" class="btn btn-secondary" (click)="hideModal()">Non</button>
         <button type="button" class="btn btn-danger" (click)="callFunctionDelete(); modal?.hide();">Supprimer</button>
       </div>
     </div>

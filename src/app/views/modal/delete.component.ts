@@ -14,4 +14,8 @@ export class DeleteComponent {
   callFunctionDelete() {
     this.functionDelete.emit("Deleted");
   }
+
+  hideModal() {
+    this.modal.hide();
+  }
 }

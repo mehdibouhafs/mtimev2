@@ -48,7 +48,8 @@
               <td>
                 <div class="avatars">
                   <div *ngFor="let i of [0, 1, 2]" class="avatar avatar-xs">
-                    <img *ngIf="f.participants[i] != null" src="assets/img/avatars/stage01.jpg" class="img-avatar" alt="admin@bootstrapmaster.com">
+                    <img *ngIf="f.participants[i] != null" src="assets/img/avatars/stage01.jpg" class="img-avatar"
+                         alt="admin@bootstrapmaster.com">
                   </div>
                   <button type="button" class="badge badge-info" [disabled]="f?.participants.length==0"
                           data-toggle="modal" (click)="doChargerModal(f); smallModal.show();">
@@ -67,7 +68,7 @@
                     </li>
                     <li role="menuitem">
                       <button type="button" class="dropdown-item" data-toggle="modal"
-                              (click)="doDeleteFormation(f); dangerModal.show();">
+                              (click)="doDeleteFormation(f); detectModal();">
                         Supprimer
                       </button>
                     </li>
@@ -128,5 +129,6 @@
   </div>
 </div>
 
-<delete-modal bsModal #dangerModal="bs-modal" [modal]="dangerModal" [todeleted]="selectedFormation" (functionDelete)="onDeleteFormation(selectedFormation)"  class="modal fade"
+<delete-modal bsModal #dangerModal="bs-modal" [modal]="dangerModal" [todeleted]="selectedFormation"
+              (functionDelete)="onDeleteFormation(selectedFormation)" class="modal fade"
               tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></delete-modal>
