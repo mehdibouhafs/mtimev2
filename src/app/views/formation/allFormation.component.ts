@@ -11,7 +11,7 @@ import {BsModalRef, BsModalService} from "ngx-bootstrap";
 })
 export class AllFormationComponent implements OnInit{
 
-  @ViewChild('smallModal') dangerModal;
+  @ViewChild('dangerModal') dangerModal;
 
   pageFormations: any;
   motCle:string="";

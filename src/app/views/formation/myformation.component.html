@@ -27,7 +27,7 @@
               <th>Date début</th>
               <th>Date de fin</th>
               <th>Certifiante</th>
-
+              <th>Participants</th>
             </tr>
             </thead>
             <tbody>
@@ -42,6 +42,18 @@
               <td><span class="badge badge-pill badge-info">{{f?.dateEnd}}</span></td>
               <td><span
                 [ngClass]="{'badge badge-pill badge-success':f.hasCertif,'badge badge-pill badge-warning':!f.hasCertif}"> &nbsp;{{f.hasCertif}}&nbsp;</span>
+              </td>
+              <td>
+                <div class="avatars">
+                  <div *ngFor="let i of [0, 1, 2]" class="avatar avatar-xs">
+                    <img *ngIf="f.participants[i] != null" src="assets/img/avatars/stage01.jpg" class="img-avatar"
+                         alt="admin@bootstrapmaster.com">
+                  </div>
+                  <button type="button" class="badge badge-info" [disabled]="f?.participants.length==0"
+                          data-toggle="modal" (click)="doChargerModal(f); smallModal.show();">
+                    <b>All</b>
+                  </button>
+                </div>
               </td>
             </tr>
 
@@ -70,3 +82,7 @@
     <!--/.col-->
   </div>
 </div>
+
+<all-participants bsModal #smallModal="bs-modal" [selectedEntity]="selectedFormation" [modal]="smallModal"
+                  class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                  aria-hidden="true"></all-participants>

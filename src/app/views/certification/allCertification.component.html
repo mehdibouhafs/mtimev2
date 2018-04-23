@@ -9,98 +9,75 @@
         <div class="card-body">
           <div class="form-group row">
             <div class="col-md-4">
-                <div class="input-group">
-                  <input id="input2-group2" name="input2-group2" class="form-control" placeholder="Mot Clé" type="text" [(ngModel)]="motCle">
-                  <span class="input-group-append">
-                          <button type="button" class="btn btn-primary"  (click)="chercher()"><i class="fa fa-search"></i> Chercher</button>
+              <div class="input-group">
+                <input id="input2-group2" name="input2-group2" class="form-control" placeholder="Mot Clé" type="text"
+                       [(ngModel)]="motCle">
+                <span class="input-group-append">
+                          <button type="button" class="btn btn-primary" (click)="chercher()"><i
+                            class="fa fa-search"></i> Chercher</button>
                         </span>
-                </div>
+              </div>
             </div>
           </div>
-          <form class="form-horizontal" #f="ngForm" id="form" (ngSubmit)="onSaveCertification(f.value)"></form>
+
           <table class="table table-striped table-sm">
             <thead>
             <tr>
-              <th>id</th>
+              <th>ID</th>
               <th>Certification</th>
               <th>URL</th>
               <th>Date Echéance</th>
               <th>Statut</th>
+              <th></th>
+              <th></th>
             </tr>
             </thead>
             <tbody>
-            <tr>
-              <td>Auto</td>
-              <td>
-                <div class="form-group">
-                  <label class="control-label" for="certificationName">Certification Name:</label>
-                  <input minlength="4" id="certificationName" name="certName" #certificationName="ngModel" [(ngModel)]="certification.certName" class="form-control" size="16" type="text" required>
-                  <div *ngIf="certificationName.invalid && (certificationName.dirty || certificationName.touched)"
-                       class="alert alert-danger">
-                    <div *ngIf="certificationName.errors.required">
-                      CertificationName is required.
-                    </div>
-                    <div *ngIf="certificationName.errors.minlength">
-                      CertificationName must be at least 4 characters long.
-                    </div>
-                  </div>
-                </div>
-              </td>
-              <td>
-                <div class="form-group">
-                  <label class="control-label" for="formationUrl">Certification URL:</label>
-                  <input minlength="4" id="formationUrl" name="frmName" #certificationUrl="ngModel" [(ngModel)]="certification.url" class="form-control" size="16" type="text" required>
-                  <div *ngIf="certificationUrl.invalid && (certificationUrl.dirty || certificationUrl.touched)"
-                       class="alert alert-danger">
-                    <div *ngIf="certificationUrl.errors.required">
-                      CertificationURL is required.
-                    </div>
-                    <div *ngIf="certificationUrl.errors.minlength">
-                      CertificationURL must be at least 4 characters long.
-                    </div>
-                  </div>
-                </div>
-              </td>
-              <td>
-                <div class="form-group">
-                  <label class="control-label" for="dateDebut">Date Echéance:</label>
-                  <input id="dateDebut" class="form-control" name="dateStrt"  [(ngModel)]="certification.dateEch" size="16" type="date" required>
-                </div>
-              </td>
 
-              <td>
-                <button form="form"  type="submit" [disabled]="!f.valid"  class="btn btn-primary btn-xs" ><i class="fa fa-dot-circle-o"></i> Submit</button></td>
-              <td>
-
-              </td>
-              <td></td>
-            </tr>
-                <tr *ngFor="let c of pageCertifications?.content | paginate: {
+            <tr *ngFor="let c of pageCertifications?.content | paginate: {
                                                       id: 'certifications',
                                                       itemsPerPage: itemsPerPage,
                                                       currentPage: currentPage,
                                                       totalItems: pageFormations?.totalElements}">
-                  <td>{{c?.id}}</td>
-                  <td>{{c?.certName}}</td>
-                  <td>{{c?.url}}</td>
-                  <td>{{c?.dateEch}}</td>
+              <td>{{c?.id}}</td>
+              <td>{{c?.certName}}</td>
+              <td>{{c?.url}}</td>
+              <td>{{c?.dateEch}}</td>
 
-                  <td><span [ngClass]="{'badge badge-pill badge-success':c?.statut==1,'badge badge-pill badge-warning':c?.statut==0}"> &nbsp;{{c?.statut}}&nbsp;</span>
-                  </td>
-                  <td><a (click)="onEditCertification(c.id)"><i class="fa fa-edit "></i> </a></td>
-                  <td>
-                  <button
-                    class="btn btn-primary"
-                    mwlConfirmationPopover
-                    [popoverTitle]="popoverTitle"
-                    [popoverMessage]="popoverMessage"
-                    placement="left"
-                    (confirm)="onDeleteFormation(f)"
-                    (cancel)="cancelClicked = true">
-                    <i class="fa fa-trash "></i>
+              <td><span
+                [ngClass]="{'badge badge-pill badge-success':c?.statut==1,'badge badge-pill badge-warning':c?.statut==0}"> &nbsp;{{c?.statut}}&nbsp;</span>
+              </td>
+              <td>
+                <div class="avatars">
+                  <div *ngFor="let i of [0, 1, 2]" class="avatar avatar-xs">
+                    <img *ngIf="c.participants[i] != null" src="assets/img/avatars/stage01.jpg" class="img-avatar"
+                         alt="admin@bootstrapmaster.com">
+                  </div>
+                  <button type="button" class="badge badge-info" [disabled]="c?.participants.length==0"
+                          data-toggle="modal" (click)="doChargerModal(c); smallModal.show();">
+                    <b>All</b>
                   </button>
-                  </td>
-                </tr>
+                </div>
+              </td>
+              <td>
+                <div class="btn-group" dropdown>
+                  <button dropdownToggle type="button" class="btn btn-primary btn-sm dropdown-toggle">
+                    <i class="fa fa-bars fa-lg"></i><span class="caret"></span>
+                  </button>
+                  <ul *dropdownMenu class="dropdown-menu" role="menu">
+                    <li role="menuitem">
+                      <button class="dropdown-item" (click)="onEditCertification(c.id)">Modifier</button>
+                    </li>
+                    <li role="menuitem">
+                      <button type="button" class="dropdown-item" data-toggle="modal"
+                              (click)="doDeleteCertification(c); dangerModal.show();">
+                        Supprimer
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              </td>
+            </tr>
 
             </tbody>
           </table>
@@ -126,3 +103,11 @@
     <!--/.col-->
   </div>
 </div>
+
+<all-participants bsModal #smallModal="bs-modal" [selectedEntity]="selectedCertification" [modal]="smallModal"
+                  class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                  aria-hidden="true"></all-participants>
+
+<delete-modal bsModal #dangerModal="bs-modal" [modal]="dangerModal"
+              (functionDelete)="onDeleteCertification(selectedCertification)" class="modal fade"
+              tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></delete-modal>

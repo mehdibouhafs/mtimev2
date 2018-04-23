@@ -2,7 +2,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import {
-  BsDropdownModule, CarouselModule, CollapseModule, PaginationModule, PopoverModule, ProgressbarModule,
+  BsDropdownModule, CarouselModule, CollapseModule, ModalModule, PaginationModule, PopoverModule, ProgressbarModule,
   TooltipModule
 } from "ngx-bootstrap";
 import {FormsModule} from "@angular/forms";
@@ -16,6 +16,9 @@ import {CertificationRoutingModule} from "./certification-routing.module";
 import {CertificationService} from "../../services/certification.service";
 import {EditCertificationComponent} from "./editCertification.component";
 import {SocketService} from "../../services/socket.service";
+import {NgSelectModule} from "@ng-select/ng-select";
+import {UserService} from "../../services/user.service";
+import {CustomModalModule} from "../modal/modal.module";
 
 @NgModule({
   imports: [
@@ -35,6 +38,9 @@ import {SocketService} from "../../services/socket.service";
       confirmButtonType: 'danger' // set defaults here
     }),
     SimpleNotificationsModule.forRoot(),
+    NgSelectModule,
+    ModalModule,
+    CustomModalModule
 
 
   ],
@@ -43,6 +49,6 @@ import {SocketService} from "../../services/socket.service";
     AllCertificationComponent,
     EditCertificationComponent,
   ],
-  providers: [CertificationService,SocketService]
+  providers: [CertificationService, UserService ,SocketService]
 })
 export class CertificationModule { }

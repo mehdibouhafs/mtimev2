@@ -104,31 +104,10 @@
   </div>
 </div>
 
-<div bsModal #smallModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-     aria-hidden="true">
-  <div class="modal-dialog modal-sm" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title">{{selectedFormation?.frmName}}</h4>
-        <button type="button" class="close" (click)="smallModal.hide()" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <ul class="list-group">
-          <li *ngFor="let p of selectedFormation?.participants" class="list-group-item">
-            <img height="30" width="30" class="img-avatar" src="assets/img/avatars/stage01.jpg"/>
-            <b>{{p.firstName}} {{p.lastName}}</b>
-          </li>
-        </ul>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="smallModal.hide()">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
+<all-participants bsModal #smallModal="bs-modal" [selectedEntity]="selectedFormation" [modal]="smallModal"
+                  class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                  aria-hidden="true"></all-participants>
 
-<delete-modal bsModal #dangerModal="bs-modal" [modal]="dangerModal" [todeleted]="selectedFormation"
+<delete-modal bsModal #dangerModal="bs-modal" [modal]="dangerModal"
               (functionDelete)="onDeleteFormation(selectedFormation)" class="modal fade"
               tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></delete-modal>

@@ -3,6 +3,7 @@ import {CommonModule} from "@angular/common";
 import {DeleteComponent} from "./delete.component";
 import {FormsModule} from "@angular/forms";
 import {ModalModule} from "ngx-bootstrap";
+import {AllparticipantsComponent} from "./allparticipants.component";
 
 @NgModule({
   imports: [
@@ -10,9 +11,13 @@ import {ModalModule} from "ngx-bootstrap";
     FormsModule,
     ModalModule.forRoot()
   ],
-  declarations: [DeleteComponent],
+  declarations: [
+    DeleteComponent,
+    AllparticipantsComponent
+  ],
   exports: [
-    DeleteComponent
+    DeleteComponent,
+    AllparticipantsComponent
   ]
 })
 

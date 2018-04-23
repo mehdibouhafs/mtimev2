@@ -1,18 +1,17 @@
-
-  <div class="modal-dialog modal-danger" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title">Confirmation</h4>
-        <button type="button" class="close" (click)="modal.hide()" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <p>Êtes-vous sûre de vouloir suuprimer {{todeleted?.frmName}}</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="hideModal()">Non</button>
-        <button type="button" class="btn btn-danger" (click)="callFunctionDelete(); modal?.hide();">Supprimer</button>
-      </div>
+<div class="modal-dialog modal-danger" role="document">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h4 class="modal-title">Confirmation</h4>
+      <button type="button" class="close" (click)="hideModal()" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p>Êtes-vous sûre de vouloir suuprimer cet element ?</p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="hideModal()">Non</button>
+      <button type="button" class="btn btn-danger" (click)="callFunctionDelete(); hideModal();">Supprimer</button>
     </div>
   </div>
+</div>

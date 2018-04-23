@@ -23,6 +23,7 @@ export class MyFormationComponent implements OnInit{
   public cancelClicked: boolean = false;
 
   formation : Formation = new Formation();
+  selectedFormation: Formation;
 
   constructor(private userService:UserService,private  autehntificationService:AuthenticationService,private router:Router ) { }
 
@@ -57,6 +58,10 @@ export class MyFormationComponent implements OnInit{
   gotoPage(page:number){
     this.currentPage = page;
     this.doSearch();
+  }
+
+  doChargerModal(formation: Formation) {
+    this.selectedFormation = formation;
   }
 
 }

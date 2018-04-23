@@ -3,6 +3,7 @@ import {AuthenticationService} from "../../services/authentification.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {Certification} from "../../model/model.certification";
 import {CertificationService} from "../../services/certification.service";
+import {UserService} from "../../services/user.service";
 
 @Component({
   templateUrl: 'editCertification.component.html'
@@ -12,7 +13,11 @@ export class EditCertificationComponent implements OnInit{
   certification : Certification = new Certification();
   idCertification :number;
 
-  constructor(private certificationService:CertificationService,private  autehntificationService:AuthenticationService,private activateRoute:ActivatedRoute){
+  users: any;
+  selectedUsers = [];
+  link : string = "assets/img/avatars/";
+
+  constructor(private certificationService:CertificationService, private userService: UserService ,private  autehntificationService:AuthenticationService,private activateRoute:ActivatedRoute){
 
     this.idCertification = this.activateRoute.snapshot.params['id'];
     console.log("idCertification" + this.idCertification);
@@ -22,13 +27,27 @@ export class EditCertificationComponent implements OnInit{
       this.certificationService.getCertification(this.idCertification)
         .subscribe((data:Certification)=>{
           this.certification = data;
+          this.selectedUsers = this.certification.participants;
           console.log("certification " + this.certification);
         },err=>{
           console.log(err);
         });
+
+    this.userService.getAllUsers()
+      .subscribe(data => {
+        this.users = data;
+      }, err => {
+        console.log(err);
+      });
   }
 
   onEditCertification() {
+
+    this.certification.participants = [];
+    this.selectedUsers.forEach(val => {
+      this.certification.participants.push(val);
+    });
+
     this.certificationService.updateCertification(this.certification)
       .subscribe((data: Certification) => {
         console.log("ok " + data);
@@ -37,6 +56,12 @@ export class EditCertificationComponent implements OnInit{
       }), err => {
       console.log(JSON.parse(err.body).message);
     };
+  }
+
+  toModeOne() {
+    this.mode = 1;
+    this.certification = new Certification();
+    this.selectedUsers = [];
   }
 
 

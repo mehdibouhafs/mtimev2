@@ -5,6 +5,7 @@ import {AuthenticationService} from "../../services/authentification.service";
 import {NotificationsService} from "angular2-notifications";
 import {User} from "../../model/model.user";
 import {UserService} from "../../services/user.service";
+import {forEach} from "@angular/router/src/utils/collection";
 
 @Component({
   selector:"app-new-formation",
@@ -35,6 +36,12 @@ export class NewFormationComponent implements OnInit{
   constructor(private formationService:FormationService, private userService:UserService , private  autehntificationService:AuthenticationService,private notificationService: NotificationsService) {
 
   }
+
+  removeOne(user:User){
+    this.selectedUsers = this.selectedUsers.filter(obj => obj !== user);
+  }
+
+
 
 
   public options = {
@@ -85,7 +92,6 @@ export class NewFormationComponent implements OnInit{
 
   onSaveFormation(){
 
-     console.log(this.selectedUsers);
 
      this.selectedUsers.forEach(val => {
        this.formation.participants.push(val);

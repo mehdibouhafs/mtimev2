@@ -6,7 +6,6 @@ import {Formation} from "../../model/model.formation";
   templateUrl: 'delete.component.html'
 })
 export class DeleteComponent {
-  @Input() todeleted: Formation;
   @Input() modal: any;
   @Output()
   functionDelete = new EventEmitter<String>();

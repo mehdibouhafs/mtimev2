@@ -51,9 +51,17 @@
                        bindLabel="username"
                        multiple="true"
                        [(ngModel)]="selectedUsers"
-                       loadingText="Chargement ..."
                        placeholder="Selectionner participants"
                        required>
+
+              <ng-template ng-label-tmp let-item="item">
+                <div class="ng-value ng-star-inserted">
+                  <img height="20" width="20" [src]="link+'stage01.jpg'"/>
+                  <b>{{item.username}}</b>
+                  <span aria-hidden="true" class="ng-value-icon left ng-star-inserted"
+                        (click)="removeOne(item)">×</span>
+                </div>
+              </ng-template>
 
 
               <ng-template ng-option-tmp let-item="item" let-index="index">

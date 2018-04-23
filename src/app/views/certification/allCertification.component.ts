@@ -22,6 +22,7 @@ export class AllCertificationComponent implements OnInit{
   public cancelClicked: boolean = false;
 
   certification : Certification = new Certification();
+  selectedCertification: Certification;
 
   constructor(private certificationService:CertificationService,private  autehntificationService:AuthenticationService,private router:Router ) { }
 
@@ -82,6 +83,14 @@ export class AllCertificationComponent implements OnInit{
             console.log("err");
           });
 
+  }
+
+  doDeleteCertification(certification:Certification) {
+    this.selectedCertification = certification;
+  }
+
+  doChargerModal(certification: Certification) {
+    this.selectedCertification = certification;
   }
 
 
