@@ -25,6 +25,20 @@
   color: red;
 }
 
+.ng-select .ng-control {
+  background-color: #fff;
+  border-radius: 2px;
+  border: 1px solid #ccc;
+  min-height: 25px;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+.ng-select.ng-single .ng-control {
+  height: 30px;
+}
+
 tr:hover {
   background-color: #f2f2f2;
 }

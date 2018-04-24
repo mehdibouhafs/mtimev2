@@ -22,6 +22,14 @@ import {NewActivityProjectComponent} from "../activityProject/newActivityProject
 import {EditActivityProjectComponent} from "../activityProject/editActivityProject.component";
 import {ActivityRoutingModule} from "./activity-routing.module";
 import {ShowActivityProjectComponent} from "../activityProject/showActivityProject.component";
+import {NewActivityRecouvrementComponent} from "../activityRecouvrement/newActivityRecouvrement.component";
+import {EditActivityRecouvrementComponent} from "../activityRecouvrement/editActivityRecouvrement.component";
+import {ShowActivityRecouvrementComponent} from "../activityRecouvrement/showActivityRecouvrement.component";
+import {NewActivityRequestComponent} from "../activityRequest/newActivityRequest.component";
+import {EditActivityRequestComponent} from "../activityRequest/editActivityRequest.component";
+import {ShowActivityRequestComponent} from "../activityRequest/showActivityRequest.component";
+import {RequestService} from "../../services/request.service";
+import {CustomModalModule} from "../modal/modal.module";
 
 @NgModule({
   imports: [
@@ -45,7 +53,8 @@ import {ShowActivityProjectComponent} from "../activityProject/showActivityProje
     OwlDateTimeModule,
     OwlNativeDateTimeModule,
     AlertModule.forRoot(),
-    ModalModule.forRoot()
+    ModalModule.forRoot(),
+    CustomModalModule
 
   ],
   declarations: [
@@ -53,8 +62,14 @@ import {ShowActivityProjectComponent} from "../activityProject/showActivityProje
     EditActivityProjectComponent,
     ShowActivityProjectComponent,
     MyActivitiessComponent,
+    NewActivityRecouvrementComponent,
+    EditActivityRecouvrementComponent,
+    ShowActivityRecouvrementComponent,
+    NewActivityRequestComponent,
+    EditActivityRequestComponent,
+    ShowActivityRequestComponent,
 
   ],
-  providers: [ActivityService,SocketService,CustomerService,ProjectService,{provide: OWL_DATE_TIME_LOCALE, useValue: 'fr'},]
+  providers: [ActivityService,SocketService,CustomerService,ProjectService,{provide: OWL_DATE_TIME_LOCALE, useValue: 'fr'},RequestService]
 })
 export class ActivityModule { }

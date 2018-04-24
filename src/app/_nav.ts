@@ -56,12 +56,22 @@ export const navigation = [
   },
   {
     name: 'Activité projet',
-    url: '/activityProject/new-activity-project',
+    url: '/activity/new-activity-project',
+    icon: 'icon-puzzle'
+  },
+  {
+    name: 'Activité recouvrement',
+    url: '/activity/new-activity-recouvrement',
+    icon: 'icon-puzzle'
+  },
+  {
+    name: 'Activité support',
+    url: '/activity/new-activity-request',
     icon: 'icon-puzzle'
   },
   {
     name: 'Mes activitees',
-    url: '/activityProject/my-activities',
+    url: '/activity/my-activities',
     icon: 'icon-puzzle'
   },
 ];

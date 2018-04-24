@@ -104,7 +104,7 @@ export class MyActivitiessComponent implements OnInit{
         break;
       }
       case "Activité recouvrement": {
-        //statements;
+        this.router.navigate(["/activityProject/show-activity-recouvrement/",activity.id]);
         break;
       }
       default: {

@@ -37,7 +37,7 @@ export const routes: Routes = [
         loadChildren: './views/calendar/calendar2.module#CalendarModule2'
       },
       {
-        path: 'activityProject',
+        path: 'activity',
         loadChildren: './views/activity/activity.module#ActivityModule'
       },
     ]

@@ -8,11 +8,15 @@ import {ShowActivityProjectComponent} from "../activityProject/showActivityProje
 import {EditActivityRecouvrementComponent} from "../activityRecouvrement/editActivityRecouvrement.component";
 import {NewActivityRecouvrementComponent} from "../activityRecouvrement/newActivityRecouvrement.component";
 import {ShowActivityRecouvrementComponent} from "../activityRecouvrement/showActivityRecouvrement.component";
+import {NewActivityRequestComponent} from "../activityRequest/newActivityRequest.component";
+import {ShowActivityRequestComponent} from "../activityRequest/showActivityRequest.component";
+import {EditActivityRequestComponent} from "../activityRequest/editActivityRequest.component";
+
 const routes: Routes = [
   {
     path: '',
     data: {
-      title: 'ActivityProject'
+      title: 'Activity'
     },
     children: [
       {
@@ -52,7 +56,29 @@ const routes: Routes = [
       },
       {
         path: 'show-activity-recouvrement/:id',
-        component: ShowActivityRecouvrementComponent,
+        component: ShowActivityRequestComponent,
+        data: {
+          title: 'show-activityRecouvrement'
+        }
+      },
+
+      {
+        path: 'new-activity-request',
+        component: NewActivityRequestComponent,
+        data: {
+          title: 'nouvelle-activiteRecouvrement'
+        }
+      },
+      {
+        path: 'edit-activity-request/:id',
+        component: EditActivityRequestComponent,
+        data: {
+          title: 'edit-activityRecouvrement'
+        }
+      },
+      {
+        path: 'show-activity-request/:id',
+        component: ShowActivityRequestComponent,
         data: {
           title: 'show-activityRecouvrement'
         }

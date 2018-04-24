@@ -10,13 +10,13 @@ export class Request{
 
    cntExcde : string;
 
-   rqtDte : string;
+   rqtDte : Date;
 
    cpyInCde : Customer;
 
    rqtNatDsc : string;
 
-   rqtStsInCde : string;
+   rqtStsInCde : number;
 
 
 }

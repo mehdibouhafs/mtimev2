@@ -1,0 +1,37 @@
+<div class="modal-dialog modal-info" role="document">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h4 class="modal-title">Détail de la demande : {{request?.rqtExcde}}</h4>
+      <button type="button" class="close" (click)="hideModal()" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="row">
+        <div class="form-group col-sm-6">
+          <label class="control-label"><strong>N°demande</strong></label>{{request?.rqtExcde}}
+          <label>{{request?.rqtExcde}}</label>
+        </div>
+        <div class="form-group col-sm-6">
+          <label class="control-label"><strong>Date de la demande</strong></label>{{request?.rqtExcde}}
+          <label><span class="badge badge-warning">{{request?.rqtDte | date: 'dd/MM/yyyy HH:mm'}}</span></label>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group col-sm-6">
+          <label class="control-label"><strong>Description</strong></label>{{request?.rqtExcde}}
+          <label>{{request?.objDsc}}</label>
+        </div>
+        <div class="form-group col-sm-6">
+          <label class="control-label"><strong>Client</strong></label>
+          <label>{{request?.cpyInCde.name}}</label>
+        </div>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="hideModal()">Fermer</button>
+    </div>
+  </div>
+</div>
