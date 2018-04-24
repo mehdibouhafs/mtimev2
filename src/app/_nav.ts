@@ -40,6 +40,11 @@ export const navigation = [
     name: 'Certifications'
   },
   {
+    name: 'Mes Certification',
+    url: '/certification/my-certification',
+    icon: 'icon-puzzle'
+  },
+  {
     name: 'New Certification',
     url: '/certification/nouvelle-certification',
     icon: 'icon-puzzle'

@@ -19,6 +19,7 @@ import {SocketService} from "../../services/socket.service";
 import {NgSelectModule} from "@ng-select/ng-select";
 import {UserService} from "../../services/user.service";
 import {CustomModalModule} from "../modal/modal.module";
+import {MycertificationComponent} from "./mycertification.component";
 
 @NgModule({
   imports: [
@@ -48,6 +49,7 @@ import {CustomModalModule} from "../modal/modal.module";
     NewCertificationComponent,
     AllCertificationComponent,
     EditCertificationComponent,
+    MycertificationComponent
   ],
   providers: [CertificationService, UserService ,SocketService]
 })

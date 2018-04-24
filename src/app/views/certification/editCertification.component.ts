@@ -4,6 +4,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {Certification} from "../../model/model.certification";
 import {CertificationService} from "../../services/certification.service";
 import {UserService} from "../../services/user.service";
+import {User} from "../../model/model.user";
 
 @Component({
   templateUrl: 'editCertification.component.html'
@@ -62,6 +63,13 @@ export class EditCertificationComponent implements OnInit{
     this.mode = 1;
     this.certification = new Certification();
     this.selectedUsers = [];
+  }
+
+  removeOne(user:User){
+    this.selectedUsers =  this.selectedUsers.filter(obj => obj !== user);
+    this.selectedUsers.splice(
+      this.selectedUsers.indexOf(user), 1
+    )
   }
 
 

@@ -4,6 +4,7 @@ import {AuthenticationService} from "../../services/authentification.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {Formation} from "../../model/model.formation";
 import {UserService} from "../../services/user.service";
+import {User} from "../../model/model.user";
 
 @Component({
   templateUrl: 'editFormation.component.html'
@@ -61,5 +62,11 @@ export class EditFormationComponent implements  OnInit{
     this.router.navigateByUrl('/formation/nouvelle-formation');
   }
 
+  removeOne(user:User){
+    this.selectedUsers =  this.selectedUsers.filter(obj => obj !== user);
+    this.selectedUsers.splice(
+      this.selectedUsers.indexOf(user), 1
+    )
+  }
 
 }

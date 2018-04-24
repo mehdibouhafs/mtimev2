@@ -3,6 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import {NewCertificationComponent} from "./newCertification.component";
 import {AllCertificationComponent} from "./allCertification.component";
 import {EditCertificationComponent} from "./editCertification.component";
+import {MycertificationComponent} from "./mycertification.component";
 
 const routes: Routes = [
   {
@@ -11,6 +12,13 @@ const routes: Routes = [
       title: 'Certification'
     },
     children: [
+      {
+        path: 'my-certification',
+        component: MycertificationComponent,
+        data: {
+          title: 'my-certification'
+        }
+      },
       {
         path: 'nouvelle-certification',
         component: NewCertificationComponent,

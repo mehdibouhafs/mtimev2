@@ -46,8 +46,9 @@
               <td>
                 <div class="avatars">
                   <div *ngFor="let i of [0, 1, 2]" class="avatar avatar-xs">
-                    <img *ngIf="f.participants[i] != null" src="assets/img/avatars/stage01.jpg" class="img-avatar"
-                         alt="admin@bootstrapmaster.com">
+                    <img *ngIf="f.participants[i] != null"
+                         [src]="'assets/img/avatars/'+f.participants[i].username+'.jpg'" class="img-avatar"
+                         [title]="f.participants[i].username" onerror="this.src='assets/img/avatars/default.jpg'">
                   </div>
                   <button type="button" class="badge badge-info" [disabled]="f?.participants.length==0"
                           data-toggle="modal" (click)="doChargerModal(f); smallModal.show();">

@@ -27,4 +27,11 @@ export class UserService {
       +"&page="+page, {headers: new HttpHeaders({'Authorization': this.autehntificationService.getToken()})});
   }
 
+  findMyCertifications(motcle:String,page:number,size:number) {
+    return this.http.get(this.host+"/mycertifications?username="+this.autehntificationService.getUserName()
+      +"&mc="+motcle
+      +"&size="+size
+      +"&page="+page, {headers: new HttpHeaders({'Authorization': this.autehntificationService.getToken()})});
+  }
+
 }

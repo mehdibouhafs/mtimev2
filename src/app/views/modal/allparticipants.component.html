@@ -9,7 +9,8 @@
     <div class="modal-body">
       <ul class="list-group">
         <li *ngFor="let p of selectedEntity?.participants" class="list-group-item">
-          <img height="30" width="30" class="img-avatar" src="assets/img/avatars/stage01.jpg"/>
+          <img height="30" width="30" class="img-avatar" [src]="'assets/img/avatars/'+p.username+'.jpg'"
+               onerror="this.src='assets/img/avatars/default.jpg'"/>
           <b>{{p.firstName}} {{p.lastName}}</b>
         </li>
       </ul>
