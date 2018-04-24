@@ -75,7 +75,7 @@
 
 
               <ng-template ng-option-tmp let-item="item" let-index="index">
-                <img height="25" width="25" class="img-avatar" [src]="link+'stage01.jpg'"/>
+                <img height="25" width="25" class="img-avatar" [src]="link+item.username+'.jpg'" onerror="this.src='assets/img/avatars/default.jpg'"/>
                 <b>{{item.username}}</b>
               </ng-template>
 
