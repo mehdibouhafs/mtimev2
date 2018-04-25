@@ -2,7 +2,7 @@ import {
   Component,
   ChangeDetectionStrategy,
   ViewChild,
-  TemplateRef
+  TemplateRef, OnInit
 } from '@angular/core';
 import { Router } from '@angular/router';
 import {AuthenticationService} from "../../services/authentification.service";
@@ -45,9 +45,12 @@ const colors: any = {
   styleUrls: ['calendar.component.scss'],
   templateUrl: 'calendar.component.html'
 })
-export class CalendarComponent  {
+export class CalendarComponent implements OnInit {
 
-  tasks : any;
+  ngOnInit(){
+    console.log("calendar1");
+  }
+
 
   @ViewChild('modalContent') modalContent: TemplateRef<any>;
 
@@ -70,7 +73,7 @@ export class CalendarComponent  {
     {
       label: '<i class="fa fa-fw fa-times"></i>',
       onClick: ({ event }: { event: CalendarEvent }): void => {
-        this.events = this.events.filter(iEvent => iEvent !== event);
+        this.events = this.events.filter(iEvent => iEvent !== event) ;
         this.handleEvent('Deleted', event);
       }
     }

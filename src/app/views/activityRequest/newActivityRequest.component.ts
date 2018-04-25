@@ -68,7 +68,7 @@ export class NewActivityRequestComponent implements OnInit,OnDestroy {
     this.activityRequest.statut = true;
     this.activityRequest.nature = "Projet";
     this.activityRequest.lieu = "Client";
-    this.activityRequest.typeActivite = "Activité request";
+    this.activityRequest.typeActivite = "Activité support";
     this.activityRequest.comments = "Teste";
     this.activityRequest.request.rqtExcde = "1111111112";
   }
@@ -79,15 +79,12 @@ export class NewActivityRequestComponent implements OnInit,OnDestroy {
     console.log("onDatesChanged ");
     if(this.activityRequest.dteStrt != null && this.activityRequest.dteEnd !=null){
       if (this.activityService.testDateBeforeNow(this.activityRequest.dteStrt,this.activityRequest.dteEnd) == true ){
-
         this.error = 0;
-
       }else{
         console.log("esle");
         this.activityRequest.statut = false;
         this.disabledStatut = true;
         this.error = 1;
-
       }
     }
   }
@@ -120,7 +117,7 @@ export class NewActivityRequestComponent implements OnInit,OnDestroy {
 
   onSaveActivityRequest(){
     this.dureeFormated = this.activityService.diffBetwenTwoDateFormated(this.activityRequest.dteStrt,this.activityRequest.dteEnd);
-    console.log("Activity Project " +JSON.stringify(this.activityRequest));
+    console.log("Activity Suuport " +JSON.stringify(this.activityRequest));
     console.log("diffBetwenTwoDateInMinutes " + this.activityService.diffBetwenTwoDateInMinutes(this.activityRequest.dteStrt,this.activityRequest.dteEnd));
     //this.activityRequest.dteStrt = new Date(this.activityService.formatDate(this.activityRequest.dteStrt));
     //this.activityRequest.dteEnd = new Date(this.activityService.formatDate(this.activityRequest.dteEnd));

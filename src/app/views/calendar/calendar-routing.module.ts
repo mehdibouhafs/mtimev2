@@ -3,20 +3,27 @@ import { Routes,
      RouterModule } from '@angular/router';
 
 import { CalendarComponent } from './calendar.component';
+import {MyCalendarComponent} from "./myCalendar/my.calendar.component";
 
 const routes: Routes = [
   {
     path: '',
-    component: CalendarComponent,
     data: {
       title: 'Calendar'
     },
     children: [
       {
-        path: 'my-calendar',
+        path: 'calendar',
         component: CalendarComponent,
         data: {
-          title: 'my-calendar'
+          title: 'calendar'
+        }
+      },
+      {
+        path: 'my-calendar',
+        component: MyCalendarComponent,
+        data: {
+          title: 'mycalendar'
         }
       },
       ]

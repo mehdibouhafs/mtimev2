@@ -46,6 +46,11 @@ export const navigation = [
     name: 'Calendar'
   },
   {
+    name: 'calendar',
+    url: '/calendar/calendar',
+    icon: 'icon-puzzle'
+  },
+  {
     name: 'My calendar',
     url: '/calendar/my-calendar',
     icon: 'icon-puzzle'

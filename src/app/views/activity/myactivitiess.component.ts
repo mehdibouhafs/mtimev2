@@ -41,6 +41,7 @@ export class MyActivitiessComponent implements OnInit{
 
     this.activityService.getMyActivitiesByMc(this.motCle,this.currentPage,this.size).subscribe(
       data=>{
+        console.log("data " + JSON.stringify(data));
         this.pageActivities = data;
         this.pages = new Array(data["totalPages"]);
         this.totalElement = data["totalElements"];
@@ -66,11 +67,19 @@ export class MyActivitiessComponent implements OnInit{
 
     switch(activity.typeActivite) {
       case "Activité projet": {
-        this.router.navigate(["/activityProject/edit-activity-project/",activity.id]);
+        this.router.navigate(["/activity/edit-activity-project/",activity.id]);
         break;
       }
       case "Activité recouvrement": {
-        //statements;
+        this.router.navigate(["/activity/edit-activity-recouvrement/",activity.id]);
+        break;
+      }
+      case "Activité support":{
+        this.router.navigate(["/activity/edit-activity-request/",activity.id]);
+        break;
+      }
+      case "Activité congé":{
+        this.router.navigate(["/activity/edit-activity-holliday/",activity.id]);
         break;
       }
       default: {
@@ -100,11 +109,11 @@ export class MyActivitiessComponent implements OnInit{
 
     switch(activity.typeActivite) {
       case "Activité projet": {
-        this.router.navigate(["/activityProject/show-activity-project/",activity.id]);
+        this.router.navigate(["/activity/show-activity-project/",activity.id]);
         break;
       }
       case "Activité recouvrement": {
-        this.router.navigate(["/activityProject/show-activity-recouvrement/",activity.id]);
+        this.router.navigate(["/activity/show-activity-recouvrement/",activity.id]);
         break;
       }
       default: {

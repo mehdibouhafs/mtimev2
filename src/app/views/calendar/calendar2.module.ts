@@ -7,6 +7,11 @@ import {FormsModule} from "@angular/forms";
 import {CommonModule} from "@angular/common";
 import {NgbModalModule} from '@ng-bootstrap/ng-bootstrap';
 import {DemoUtilsModule} from "../demo-utils/module";
+import {MyCalendarComponent} from "./myCalendar/my.calendar.component";
+import {AuthenticationService} from "../../services/authentification.service";
+import {ActivityService} from "../../services/activity.service";
+import {ModalModule} from "ngx-bootstrap";
+import {EditActivityProjectComponent} from "../activityProject/editActivityProject.component";
 @NgModule({
   imports: [
     CalendarRoutingModule,
@@ -15,10 +20,11 @@ import {DemoUtilsModule} from "../demo-utils/module";
     FormsModule,
     CommonModule,
     NgbModalModule.forRoot(),
-    DemoUtilsModule
+    DemoUtilsModule,
+    ModalModule.forRoot()
 
   ],
-  declarations: [ CalendarComponent ],
-  providers: []
+  declarations: [ CalendarComponent,MyCalendarComponent,EditActivityProjectComponent ],
+  providers: [AuthenticationService,ActivityService]
 })
 export class CalendarModule2 { }

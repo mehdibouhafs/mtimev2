@@ -1,25 +1,32 @@
-import {Component, OnInit} from "@angular/core";
+import {Component, Input, OnInit} from "@angular/core";
 import {AuthenticationService} from "../../services/authentification.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ActivityProject} from "../../model/model.activityProject";
 import {ActivityService} from "../../services/activity.service";
 import * as moment from "moment-timezone";
 @Component({
+  selector: 'edit-activityProject-modal',
   templateUrl: 'editActivityProject.component.html'
 })
 export class EditActivityProjectComponent implements OnInit{
   mode:number=1;
-  activityProject : ActivityProject = new ActivityProject();
+  @Input()
+  activityProject : ActivityProject;
   idActivityProject :number;
+  @Input() editActivityProjectModal;
 
   constructor(private activityService:ActivityService,private  autehntificationService:AuthenticationService,private activateRoute:ActivatedRoute){
 
-    this.idActivityProject = this.activateRoute.snapshot.params['id'];
+    //this.idActivityProject = this.activateRoute.snapshot.params['id'];
 
   }
 
+  hideModal() {
+    this.editActivityProjectModal.hide();
+  }
+
   ngOnInit(){
-      this.activityService.getActivity(this.idActivityProject)
+      /*this.activityService.getActivity(this.idActivityProject)
         .subscribe((data:ActivityProject)=>{
           this.activityProject = data;
           this.activityProject.dteStrt = new Date(this.activityProject.dteStrt);
@@ -27,7 +34,7 @@ export class EditActivityProjectComponent implements OnInit{
           console.log("activityProject " + JSON.stringify(this.activityProject));
         },err=>{
           console.log(err);
-        });
+        });*/
   }
 
   onEditActivityProject() {

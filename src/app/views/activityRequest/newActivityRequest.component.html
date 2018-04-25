@@ -26,14 +26,14 @@
               <label class="control-label">Numéro de la demande</label>
               <div class="input-group">
                 <span class="input-group-prepend">
-                    <button class="btn btn-primary" type="button"></button>
+                    <button class="btn btn-primary" type="button"><i class="fa fa-search"></i></button>
                   </span>
                 <input minlength="10" class="form-control form-control-sm" placeholder="Numéro de la demande"
                        aria-label="Input group example" aria-describedby="btnGroupAddon" maxlength="10" id="rqtExcde"
                        name="rqtExcde" #rqtExcde="ngModel" [(ngModel)]="activityRequest.request.rqtExcde" size="10"
                        type="text" (change)="onSearchRequest()" required>
                 <div *ngIf="rqtExcde.invalid && (rqtExcde.dirty || rqtExcde.touched)"
-                     class="alert alert-danger">
+                     class="error">
                   <div *ngIf="rqtExcde.errors.required">
                     Le numéro de la demande est obligatoire.
                   </div>
@@ -100,7 +100,7 @@
                 <option>Nature 3</option>
                 <option>Nature 4</option>
               </select>
-              <div *ngIf="nature.invalid && (nature.dirty || nature.touched)" class="alert alert-danger">
+              <div *ngIf="nature.invalid && (nature.dirty || nature.touched)" class="error">
                 <div *ngIf="nature.errors.required">
                   La nature est obligatoire.
                 </div>
@@ -147,7 +147,7 @@
                 <option>Fes</option>
                 <option>Agadir</option>
               </select>
-              <div *ngIf="nature.invalid && (nature.dirty || nature.touched)" class="alert alert-danger">
+              <div *ngIf="nature.invalid && (nature.dirty || nature.touched)" class="error">
                 <div *ngIf="ville.errors.required">
                   La ville est obligatoire.
                 </div>
@@ -165,7 +165,7 @@
                         placeholder="Action" style="margin-top: 0px; margin-bottom: 0px; height: 56px;"
                         required></textarea>
               <div *ngIf="comments.invalid && (comments.dirty || comments.touched)"
-                   class="alert alert-danger">
+                   class="error">
                 <div *ngIf="comments.errors.required">
                   Commentaire est requis.
                 </div>
@@ -212,24 +212,19 @@
     <div class="card">
       <div class="card-header"
            [ngStyle]="{'background-color':activityRequest.statut=== true ?'rgb(135, 243, 158)':'rgb(158, 225, 251)'}">
-        <i class="fa fa-edit"></i>Confirmation d'ajout de l'activité request
+        <i class="fa fa-edit"></i>Confirmation d'ajout de l'activité support id : {{activityRequest.id }}
       </div>
       <form class="form-horizontal" #f="ngForm" (ngSubmit)="onSaveActivityRequest(f.value)">
         <div class="card-body">
           <div class="row">
 
-            <div class="form-group col-sm-2">
-              <label class="control-label"><strong>Id:</strong></label>
-              <label>{{activityRequest.id }}</label>
-            </div>
-
-            <div class="form-group col-sm-4">
+            <div class="form-group col-sm-6">
               <label class="control-label"><strong>Date de début:</strong></label>
               <label><span
                 class="badge badge-warning">{{activityRequest.dteStrt | date: 'dd/MM/yyyy HH:mm'}}</span></label>
             </div>
 
-            <div class="form-group col-sm-4">
+            <div class="form-group col-sm-6">
               <label class="control-label"><strong>Date de fin:&nbsp;</strong></label>
               <label><span
                 class="badge badge-warning">{{activityRequest.dteEnd | date: 'dd/MM/yyyy HH:mm'}}</span></label>
@@ -238,45 +233,47 @@
 
           <div class="row">
 
-            <div class="form-group col-sm-4">
+            <div class="form-group col-sm-6">
               <label class="control-label"><strong>Durée (Min):&nbsp;</strong></label>
               <label>{{activityRequest.durtion }}</label>
             </div>
 
-            <div class="form-group col-sm-4">
+            <div class="form-group col-sm-6">
               <label class="control-label" for="nature"><strong>Nature de l'activité:</strong> </label>
               <label>{{activityRequest.nature}}</label>
             </div>
+          </div><!--/.row-->
 
 
-            <div class="form-group col-sm-4">
+          <div class="row">
+
+            <div class="form-group col-sm-6">
               <div class="form-group">
                 <label class="control-label"><strong>Client:</strong></label>
                 <label>{{activityRequest.customer.code}}</label>
               </div>
             </div>
 
-          </div><!--/.row-->
-
-
-          <div class="row">
-            <div class="form-group col-sm-2">
+            <div class="form-group col-sm-6">
               <div class="form-group">
-                <label class="control-label" for="lieu"><strong>Lieu:</strong></label>
-                <label>{{activityRequest.lieu}}</label>
+                <label class="control-label"><strong>Lieu / ville</strong></label>
+                <label>{{activityRequest.lieu}} / {{activityRequest.ville}}</label>
               </div>
             </div>
 
-            <div class="form-group col-sm-10">
-              <label class="control-label" for="comments1"><strong>Commentaire:</strong></label>
-              <textarea minlength="1" id="comments1" name="comments1" rows="9" class="form-control"
-                        placeholder="Content.." style="margin-top: 0px; margin-bottom: 0px; height: 56px;" disabled>{{activityRequest.comments}}</textarea>
-            </div>
 
           </div>
 
 
           <div class="row">
+
+            <div class="form-group col-sm-6">
+              <label class="control-label" for="comments1"><strong>Commentaire:</strong></label>
+              <textarea minlength="1" id="comments1" name="comments1" rows="9" class="form-control"
+                        placeholder="Content.." style="margin-top: 0px; margin-bottom: 0px; height: 56px;" disabled>{{activityRequest.comments}}</textarea>
+            </div>
+
+
             <div class="form-group col-sm-6">
               <label class="col-form-label"><strong>Statut:</strong></label>
               <div class="col-form-label">
@@ -295,10 +292,6 @@
               </div>
             </div>
 
-            <div class="form-group col-sm-6">
-              <label class="control-label" for="ville"><strong>Ville:</strong></label>
-              <label>{{activityRequest.ville}}</label>
-            </div>
           </div>
 
 
@@ -316,9 +309,7 @@
 </div>
 
 <request-modal bsModal #requestModal="bs-modal" [modal]="requestModal"
-               class="modal fade"
+               class="modal fade" [request]="activityRequest.request"
                tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></request-modal>
 
-<delete-modal bsModal #dangerModal="bs-modal" [modal]="dangerModal"
-              (functionDelete)="onDeleteFormation(selectedFormation)" class="modal fade"
-              tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></delete-modal>
+

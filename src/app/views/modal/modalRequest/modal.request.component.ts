@@ -1,11 +1,12 @@
-import {Component, EventEmitter, Input, Output} from "@angular/core";
+import {Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
 import {Request} from "../../../model/model.request";
+
 
 @Component({
   selector: 'request-modal',
   templateUrl: 'modal.request.component.html'
 })
-export class ModalRequestComponent {
+export class ModalRequestComponent implements OnInit{
   @Input() modal: any;
 
   @Input()
@@ -14,6 +15,11 @@ export class ModalRequestComponent {
 
   constructor(){
     console.log("teste");
+  }
+
+  ngOnInit(){
+    console.log("request " + JSON.stringify(this.request));
+
   }
 
   hideModal() {

@@ -54,7 +54,7 @@ import {CustomModalModule} from "../modal/modal.module";
     OwlNativeDateTimeModule,
     AlertModule.forRoot(),
     ModalModule.forRoot(),
-    CustomModalModule
+    CustomModalModule,
 
   ],
   declarations: [
@@ -69,6 +69,18 @@ import {CustomModalModule} from "../modal/modal.module";
     EditActivityRequestComponent,
     ShowActivityRequestComponent,
 
+  ],
+  exports: [
+    NewActivityProjectComponent,
+    EditActivityProjectComponent,
+    ShowActivityProjectComponent,
+    MyActivitiessComponent,
+    NewActivityRecouvrementComponent,
+    EditActivityRecouvrementComponent,
+    ShowActivityRecouvrementComponent,
+    NewActivityRequestComponent,
+    EditActivityRequestComponent,
+    ShowActivityRequestComponent
   ],
   providers: [ActivityService,SocketService,CustomerService,ProjectService,{provide: OWL_DATE_TIME_LOCALE, useValue: 'fr'},RequestService]
 })
