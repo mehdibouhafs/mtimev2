@@ -1,17 +1,19 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {AuthenticationService} from "../../services/authentification.service";
+
 import {NotificationsService} from "angular2-notifications";
-import {SocketService} from "../../services/socket.service";
+
 import {Client, Frame, Message} from "stompjs";
 import {Subject} from "rxjs/Subject";
-import {ActivityRecouvrement} from "../../model/model.activityRecouvrement";
-import {ActivityService} from "../../services/activity.service";
-import {CustomerService} from "../../services/customer.service";
-import {Customer} from "../../model/model.customer";
+
 import {Router} from "@angular/router";
-import {ProjectService} from "../../services/project.service";
 import {DateTimeAdapter} from "ng-pick-datetime";
 import * as moment from "moment-timezone";
+import {ActivityService} from "../../../services/activity.service";
+import {SocketService} from "../../../services/socket.service";
+import {CustomerService} from "../../../services/customer.service";
+import {AuthenticationService} from "../../../services/authentification.service";
+import {ActivityRecouvrement} from "../../../model/model.activityRecouvrement";
+import {ProjectService} from "../../../services/project.service";
 
 @Component({
   selector:"app-new-activtyRecouvrement",

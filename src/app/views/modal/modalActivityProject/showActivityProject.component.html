@@ -1,0 +1,96 @@
+<div class="modal-dialog modal-lg modal-info" role="document">
+
+  <div class="modal-content">
+    <div class="modal-header">
+      <h4 class="modal-title">Visualiser l'activité </h4>
+      <button type="button" class="close" (click)="hideModal()" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="row">
+        <div class="form-group col-sm-6">
+          <label class="control-label"><strong>Date de début:</strong></label>
+          <label><span
+            class="badge badge-warning">{{activityProject?.dteStrt | date: 'dd/MM/yyyy HH:mm'}}</span></label>
+        </div>
+
+        <div class="form-group col-sm-6">
+          <label class="control-label"><strong>Date de fin:&nbsp;</strong></label>
+          <label><span
+            class="badge badge-warning">{{activityProject?.dteEnd | date: 'dd/MM/yyyy HH:mm'}}</span></label>
+        </div>
+      </div><!--/.row-->
+
+      <div class="row">
+        <div class="form-group col-sm-6">
+          <label class="control-label"><strong>Id:</strong></label>
+          <label>{{activityProject?.id }}</label>
+        </div>
+
+        <div class="form-group col-sm-6">
+          <label class="control-label"><strong>Durée (Min):&nbsp;</strong></label>
+          <label>{{activityProject?.durtion }}</label>
+        </div>
+      </div><!--/.row-->
+
+      <div class="row">
+        <div class="form-group col-sm-6">
+          <div class="form-group">
+            <label class="control-label"><strong>Client:</strong></label>
+            <label>{{activityProject?.customer?.code}}</label>
+          </div>
+
+        </div>
+
+        <div class="form-group col-sm-6">
+          <label class="control-label"><strong>Projet:</strong></label>
+          <label>{{activityProject?.project?.prjId}}</label>
+        </div>
+
+      </div>
+
+      <div class="row">
+        <div class="form-group col-sm-6">
+          <div class="form-group">
+            <label class="control-label"><strong>Lieu:</strong></label>
+            <label>{{activityProject?.lieu}}</label>
+          </div>
+
+        </div>
+
+        <div class="form-group col-sm-6">
+          <label class="control-label"><strong>Nature de l'activité:</strong> </label>
+          <label>{{activityProject?.nature}}</label>
+        </div>
+
+      </div>
+      <div class="row">
+        <div class="form-group col-sm-6">
+          <label class="control-label" for="comments1"><strong>Commentaire:</strong></label>
+          <textarea minlength="1" id="comments1" name="comments1" rows="9" class="form-control"
+                    placeholder="Content.." style="margin-top: 0px; margin-bottom: 0px; height: 56px;" disabled>{{activityProject?.comments}}</textarea>
+        </div>
+        <div class="form-group col-sm-6">
+          <label class="control-label"><strong>Ville:</strong></label>
+          <label>{{activityProject?.ville}}</label>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="form-group col-sm-6">
+          <label class="col-form-label"><strong>Statut:</strong></label>
+          <label>{{activityProject?.statut}}</label>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="modal-footer">
+      <button (click)="mode=1" class="btn btn-sm btn-primary"><i class="fa fa-dot-circle-o"></i> Modifier
+        l'activitée
+      </button>
+      <button type="button" class="btn btn-sm btn-secondary" (click)="hideModal()">Fermer</button>
+    </div>
+  </div>
+</div>

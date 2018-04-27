@@ -2,7 +2,7 @@ import {
   Component,
   ChangeDetectionStrategy,
   ViewChild,
-  TemplateRef, OnInit
+  TemplateRef, OnInit, Input
 } from '@angular/core';
 import { Router } from '@angular/router';
 
@@ -20,9 +20,11 @@ import {
 import { Subject } from 'rxjs/Subject';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {
+  CalendarDateFormatter,
   CalendarEvent,
   CalendarEventAction,
-  CalendarEventTimesChangedEvent
+  CalendarEventTimesChangedEvent,
+  DAYS_OF_WEEK,
 } from 'angular-calendar';
 import {AuthenticationService} from "../../../services/authentification.service";
 import {ActivityService} from "../../../services/activity.service";
@@ -30,6 +32,9 @@ import {Activity} from "../../../model/model.activity";
 import {Observable} from "rxjs/Observable";
 import {HttpClient, HttpParams} from "@angular/common/http";
 import { map } from 'rxjs/operators/map';
+import {CustomDateFormatter} from "./custom-date-formatter.provider";
+import * as moment from "moment-timezone";
+
 const colors: any = {
   red: {
     primary: '#ad2121',
@@ -49,17 +54,30 @@ const colors: any = {
   selector: 'mycalendar-composant',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['my.calendar.component.scss'],
-  templateUrl: 'mycalendar.component.html'
+  templateUrl: 'mycalendar.component.html',
+  providers: [
+    {
+      provide: CalendarDateFormatter,
+      useClass: CustomDateFormatter
+    }
+  ]
 })
 export class MyCalendarComponent implements OnInit {
 
 
   @ViewChild('modalActivityProject') modalActivityProject: TemplateRef<any>;
   @ViewChild('editActivityProjectModal') editActivityProjectModal;
+  @ViewChild('newActivityProjectModal') newActivityProjectModal;
+  weekStartsOn: number = DAYS_OF_WEEK.MONDAY;
+
+  weekendDays: number[] = [DAYS_OF_WEEK.FRIDAY, DAYS_OF_WEEK.SATURDAY];
 
   view: string = 'month';
 
   viewDate: Date = new Date();
+
+  locale: string = 'fr';
+
 
   modalData: {
     action: string;
@@ -91,7 +109,7 @@ export class MyCalendarComponent implements OnInit {
   ];
 
 
-  constructor(private modal: NgbModal,private activityService:ActivityService,private authenticationService:AuthenticationService ) { }
+  constructor(private modal1: NgbModal,private activityService:ActivityService,private authenticationService:AuthenticationService ) { }
 
   ngOnInit(){
     /*this.activityService.getMyActivitiesByMc("",1,10).subscribe(
@@ -124,28 +142,55 @@ export class MyCalendarComponent implements OnInit {
       day: endOfDay
     }[this.view];
 
+    console.log("view " + this.view);
+
+    switch(this.view){
+      case "month" || "week" :
+        this.events$ = this.activityService.getAllMyActivitiesByDates(format(getStart(this.viewDate),'YYYY-MM-DD'),moment(format(getEnd(this.viewDate))).add(1,'days').format("YYYY-MM-DD"))
+          .pipe(
+            map((results:Activity[]) => {
+              return results.map((activity: Activity) => {
+                return {
+                  title: activity.typeActivite,
+                  start: new Date(activity.dteStrt),
+                  end: new Date(activity.dteEnd),
+                  color: colors.yellow,
+                  actions: this.actions,
+                  meta: {
+                    activity
+                  }
+                };
+              });
+            })
+          );
+        break;
+      case "day" :
+        this.events$ = this.activityService.getAllMyActivitiesByDatesForDay(format(getStart(this.viewDate),'YYYY-MM-DD'),format(getStart(this.viewDate),'YYYY-MM-DD'))
+          .pipe(
+            map((results:Activity[]) => {
+              return results.map((activity: Activity) => {
+                return {
+                  title: activity.typeActivite,
+                  start: new Date(activity.dteStrt),
+                  end: new Date(activity.dteEnd),
+                  color: colors.yellow,
+                  actions: this.actions,
+                  meta: {
+                    activity
+                  }
+                };
+              });
+            })
+          );
+        break;
+
+      default:
+        console.log("default");
+    }
 
 
-    this.events$ = this.activityService.getAllMyActivitiesByDates(format(getStart(this.viewDate), 'YYYY-MM-DD'),format(getEnd(this.viewDate), 'YYYY-MM-DD'))
-      .pipe(
-        map((results:Activity[]) => {
-          return results.map((activity: Activity) => {
-            return {
-              title: activity.typeActivite,
-              start: new Date(activity.dteStrt),
-              end: new Date(activity.dteEnd),
-              color: colors.yellow,
-              actions: this.actions,
-              meta: {
-                activity
-              }
-            };
-          });
-        })
-      );
+
   }
-
-
 
   eventTimesChanged({
                       event,
@@ -162,12 +207,16 @@ export class MyCalendarComponent implements OnInit {
     this.modalData = { event, action };
     switch(event.meta.activity.typeActivite){
       case "Activité projet":
+
+        this.modalData.event.meta.activity.dteStrt = new Date(this.modalData.event.meta.activity.dteStrt);
+        this.modalData.event.meta.activity.dteEnd = new Date(this.modalData.event.meta.activity.dteEnd);
+        console.log("data " + JSON.stringify(this.modalData.event.meta.activity));
+
         this.editActivityProjectModal.show();
         break;
       case "Activité support":
-        this.modal.open(this.modalActivityProject, { size: 'lg' });
+        this.modal1.open(this.modalActivityProject, { size: 'lg' });
         break;
-
       default:
     }
 
@@ -199,6 +248,7 @@ export class MyCalendarComponent implements OnInit {
       '_blank'
     );
   }
+
 
 
 

@@ -1,19 +1,18 @@
 import {Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {AuthenticationService} from "../../services/authentification.service";
 import {NotificationsService} from "angular2-notifications";
-import {SocketService} from "../../services/socket.service";
 import {Client, Frame, Message} from "stompjs";
 import {Subject} from "rxjs/Subject";
-import {ActivityRequest} from "../../model/model.activityRequest";
-import {ActivityService} from "../../services/activity.service";
-import {CustomerService} from "../../services/customer.service";
-import {Customer} from "../../model/model.customer";
 import {Router} from "@angular/router";
 import {DateTimeAdapter} from "ng-pick-datetime";
 import * as moment from "moment-timezone";
-import {RequestService} from "../../services/request.service";
-import {Request} from "../../model/model.request";
 import {FormControl, FormGroup} from "@angular/forms";
+import {SocketService} from "../../../services/socket.service";
+import {CustomerService} from "../../../services/customer.service";
+import {RequestService} from "../../../services/request.service";
+import {AuthenticationService} from "../../../services/authentification.service";
+import {ActivityRequest} from "../../../model/model.activityRequest";
+import {ActivityService} from "../../../services/activity.service";
+import {Request} from "../../../model/model.request";
 
 @Component({
   selector:"app-new-activtyRequest",

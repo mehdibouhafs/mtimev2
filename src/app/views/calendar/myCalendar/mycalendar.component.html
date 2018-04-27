@@ -1,7 +1,12 @@
 <div class="animated fadeIn">
   <edit-activityProject-modal bsModal #editActivityProjectModal="bs-modal" [modal]="editActivityProjectModal"
-                              class="modal fade" [activityProject]="modalData?.event"
+                              class="modal fade" [activityProject]="modalData?.event.meta.activity"
                               tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></edit-activityProject-modal>
+
+  <edit-activityProject-modal bsModal #newActivityProjectModal="bs-modal" [modal]="newActivityProjectModal"
+                              class="modal fade" [activityProject]="modalData?.event.meta.activity"
+                              tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></edit-activityProject-modal>
+
   <ng-template #modalActivityProject let-close="close">
     <div class="modal-header">
       <h5 class="modal-title">Event action occurred</h5>
@@ -23,18 +28,21 @@
       <button type="button" class="btn btn-outline-secondary" (click)="close()">OK</button>
     </div>
   </ng-template>
+
   <mwl-demo-utils-calendar-header
     [(view)]="view"
     [(viewDate)]="viewDate"
     (viewDateChange)="fetchEvents()"
-    (viewChange)="fetchEvents()">
+    (viewChange)="fetchEvents()"
+    [locale]="locale">
+  >
   </mwl-demo-utils-calendar-header>
 
   <ng-template #loading>
     <div class="text-center">
       <i class="fa fa-spin fa-spinner fa-5x"></i>
       <br>
-      Loading events...
+      Chargement des activitées..
     </div>
   </ng-template>
 
@@ -46,19 +54,29 @@
         [events]="events"
         [activeDayIsOpen]="activeDayIsOpen"
         (dayClicked)="dayClicked($event.day)"
-        (eventClicked)="eventClicked($event.event)">
+        (eventClicked)="eventClicked($event.event)"
+        [locale]="locale"
+        [weekStartsOn]="weekStartsOn"
+        [weekendDays]="weekendDays"
+      >
       </mwl-calendar-month-view>
       <mwl-calendar-week-view
         *ngSwitchCase="'week'"
         [viewDate]="viewDate"
         [events]="events"
-        (eventClicked)="eventClicked($event.event)">
+        (eventClicked)="eventClicked($event.event)"
+        [locale]="locale"
+        [weekStartsOn]="weekStartsOn"
+        [weekendDays]="weekendDays"
+      >
       </mwl-calendar-week-view>
       <mwl-calendar-day-view
         *ngSwitchCase="'day'"
         [viewDate]="viewDate"
         [events]="events"
-        (eventClicked)="eventClicked($event.event)">
+        (eventClicked)="eventClicked($event.event)"
+        [locale]="locale"
+      >
       </mwl-calendar-day-view>
     </div>
   </div>

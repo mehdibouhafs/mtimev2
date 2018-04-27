@@ -1,18 +1,23 @@
 import {Component, OnInit} from "@angular/core";
-import {AuthenticationService} from "../../services/authentification.service";
+
 import {ActivatedRoute, Router} from "@angular/router";
-import {ActivityRecouvrement} from "../../model/model.activityRecouvrement";
-import {ActivityService} from "../../services/activity.service";
+
 import * as moment from "moment-timezone";
+import {ActivityService} from "../../../services/activity.service";
+import {AuthenticationService} from "../../../services/authentification.service";
+import {ActivityRecouvrement} from "../../../model/model.activityRecouvrement";
 @Component({
-  templateUrl: 'showActivityRecouvrement.component.html'
+  templateUrl: 'editActivityRecouvrement.component.html'
 })
-export class ShowActivityRecouvrementComponent implements OnInit{
+export class EditActivityRecouvrementComponent implements OnInit{
+  mode:number=1;
   activityRecouvrement : ActivityRecouvrement = new ActivityRecouvrement();
   idActivityRecouvrement :number;
 
-  constructor(private activityService:ActivityService,private  autehntificationService:AuthenticationService,private activateRoute:ActivatedRoute,private router:Router){
+  constructor(private activityService:ActivityService,private  autehntificationService:AuthenticationService,private activateRoute:ActivatedRoute){
+
     this.idActivityRecouvrement = this.activateRoute.snapshot.params['id'];
+
   }
 
   ngOnInit(){
@@ -27,11 +32,16 @@ export class ShowActivityRecouvrementComponent implements OnInit{
       });
   }
 
-  onShowAllMyActivities(){
-    this.router.navigate(["/activityRecouvrement/my-activities/"]);
+  onEditActivityRecouvrement() {
+    this.activityService.updateActivity(this.activityRecouvrement)
+      .subscribe((data: ActivityRecouvrement) => {
+        console.log("ok " + data);
+        this.activityRecouvrement = data;
+        this.mode = 2;
+      }), err => {
+      console.log(JSON.parse(err.body).message);
+    };
   }
-
-
 
 
 }

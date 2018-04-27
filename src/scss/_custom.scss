@@ -1,4 +1,10 @@
 // Here you can add other styles
+
+.cdk-overlay-container {
+  position: fixed;
+  z-index: 1090;
+}
+
 .my-pagination .ngx-pagination .current {
   background: blue;
 }

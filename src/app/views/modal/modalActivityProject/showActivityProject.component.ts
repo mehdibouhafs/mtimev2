@@ -1,9 +1,11 @@
 import {Component, OnInit} from "@angular/core";
-import {AuthenticationService} from "../../services/authentification.service";
 import {ActivatedRoute, Router} from "@angular/router";
-import {ActivityProject} from "../../model/model.activityProject";
-import {ActivityService} from "../../services/activity.service";
+
+
 import * as moment from "moment-timezone";
+import {ActivityService} from "../../../services/activity.service";
+import {AuthenticationService} from "../../../services/authentification.service";
+import {ActivityProject} from "../../../model/model.activityProject";
 @Component({
   templateUrl: 'showActivityProject.component.html'
 })

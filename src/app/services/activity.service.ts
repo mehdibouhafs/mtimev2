@@ -28,7 +28,6 @@ export class ActivityService{
   }
 
   updateActivity(activity:Activity){
-    console.log("activity a updaté "+JSON.stringify(activity));
     return this.http.put(this.host+'/activities/'+activity.id,activity,{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
   }
 
@@ -38,6 +37,10 @@ export class ActivityService{
 
   getAllMyActivitiesByDates(dteStrt:string,dteEnd:string){
     return this.http.get(this.host+'/findAllMyActivitiesByDates?username='+this.authenticationService.getUserName()+"&dteStrt="+dteStrt+"&dteEnd="+dteEnd,{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
+  }
+
+  getAllMyActivitiesByDatesForDay(dteStrt:string,dteEnd:string){
+    return this.http.get(this.host+'/findAllMyActivitiesByDatesForDay?username='+this.authenticationService.getUserName()+"&dteStrt="+dteStrt+"&dteEnd="+dteEnd,{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
   }
 
   formatDate(date:any){
