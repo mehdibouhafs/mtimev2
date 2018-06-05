@@ -10,6 +10,7 @@ export class AuthenticationService{
   private host:string = "http://localhost:8080";
   private jwtToken = null;
   private roles : Array<any>;
+  private rolesParsed : Array<string> = [];
   private imgProfil:string;
   private name : string;
 
@@ -29,6 +30,11 @@ export class AuthenticationService{
     this.imgProfil = jwtHelper.decodeToken(this.jwtToken).sub;
     localStorage.setItem('imgProfil',this.imgProfil+".jpg");
     localStorage.setItem('name',this.imgProfil);
+
+    this.roles.forEach(oneauthority=>{
+      this.rolesParsed.push(oneauthority.authority);
+    });
+    localStorage.setItem('roles', JSON.stringify(this.rolesParsed));
   }
 
   loadToken(){
@@ -77,7 +83,7 @@ export class AuthenticationService{
     localStorage.removeItem('token');
     localStorage.removeItem('imgProfil');
     localStorage.removeItem('name');
-
+    localStorage.removeItem('roles');
   }
 
   isAdmin(){
@@ -85,6 +91,16 @@ export class AuthenticationService{
       if(r.authority == 'ADMIN') return true;
     }
     return false;
+  }
+
+  loadRoles() {
+    this.rolesParsed = JSON.parse(localStorage.getItem('roles'));
+  }
+
+  getRoles() {
+    if(this.rolesParsed == null || this.rolesParsed.length == 0)
+      this.loadRoles();
+    return this.rolesParsed;
   }
 
   saveTask(task){

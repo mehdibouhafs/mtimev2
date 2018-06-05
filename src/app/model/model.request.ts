@@ -2,7 +2,7 @@ import {Customer} from "./model.customer";
 
 export class Request{
 
-   rqtExcde : string;
+   rqtExcde : string="";
 
    objDsc : string;
 

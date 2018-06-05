@@ -70,6 +70,10 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {SimpleNotificationsModule} from "angular2-notifications";
 import {SocketService} from "./services/socket.service";
 import {OwlDateTimeModule, OwlNativeDateTimeModule} from "ng-pick-datetime";
+import {ActivityService} from "./services/activity.service";
+import {NewActivityCommercialComponent} from "./views/activityCommercial/newActivityCommercial.component";
+import {CalendarModule} from "angular-calendar";
+import {FormsModule} from "@angular/forms";
 
 @NgModule({
   imports: [
@@ -80,7 +84,7 @@ import {OwlDateTimeModule, OwlNativeDateTimeModule} from "ng-pick-datetime";
     ChartsModule,
     HttpClientModule,
     BrowserAnimationsModule,
-    SimpleNotificationsModule.forRoot(),
+    SimpleNotificationsModule.forRoot()
 
 
   ],
@@ -94,7 +98,7 @@ import {OwlDateTimeModule, OwlNativeDateTimeModule} from "ng-pick-datetime";
     provide: LocationStrategy,
     useClass: HashLocationStrategy
   },
-    AuthenticationService,SocketService
+    AuthenticationService,SocketService,ActivityService
   ],
   bootstrap: [ AppComponent ]
 })

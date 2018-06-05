@@ -17,6 +17,9 @@ export class Activity {
   statut:boolean;
   comments:string;
 
+  createdAt:Date;
+  updatedAt:Date;
+
   constructor(){
     this.customer = new Customer();
     this.user = new User();

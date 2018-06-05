@@ -25,6 +25,10 @@ export const routes: Routes = [
         loadChildren: './views/dashboard/dashboard.module#DashboardModule'
       },
       {
+        path: 'tickets',
+        loadChildren: './views/support/support.module#SupportModule'
+      },
+      {
         path: 'formation',
         loadChildren: './views/formation/formation.module#FormationModule'
       },
@@ -33,13 +37,13 @@ export const routes: Routes = [
         loadChildren: './views/certification/certification.module#CertificationModule'
       },
       {
-        path: 'calendar',
-        loadChildren: './views/calendar/calendar2.module#CalendarModule2'
-      },
-      {
         path: 'activity',
         loadChildren: './views/activity/activity.module#ActivityModule'
       },
+      {
+        path: 'calendar',
+        loadChildren: './views/calendar/calendar2.module#CalendarModule2'
+      }
     ]
   },
   {

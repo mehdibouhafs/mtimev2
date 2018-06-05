@@ -20,9 +20,14 @@ import { navigation } from './../../_nav';
       </ul>
     </nav>`
 })
-export class AppSidebarNavComponent {
+export class AppSidebarNavComponent implements OnInit {
 
-  public navigation = navigation;
+  @Input() roles = [];
+
+  //public navigation = navigation;
+
+  public navigation = [];
+
 
   public isDivider(item) {
     return item.divider ? true : false
@@ -33,9 +38,79 @@ export class AppSidebarNavComponent {
   }
 
   constructor() { }
+
+  ngOnInit() {
+    this.navigation.push(
+      {
+        name: 'Dashboard',
+        url: '/dashboard',
+        icon: 'icon-chart'
+      }
+    );
+    this.roles.forEach(oneAuthority=>{
+      if (oneAuthority=="read_tickets")
+        this.navigation.push(
+          {
+            name: 'Tickets',
+            url: '/tickets',
+            icon: 'icon-check'
+          }
+        );
+    });
+    this.navigation.push(
+      {
+        title: true,
+        name: 'Gérer activités'
+      },
+      {
+        name: 'Nouvelle Activité',
+        url: '/activity/new-activity',
+        icon: 'icon-plus'
+      },
+      {
+        name: 'Mes activités',
+        url: '/activity/my-activities',
+        icon: 'icon-list'
+      }
+    );
+    this.roles.forEach(oneAuthority=>{
+      if (oneAuthority=="ADMIN")
+        this.navigation.push(
+          {
+            name: 'Toutes les activités',
+            url: '/activity/all-activities',
+            icon: 'icon-list'
+          }
+        );
+    });
+    this.navigation.push(
+      {
+        title: true,
+        name: 'Calendrier'
+      },
+      {
+        name: 'Mon calendrier',
+        url: '/calendar/my-calendar',
+        icon: 'fa fa-calendar'
+      }
+    );
+    this.roles.forEach(oneAuthority=>{
+      if (oneAuthority=="ADMIN")
+        this.navigation.push(
+          {
+            name: 'Admin calendrier',
+            url: '/calendar/all-calendar',
+            icon: 'fa fa-calendar'
+          }
+        );
+    });
+  }
+
 }
 
 import { Router } from '@angular/router';
+import {AuthenticationService} from "../../services/authentification.service";
+import {HttpClient} from "@angular/common/http";
 
 @Component({
   selector: 'app-sidebar-nav-item',

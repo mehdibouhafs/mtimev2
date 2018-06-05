@@ -1,0 +1,43 @@
+<div class="modal-dialog show-details" role="document">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h4 class="modal-title">Activité Congé</h4>
+      <button type="button" class="close" (click)="hideModal()" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group row">
+        <div class="col-sm-2 nopadding-right"><strong>Début :</strong></div>
+        <div class="col-sm-3 nopadding">
+          <span class="badge badge-pill badge-light">{{activityHoliday?.dteStrt | date:"dd/MM/yyyy"}}</span>
+        </div>
+        <div class="col-sm-2 nopadding-right"><strong>Fin :</strong></div>
+        <div class="col-sm-3 nopadding">
+          <span class="badge badge-pill badge-light">{{activityHoliday?.dteEnd | date:"dd/MM/yyyy"}}</span>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <div class="col-sm-2 nopadding-right"><strong>Durée :</strong></div>
+        <div class="col-sm-3 nopadding">
+          <span class="badge badge-pill badge-dark">{{ShortconvertMinutesToHoursAndMinute(activityHoliday.durtion)}}</span>
+        </div>
+        <div class="col-sm-2 nopadding-right"><strong>Statut :</strong></div>
+        <div class="col-sm-3 nopadding">
+          <span [class]="activityHoliday.statut?'badge badge-pill badge-success':'badge badge-pill badge-info'">{{activityHoliday?.statut==true?'Realisé':'Planifié'}}</span>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <div class="col-sm-3"><strong>Commentaire:</strong></div>
+        <div class="col-sm-7 nopadding">
+          {{activityHoliday?.comments}}
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-sm btn-warning" (click)="hideModal()"><i class="fa fa-check"></i> OK</button>
+    </div>
+  </div>
+</div>

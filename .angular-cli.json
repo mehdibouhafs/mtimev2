@@ -29,6 +29,7 @@
         "../node_modules/moment/min/moment.min.js",
         "../node_modules/moment-timezone/builds/moment-timezone.min.js",
         "../node_modules/chart.js/dist/Chart.bundle.min.js",
+        "../node_modules/chart.js/dist/Chart.js",
         "../node_modules/chart.js/dist/Chart.min.js",
         "../node_modules/sockjs-client/dist/sockjs-0.3.4.min.js",
         "../node_modules/stompjs/lib/stomp.js"

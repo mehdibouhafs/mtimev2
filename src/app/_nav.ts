@@ -2,81 +2,45 @@ export const navigation = [
   {
     name: 'Dashboard',
     url: '/dashboard',
-    icon: 'icon-speedometer',
-    badge: {
-      variant: 'info',
-      text: 'NEW'
-    }
+    icon: 'icon-chart'
+  },
+  {
+    name: 'Tickets',
+    url: '/tickets',
+    icon: 'icon-check'
   },
   {
     title: true,
-    name: 'Formations'
+    name: 'Gérer activités'
   },
   {
-    name: 'New Formation',
-    url: '/formation/nouvelle-formation',
-    icon: 'icon-puzzle'
+    name: 'Nouvelle Activité',
+    url: '/activity/new-activity',
+    icon: 'icon-plus'
   },
   {
-    name: 'Multiple Formations',
-    url: '/formation/multiple-formation',
-    icon: 'icon-puzzle'
-  },
-  {
-    name: 'All Formations',
-    url: '/formation/all-formation',
-    icon: 'icon-puzzle'
-  },
-  {
-    title: true,
-    name: 'Certifications'
-  },
-  {
-    name: 'New Certification',
-    url: '/certification/nouvelle-certification',
-    icon: 'icon-puzzle'
-  },
-  {
-    name: 'All Certifications',
-    url: '/certification/all-certification',
-    icon: 'icon-puzzle'
-  },
-  {
-    title: true,
-    name: 'Calendar'
-  },
-  {
-    name: 'calendar',
-    url: '/calendar/calendar',
-    icon: 'icon-puzzle'
-  },
-  {
-    name: 'My calendar',
-    url: '/calendar/my-calendar',
-    icon: 'icon-puzzle'
-  },
-  {
-    title: true,
-    name: 'activityProject'
-  },
-  {
-    name: 'Activité projet',
-    url: '/activity/new-activity-project',
-    icon: 'icon-puzzle'
-  },
-  {
-    name: 'Activité recouvrement',
-    url: '/activity/new-activity-recouvrement',
-    icon: 'icon-puzzle'
-  },
-  {
-    name: 'Activité support',
-    url: '/activity/new-activity-request',
-    icon: 'icon-puzzle'
-  },
-  {
-    name: 'Mes activitees',
+    name: 'Mes activités',
     url: '/activity/my-activities',
-    icon: 'icon-puzzle'
+    icon: 'icon-list'
   },
+  {
+    name: 'Toutes les activités',
+    url: '/activity/all-activities',
+    icon: 'icon-list'
+  },
+  {
+    title: true,
+    name: 'Calendrier'
+  },
+  {
+    name: 'Mon calendrier',
+    url: '/calendar/my-calendar',
+    icon: 'fa fa-calendar'
+  },
+  {
+    name: 'Admin calendrier',
+    url: '/calendar/all-calendar',
+    icon: 'fa fa-calendar'
+  },
+
 ];

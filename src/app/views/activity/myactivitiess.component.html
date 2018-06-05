@@ -1,7 +1,7 @@
 <div class="animated fadeIn">
   <!--/.row-->
   <div class="row">
-    <div class="col-lg-12">
+    <div class="col-lg-10 mx-auto">
       <div class="card">
         <div class="card-header">
           <i class="fa fa-align-justify"></i> Mes activitées
@@ -10,38 +10,72 @@
           <div class="form-group row">
             <div class="col-md-4">
               <div class="input-group">
-                <input id="input2-group2" name="input2-group2" class="form-control" placeholder="Mot Clé" type="text" [(ngModel)]="motCle">
+                <input id="input2-group2" name="input2-group2" class="form-control form-control-sm" placeholder="Chercher" type="text"
+                       [(ngModel)]="motCle">
                 <span class="input-group-append">
-                          <button type="button" class="btn btn-primary"  (click)="chercher()"><i class="fa fa-search"></i> Chercher</button>
+                          <button type="button" class="btn btn-sm btn-primary" (click)="chercher()"><i
+                            class="fa fa-search"></i></button>
                         </span>
               </div>
             </div>
+            <div class="col-md-4">
+              <ng-select [items]="items"
+                         [(ngModel)]="typeSelected"
+                         (change)="doSearch()"
+                         placeholder="Toutes les activités"
+                         multiple="true"
+                         bindValue="shortType"
+                         bindLabel="type">
+
+              </ng-select>
+            </div>
           </div>
-          <form class="form-horizontal" #f="ngForm" id="form" (ngSubmit)="onSaveActivity(f.value)"></form>
           <table class="table table-sm">
             <thead>
-            <tr >
-              <th>Nature</th>
-              <th>Date</th>
+            <tr>
+              <th>Type d'activité</th>
+              <th>Debut</th>
+              <th>Fin</th>
               <th>Durée</th>
-              <th>Client</th>
               <th>Statut</th>
+              <th></th>
+              <th></th>
             </tr>
             </thead>
             <tbody>
-            <tr (click)="myModal.show();selectActivity(a)" *ngFor="let a of pageActivities?.content | paginate: {
+            <tr *ngFor="let a of pageActivities?.content | paginate: {
                                                       id: 'activities',
                                                       itemsPerPage: itemsPerPage,
                                                       currentPage: currentPage,
                                                       totalItems: pageActivities?.totalElements}">
-              <td>{{a.nature}}</td>
-              <td style="width: 19%"><span class="badge badge-pill badge-info">{{a.dteStrt | date:"dd/MM/yy HH:mm"}}~{{a.dteEnd |date:"dd/MM/yy HH:mm"}}</span> </td>
-              <td>{{a.durtion}}</td>
-              <td>{{a.customer.name}}</td>
-              <td>{{a.statut}}</td>
-              <td><a (click)="onEditMyActivity(a)"><i class="fa fa-edit "></i> </a></td>
+              <td>{{a.typeActivite}}</td>
+              <td><span class="badge badge-pill badge-light">{{a.dteStrt | date:"dd/MM/yy HH:mm"}}</span>
+              </td>
+              <td><span class="badge badge-pill badge-light">{{a.dteEnd | date:"dd/MM/yy HH:mm"}}</span>
+              </td>
+              <td><span class="badge badge-pill badge-dark">{{activityService.ShortconvertMinutesToHoursAndMinute(a.durtion)}}</span></td>
+              <td><span [class]="a.statut?'badge badge-pill badge-success':'badge badge-pill badge-info'">{{a.statut?'Realisé':'Planifié'}}</span></td>
               <td>
-                <h1>delete</h1>
+                <button class="btn btn-outline-primary btn-sm" (click)="detectModal(a)"><i
+                  class="fa fa-eye"></i></button>
+              </td>
+              <td>
+                <div class="btn-group" dropdown>
+                  <button dropdownToggle type="button" class="btn btn-outline-primary btn-sm dropdown-toggle">
+                    <i class="fa fa-cog"></i><span class="caret"></span>
+                  </button>
+                  <ul *dropdownMenu class="dropdown-menu" role="menu">
+                    <li role="menuitem">
+                      <button class="dropdown-item small" (click)="onEditMyActivity(a);"><i class="fa fa-edit"></i> Modifier</button>
+                    </li>
+                    <li role="menuitem">
+                      <button type="button" class="dropdown-item small" data-toggle="modal"
+                              (click)="selectActivity(a); dangerModal.show();">
+                        <i class="fa fa-remove"></i> Supprimer
+                      </button>
+                    </li>
+                  </ul>
+                </div>
               </td>
             </tr>
             </tbody>
@@ -67,109 +101,57 @@
     </div>
     <!--/.col-->
   </div>
-  <div bsModal #myModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog " [ngClass]="{'modal-success':activity.statut=== true}" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h4 class="modal-title">Détail de l'activité</h4>
-          <button type="button" class="close" (click)="myModal.hide()" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-              <form class="form-horizontal" #f="ngForm" (ngSubmit)="onSaveActivityProject(f.value)">
-                <div class="card-body">
-                  <div class="row">
-                    <div class="form-group col-sm-6">
-                      <label class="control-label" ><strong>Date de début:</strong></label>
-                      <label><span class="badge badge-warning">{{activity.dteStrt | date: 'dd/MM/yyyy HH:mm'}}</span></label>
-                    </div>
-
-                    <div class="form-group col-sm-6">
-                      <label class="control-label" ><strong>Date de fin:&nbsp;</strong></label>
-                      <label><span class="badge badge-warning">{{activity.dteEnd | date: 'dd/MM/yyyy HH:mm'}}</span></label>
-                    </div>
-                  </div><!--/.row-->
-
-                  <div class="row">
-                    <div class="form-group col-sm-6">
-                      <label class="control-label" ><strong>Id:</strong></label>
-                      <label>{{activity.id }}</label>
-                    </div>
-
-                    <div class="form-group col-sm-6">
-                      <label class="control-label" ><strong>Durée (Min):&nbsp;</strong></label>
-                      <label>{{activity.durtion }}</label>
-                    </div>
-                  </div><!--/.row-->
-
-                  <div class="row">
-                    <div class="form-group col-sm-6">
-                      <div class="form-group">
-                        <label class="control-label"><strong>Client:</strong></label>
-                        <label>{{activity.customer.code}}</label>
-                      </div>
-
-                    </div>
-
-                    <div class="form-group col-sm-6">
-                      <label class="control-label"><strong>Projet:</strong></label>
-                      <label>{{activity.id}}</label>
-                    </div>
-
-                  </div>
-
-                  <div class="row">
-                    <div class="form-group col-sm-6">
-                      <div class="form-group">
-                        <label class="control-label" ><strong>Lieu:</strong></label>
-                        <label>{{activity.lieu}}</label>
-                      </div>
-
-                    </div>
-
-                    <div class="form-group col-sm-6">
-                      <label class="control-label" ><strong>Nature de l'activité:</strong> </label>
-                      <label>{{activity.nature}}</label>
-                    </div>
-
-                  </div>
-
-                  <div class="form-group">
-                    <label class="control-label" for="comments1"><strong>Commentaire:</strong></label>
-                    <textarea minlength="1"  id="comments1" name="comments1"  rows="9" class="form-control" placeholder="Content.." style="margin-top: 0px; margin-bottom: 0px; height: 56px;" disabled>{{activity.comments}}</textarea>
-                  </div>
-
-                  <div class="row">
-                    <div class="form-group col-sm-6">
-                      <label class="col-form-label"><strong>Statut:</strong></label>
-                      <div class="col-form-label">
-                        <div class="form-check form-check-inline mr-1">
-                          <input class="form-check-input" type="radio" id="inline-radio1" [value]="true" [(ngModel)]="activity.statut" name="inline-radios" disabled><!---[attr.disabled]="disabledStatut"-->
-                          <label class="form-check-label" for="inline-radio1">Réalisé</label>
-                        </div>
-                        <div class="form-check form-check-inline mr-1">
-                          <input class="form-check-input" type="radio" id="inline-radio2" [value]="false" [(ngModel)]="activity.statut" name="inline-radios" disabled>
-                          <label class="form-check-label" for="inline-radio2">Planifié</label>
-                        </div>
-
-                      </div>
-                    </div>
-
-                    <div class="form-group col-sm-6">
-                      <label class="control-label" ><strong>Ville:</strong></label>
-                      <label>{{activity.ville}}</label>
-                    </div>
-                  </div>
-                </div><!--/.col-->
-              </form>
-
-          </div>
-
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" (click)="myModal.hide()">Fermer</button>
-        </div>
-      </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-  </div><!-- /.modal -->
 </div>
+
+
+<edit-activity-request bsModal #editactivityRequestModal="bs-modal" [pageActivities]="pageActivities" [index]="indexSelected" [modal]="editactivityRequestModal"
+                            [activityRequest]="activityRequest" class="modal fade" tabindex="-1" role="dialog"
+                            aria-labelledby="myModalLabel" aria-hidden="true"></edit-activity-request>
+
+<edit-activity-si bsModal #editactivitySIModal="bs-modal" [pageActivities]="pageActivities" [index]="indexSelected" [modal]="editactivitySIModal"
+                       [activitySI]="activitySI" class="modal fade" tabindex="-1" role="dialog"
+                       aria-labelledby="myModalLabel" aria-hidden="true"></edit-activity-si>
+
+<edit-activity-recouvrement bsModal #editactivityRecouvrementModal="bs-modal" [pageActivities]="pageActivities" [index]="indexSelected" [modal]="editactivityRecouvrementModal"
+                       [activityRecouvrement]="activityRecouvrement" class="modal fade" tabindex="-1" role="dialog"
+                       aria-labelledby="myModalLabel" aria-hidden="true"></edit-activity-recouvrement>
+
+<edit-activity-project bsModal #editactivityProjectModal="bs-modal" [pageActivities]="pageActivities" [index]="indexSelected" [modal]="editactivityProjectModal"
+                       [activityProject]="activityProject" class="modal fade" tabindex="-1" role="dialog"
+                       aria-labelledby="myModalLabel" aria-hidden="true"></edit-activity-project>
+
+<edit-activity-holiday bsModal #editactivityHolidayModal="bs-modal" [pageActivities]="pageActivities" [index]="indexSelected" [modal]="editactivityHolidayModal"
+                       [activityHoliday]="activityHoliday" class="modal fade" tabindex="-1" role="dialog"
+                       aria-labelledby="myModalLabel" aria-hidden="true"></edit-activity-holiday>
+
+<edit-activity-commercial bsModal #editactivityCommercialModal="bs-modal" [pageActivities]="pageActivities" [index]="indexSelected" [modal]="editactivityCommercialModal"
+                       [activityCommercial]="activityCommercial" class="modal fade" tabindex="-1" role="dialog"
+                       aria-labelledby="myModalLabel" aria-hidden="true"></edit-activity-commercial>
+
+<show-activity-request bsModal #activityRequestModal="bs-modal" [modal]="activityRequestModal"
+                       [activityRequest]="activityRequest" class="modal fade" tabindex="-1" role="dialog"
+                       aria-labelledby="myModalLabel" aria-hidden="true"></show-activity-request>
+
+<show-activity-project bsModal #activityProjectModal="bs-modal" [modal]="activityProjectModal"
+                          [activityProject]="activityProject" class="modal fade" tabindex="-1" role="dialog"
+                          aria-labelledby="myModalLabel" aria-hidden="true"></show-activity-project>
+
+<show-activity-recouvrement bsModal #activityRecouvrementModal="bs-modal" [modal]="activityRecouvrementModal"
+                       [activityRecouvrement]="activityRecouvrement" class="modal fade" tabindex="-1" role="dialog"
+                       aria-labelledby="myModalLabel" aria-hidden="true"></show-activity-recouvrement>
+
+<show-activity-commercial bsModal #activityCommercialModal="bs-modal" [modal]="activityCommercialModal"
+                          [activityCommercial]="activityCommercial" class="modal fade" tabindex="-1" role="dialog"
+                          aria-labelledby="myModalLabel" aria-hidden="true"></show-activity-commercial>
+
+<show-activity-holiday bsModal #activityHolidayModal="bs-modal" [modal]="activityHolidayModal"
+                          [activityHoliday]="activityHoliday" class="modal fade" tabindex="-1" role="dialog"
+                          aria-labelledby="myModalLabel" aria-hidden="true"></show-activity-holiday>
+
+<show-activity-si bsModal #activitySIModal="bs-modal" [modal]="activitySIModal"
+                       [activitySI]="activitySI" class="modal fade" tabindex="-1" role="dialog"
+                       aria-labelledby="myModalLabel" aria-hidden="true"></show-activity-si>
+
+<delete-modal bsModal #dangerModal="bs-modal" [modal]="dangerModal" [activity]="activity"
+              (functionDelete)="onDeleteMyActivity(activity)" class="modal fade"
+              tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></delete-modal>

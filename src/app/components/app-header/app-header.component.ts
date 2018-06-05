@@ -36,7 +36,7 @@ export class AppHeaderComponent implements OnInit,OnDestroy,AfterViewInit  {
 
   ngOnInit(){
     this.imgProfil = this.link + this.authService.getImgProfil();
-    this.socketService.connect();
+    //this.socketService.connect();
 
   }
   ngAfterViewInit(){
@@ -54,7 +54,7 @@ export class AppHeaderComponent implements OnInit,OnDestroy,AfterViewInit  {
 
 
   ngOnDestroy(){
-    this.socketService.disconnect();
+    //this.socketService.disconnect();
   }
 
   onLogout(){

@@ -1,115 +1,318 @@
 <div class="animated fadeIn">
+
+
+
   <div class="row">
     <div class="col-sm-6 col-lg-3">
-      <div class="card text-white bg-primary">
-        <div class="card-body pb-0">
-          <div class="btn-group float-right" dropdown>
-            <button type="button" class="btn btn-transparent dropdown-toggle p-0" dropdownToggle>
-              <i class="icon-settings"></i>
-            </button>
-            <div class="dropdown-menu dropdown-menu-right" *dropdownMenu>
-              <a class="dropdown-item" href="#">Action</a>
-              <a class="dropdown-item" href="#">Another action</a>
-              <a class="dropdown-item" href="#">Something else here</a>
-              <a class="dropdown-item" href="#">Something else here</a>
+      <div class="social-box facebook">
+        <i><h4>Activités globales</h4></i>
+        <div class="chart-wrapper">
+          <div class="chartjs-size-monitor"
+               style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
+            <div class="chartjs-size-monitor-expand"
+                 style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+              <div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div>
+            </div>
+            <div class="chartjs-size-monitor-shrink"
+                 style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+              <div style="position:absolute;width:200%;height:200%;left:0; top:0"></div>
             </div>
           </div>
-          <h1 class="mb-0">40</h1>
-          <strong>&nbsp;Activités réalisées</strong>
+          <canvas id="social-box-chart-1" height="90" width="226" class="chartjs-render-monitor"
+                  style="display: block;"></canvas>
         </div>
-        <div class="chart-wrapper px-3" style="height:70px;">
-          <canvas baseChart class="chart"
-                  [datasets]="lineChart1Data"
-                  [labels]="lineChart1Labels"
-                  [options]="lineChart1Options"
-                  [colors]="lineChart1Colours"
-                  [legend]="lineChart1Legend"
-                  [chartType]="lineChart1Type"
-                  (chartHover)="chartHovered($event)"
-                  (chartClick)="chartClicked($event)"></canvas>
-        </div>
+        <ul>
+          <li>
+            <strong>{{statistics?.realisedActivities}}</strong>
+            <span>réalisés</span>
+          </li>
+          <li>
+            <strong>{{statistics?.planifiedActivities}}</strong>
+            <span>planifiés</span>
+          </li>
+        </ul>
       </div>
-    </div><!--/.col-->
+    </div>
     <div class="col-sm-6 col-lg-3">
-      <div class="card text-white bg-info">
-        <div class="card-body pb-0">
-          <button type="button" class="btn btn-transparent p-0 float-right">
-            <i class="icon-location-pin"></i>
-          </button>
-          <h1 class="mb-0">50</h1>
-          <strong>&nbsp; Activités planifiées</strong>
-        </div>
-        <div class="chart-wrapper px-3" style="height:70px;">
-          <canvas baseChart class="chart"
-                  [datasets]="lineChart2Data"
-                  [labels]="lineChart2Labels"
-                  [options]="lineChart2Options"
-                  [colors]="lineChart2Colours"
-                  [legend]="lineChart2Legend"
-                  [chartType]="lineChart2Type"
-                  (chartHover)="chartHovered($event)"
-                  (chartClick)="chartClicked($event)"></canvas>
-        </div>
-      </div>
-    </div><!--/.col-->
-    <div class="col-sm-6 col-lg-3">
-      <div class="card text-white bg-warning">
-        <div class="card-body pb-0">
-          <div class="btn-group float-right" dropdown>
-            <button type="button" class="btn btn-transparent dropdown-toggle p-0" dropdownToggle>
-              <i class="icon-settings"></i>
-            </button>
-            <div class="dropdown-menu dropdown-menu-right" *dropdownMenu>
-              <a class="dropdown-item" href="#">Action</a>
-              <a class="dropdown-item" href="#">Another action</a>
-              <a class="dropdown-item" href="#">Something else here</a>
+      <div class="social-box facebook">
+        <i><h4>{{months[currentDate.getMonth()] + ' ' + currentDate.getFullYear()}}</h4></i>
+        <div class="chart-wrapper">
+          <div class="chartjs-size-monitor"
+               style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
+            <div class="chartjs-size-monitor-expand"
+                 style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+              <div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div>
+            </div>
+            <div class="chartjs-size-monitor-shrink"
+                 style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+              <div style="position:absolute;width:200%;height:200%;left:0; top:0"></div>
             </div>
           </div>
-          <h4 class="mb-0">100%</h4>
-          <p>Charge de travail</p>
+          <canvas id="social-box-chart-1" height="90" width="226" class="chartjs-render-monitor"
+                  style="display: block;"></canvas>
         </div>
-        <div class="chart-wrapper" style="height:70px;">
-          <canvas baseChart class="chart"
-                  [datasets]="lineChart3Data"
-                  [labels]="lineChart3Labels"
-                  [options]="lineChart3Options"
-                  [colors]="lineChart3Colours"
-                  [legend]="lineChart3Legend"
-                  [chartType]="lineChart3Type"
-                  (chartHover)="chartHovered($event)"
-                  (chartClick)="chartClicked($event)"></canvas>
-        </div>
+        <ul>
+          <li>
+            <strong>{{statistics?.realisedActivitiesOnthisMonth}}</strong>
+            <span>réalisés</span>
+          </li>
+          <li>
+            <strong>{{statistics?.planifiedActivitiesOnthisMonth}}</strong>
+            <span>planifiés</span>
+          </li>
+        </ul>
       </div>
-    </div><!--/.col-->
+    </div>
     <div class="col-sm-6 col-lg-3">
-      <div class="card text-white bg-danger">
-        <div class="card-body pb-0">
-          <div class="btn-group float-right" dropdown>
-            <button type="button" class="btn btn-transparent dropdown-toggle p-0" dropdownToggle>
-              <i class="icon-settings"></i>
-            </button>
-            <div class="dropdown-menu dropdown-menu-right" *dropdownMenu>
-              <a class="dropdown-item" href="#">Action</a>
-              <a class="dropdown-item" href="#">Another action</a>
-              <a class="dropdown-item" href="#">Something else here</a>
+      <div class="social-box facebook">
+        <i><h4>Activités Week End</h4></i>
+        <div class="chart-wrapper">
+          <div class="chartjs-size-monitor"
+               style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
+            <div class="chartjs-size-monitor-expand"
+                 style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+              <div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div>
+            </div>
+            <div class="chartjs-size-monitor-shrink"
+                 style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+              <div style="position:absolute;width:200%;height:200%;left:0; top:0"></div>
             </div>
           </div>
-          <h4 class="mb-0">10%</h4>
-          <p>Taux action week-end</p>
+          <canvas id="social-box-chart-1" height="90" width="226" class="chartjs-render-monitor"
+                  style="display: block;"></canvas>
         </div>
-        <div class="chart-wrapper px-3" style="height:70px;">
-          <canvas baseChart class="chart"
-                  [datasets]="barChart1Data"
-                  [labels]="barChart1Labels"
-                  [options]="barChart1Options"
-                  [colors]="barChart1Colours"
-                  [legend]="barChart1Legend"
-                  [chartType]="barChart1Type"
-                  (chartHover)="chartHovered($event)"
-                  (chartClick)="chartClicked($event)"></canvas>
+        <ul>
+          <li>
+            <strong>{{statistics?.activitiesRealisedOnWeekEnd}}</strong>
+            <span>réalisés</span>
+          </li>
+          <li>
+            <strong>{{statistics?.activitiesRealisedOnWeekEndThisMonth}}</strong>
+            <span>réalisés en {{months[currentDate.getMonth()]}}</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+      <div class="social-box facebook">
+        <i><h4>Productivité</h4></i>
+        <div class="chart-wrapper">
+          <div class="chartjs-size-monitor"
+               style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
+            <div class="chartjs-size-monitor-expand"
+                 style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+              <div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div>
+            </div>
+            <div class="chartjs-size-monitor-shrink"
+                 style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+              <div style="position:absolute;width:200%;height:200%;left:0; top:0"></div>
+            </div>
+          </div>
+          <canvas id="social-box-chart-1" height="90" width="226" class="chartjs-render-monitor"
+                  style="display: block;"></canvas>
+        </div>
+        <ul>
+          <li>
+            <strong>{{statistics?.productivite.toFixed(2)}} %</strong>
+            <span>Globale</span>
+          </li>
+          <li>
+            <strong>{{statistics?.productiviteThisMonth.toFixed(2)}} %</strong>
+            <span>Mois courant</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-columns cols-2">
+    <div>
+      <div class="card">
+        <div class="card-header">
+          <i class="fa fa-align-justify"></i> Activités à réalisés
+        </div>
+        <div class="card-body">
+          <table class="table table-sm table-responsive table-hover">
+            <thead>
+            <tr>
+              <th>Type</th>
+              <th>Debut</th>
+              <th>Fin</th>
+              <th>Durée</th>
+              <th>Statut</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr [class]="a.statut?'table-success':'table-light'" (click)="selectActivity(a)" *ngFor="let a of pageActivities?.content | paginate: {
+                                                      id: 'activities',
+                                                      itemsPerPage: itemsPerPage,
+                                                      currentPage: currentPage,
+                                                      totalItems: pageActivities?.totalElements}">
+              <td>{{detectAbrevi(a.typeActivite)}}</td>
+              <td><span class="badge badge-pill badge-light">{{a.dteStrt | date:"dd/MM/yy HH:mm"}}</span>
+              </td>
+              <td><span class="badge badge-pill badge-light">{{a.dteEnd | date:"dd/MM/yy HH:mm"}}</span>
+              </td>
+              <td><span class="badge badge-pill badge-dark">{{activityService.ShortconvertMinutesToHoursAndMinute(a.durtion)}}</span>
+              </td>
+              <td><span [class]="a.statut?'badge badge-pill badge-success':'badge badge-pill badge-info'">{{a.statut?'Realisé':'Planifié'}}</span>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+          <pagination-controls
+            class="mypagination"
+            id="activities"
+            (pageChange)="gotoPage($event)"
+            maxSize="15"
+            directionLinks="true"
+            autoHide="true"
+            previousLabel="Précédant"
+            nextLabel="Suivant"
+            screenReaderPaginationLabel="Pagination"
+            screenReaderPageLabel="page"
+            screenReaderCurrentLabel="Vous etes sur la page">
+          </pagination-controls>
+          <div class="col-xs-12 col-12 d-sm-down-none">
+          </div>
+
         </div>
       </div>
-    </div><!--/.col-->
-  </div><!--/.row-->
+    </div>
+
+    <div>
+      <div class="card">
+        <div class="card-header">
+          <i class="fa fa-align-justify"></i> Activités congé
+        </div>
+        <div class="card-body">
+          <table class="table table-sm table-responsive table-hover">
+            <thead>
+            <tr>
+              <th>Type</th>
+              <th>Debut</th>
+              <th>Fin</th>
+              <th>Durée</th>
+              <th>Statut</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr [class]="a.statut?'table-success':'table-light'" (click)="selectActivity(a)" *ngFor="let a of pageActivitiesHoliday?.content | paginate: {
+                                                      id: 'activitiesHoliday',
+                                                      itemsPerPage: itemsPerPageHoliday,
+                                                      currentPage: currentPageHoliday,
+                                                      totalItems: pageActivitiesHoliday?.totalElements}">
+              <td>{{detectAbrevi(a.typeActivite)}}</td>
+              <td><span class="badge badge-pill badge-light">{{a.dteStrt | date:"dd/MM/yy HH:mm"}}</span>
+              </td>
+              <td><span class="badge badge-pill badge-light">{{a.dteEnd | date:"dd/MM/yy HH:mm"}}</span>
+              </td>
+              <td><span class="badge badge-pill badge-dark">{{activityService.ShortconvertMinutesToHoursAndMinute(a.durtion)}}</span>
+              </td>
+              <td><span [class]="a.statut?'badge badge-pill badge-success':'badge badge-pill badge-info'">{{a.statut?'Realisé':'Planifié'}}</span>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+          <pagination-controls
+            class="mypagination"
+            id="activitiesHoliday"
+            (pageChange)="gotoPageHoliday($event)"
+            maxSize="15"
+            directionLinks="true"
+            autoHide="true"
+            previousLabel="Précédant"
+            nextLabel="Suivant"
+            screenReaderPaginationLabel="Pagination"
+            screenReaderPageLabel="page"
+            screenReaderCurrentLabel="Vous etes sur la page">
+          </pagination-controls>
+          <div class="col-xs-12 col-12 d-sm-down-none">
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div *ngIf="statistics" class="card-columns cols-2">
+
+
+    <div class="chart-wrapper">
+      <canvas baseChart class="chart"
+              [chartType]="lineChartType"
+              [labels]="lineChartLabels"
+              [datasets]="lineChartData"
+              [options]="optionsLine">
+
+      </canvas>
+    </div>
+
+
+    <div class="chart-wrapper">
+      <canvas baseChart class="chart"
+              [chartType]="barChartType"
+              [labels]="barChartLabels"
+              [datasets]="barChartData"
+              [options]="optionsbar">
+
+      </canvas>
+    </div>
+
+  </div>
+
+  <div *ngIf="statistics" class="card-columns cols-2">
+
+
+    <div class="chart-wrapper">
+      <canvas baseChart class="chart"
+              [data]="pieChartData"
+              [labels]="pieChartLabels"
+              [chartType]="pieChartType"
+              [options]="options"
+              (chartHover)="chartHovered($event)"
+              (chartClick)="chartClicked($event)">
+
+      </canvas>
+    </div>
+
+    <div class="chart-wrapper">
+      <canvas baseChart class="chart"
+              [data]="pieChartData1"
+              [labels]="pieChartLabels1"
+              [chartType]="pieChartType"
+              [options]="options1"
+              (chartHover)="chartHovered($event)"
+              (chartClick)="chartClicked($event)">
+
+      </canvas>
+    </div>
+
+  </div>
 
 </div>
+
+<edit-activity-request bsModal #editactivityRequestModal="bs-modal" [toDo]="true" [disabledStatut]="disabledStatut" [pageActivities]="pageActivities" [index]="indexSelected" [modal]="editactivityRequestModal"
+                       [activityRequest]="activityRequest" class="modal fade" tabindex="-1" role="dialog"
+                       aria-labelledby="myModalLabel" aria-hidden="true"></edit-activity-request>
+
+<edit-activity-si bsModal #editactivitySIModal="bs-modal" [toDo]="true" [disabledStatut]="disabledStatut" [pageActivities]="pageActivities" [index]="indexSelected" [modal]="editactivitySIModal"
+                  [activitySI]="activitySI" class="modal fade" tabindex="-1" role="dialog"
+                  aria-labelledby="myModalLabel" aria-hidden="true"></edit-activity-si>
+
+<edit-activity-recouvrement bsModal #editactivityRecouvrementModal="bs-modal" [toDo]="true" [disabledStatut]="disabledStatut" [pageActivities]="pageActivities" [index]="indexSelected" [modal]="editactivityRecouvrementModal"
+                            [activityRecouvrement]="activityRecouvrement" class="modal fade" tabindex="-1" role="dialog"
+                            aria-labelledby="myModalLabel" aria-hidden="true"></edit-activity-recouvrement>
+
+<edit-activity-project bsModal #editactivityProjectModal="bs-modal" [toDo]="true" [disabledStatut]="disabledStatut" [pageActivities]="pageActivities" [index]="indexSelected" [modal]="editactivityProjectModal"
+                       [activityProject]="activityProject" class="modal fade" tabindex="-1" role="dialog"
+                       aria-labelledby="myModalLabel" aria-hidden="true"></edit-activity-project>
+
+<edit-activity-holiday bsModal #editactivityHolidayModal="bs-modal" [toDo]="true" [disabledStatut]="disabledStatut" [pageActivities]="pageActivitiesHoliday" [index]="indexSelectedHoliday" [modal]="editactivityHolidayModal"
+                       [activityHoliday]="activityHoliday" class="modal fade" tabindex="-1" role="dialog"
+                       aria-labelledby="myModalLabel" aria-hidden="true"></edit-activity-holiday>
+
+<edit-activity-commercial bsModal #editactivityCommercialModal="bs-modal" [toDo]="true" [disabledStatut]="disabledStatut" [pageActivities]="pageActivities" [index]="indexSelected" [modal]="editactivityCommercialModal"
+                          [activityCommercial]="activityCommercial" class="modal fade" tabindex="-1" role="dialog"
+                          aria-labelledby="myModalLabel" aria-hidden="true"></edit-activity-commercial>

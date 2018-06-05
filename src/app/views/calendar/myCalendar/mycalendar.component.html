@@ -1,33 +1,4 @@
 <div class="animated fadeIn">
-  <edit-activityProject-modal bsModal #editActivityProjectModal="bs-modal" [modal]="editActivityProjectModal"
-                              class="modal fade" [activityProject]="modalData?.event.meta.activity"
-                              tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></edit-activityProject-modal>
-
-  <edit-activityProject-modal bsModal #newActivityProjectModal="bs-modal" [modal]="newActivityProjectModal"
-                              class="modal fade" [activityProject]="modalData?.event.meta.activity"
-                              tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></edit-activityProject-modal>
-
-  <ng-template #modalActivityProject let-close="close">
-    <div class="modal-header">
-      <h5 class="modal-title">Event action occurred</h5>
-      <button type="button" class="close" (click)="close()">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-    <div class="modal-body">
-      <div>
-        Action:
-        <pre>{{ modalData?.action }}</pre>
-      </div>
-      <div>
-        Event:
-        <pre>{{ modalData?.event | json }}</pre>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-outline-secondary" (click)="close()">OK</button>
-    </div>
-  </ng-template>
 
   <mwl-demo-utils-calendar-header
     [(view)]="view"
@@ -35,7 +6,6 @@
     (viewDateChange)="fetchEvents()"
     (viewChange)="fetchEvents()"
     [locale]="locale">
-  >
   </mwl-demo-utils-calendar-header>
 
   <ng-template #loading>
@@ -82,3 +52,124 @@
   </div>
 
 </div>
+
+<button type="button" class="btn btn-primary" data-toggle="modal" (click)="myModal.show()">
+  <i class="fa fa-plus"></i>
+</button>
+
+<div bsModal #myModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Nouvelle Activité</h4>
+        <button type="button" class="close" (click)="myModal.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <h5 class="card-title text-center">Selectionnez le type d'activité :</h5>
+        <div class="list-group">
+          <button type="button" (click)="myModal.hide(); newactivityRequestModal.show()"
+                  class="list-group-item list-group-item-action w-50 mx-auto">
+            <i class="fa fa-support"></i> Activité Support
+          </button>
+          <button type="button" (click)="myModal.hide(); newactivityProjectModal.show()"
+                  class="list-group-item list-group-item-action w-50 mx-auto">
+            <i class="fa fa-product-hunt"></i> Activité Projet
+          </button>
+          <button type="button" (click)="myModal.hide(); newactivityCommercialModal.show()"
+                  class="list-group-item list-group-item-action w-50 mx-auto">
+            <i class="fa fa-briefcase"></i> Activité Commerciale
+          </button>
+          <button type="button" (click)="myModal.hide(); newactivityRecouvrementModal.show()"
+                  class="list-group-item list-group-item-action w-50 mx-auto">
+            <i class="fa fa-calendar-check-o"></i> Activité Recouvrement
+          </button>
+          <button type="button" (click)="myModal.hide(); newactivityHolidayModal.show()"
+                  class="list-group-item list-group-item-action w-50 mx-auto">
+            <i class="fa fa-home"></i> Activité
+            Congé
+          </button>
+        </div>
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<new-activtyProject bsModal #newactivityProjectModal="bs-modal" [modal]="newactivityProjectModal" [lastActivity]="lastActivity"
+                    class="modal fade"
+                    tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></new-activtyProject>
+
+<new-activtyCommercial bsModal #newactivityCommercialModal="bs-modal" [modal]="newactivityCommercialModal" [lastActivity]="lastActivity"
+                       class="modal fade"
+                       tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                       aria-hidden="true"></new-activtyCommercial>
+
+<new-activityHoliday bsModal #newactivityHolidayModal="bs-modal" [modal]="newactivityHolidayModal" [lastActivity]="lastActivity"
+                     class="modal fade"
+                     tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                     aria-hidden="true"></new-activityHoliday>
+
+<new-activityRecouvrement bsModal #newactivityRecouvrementModal="bs-modal" [modal]="newactivityRecouvrementModal" [lastActivity]="lastActivity"
+                          class="modal fade"
+                          tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                          aria-hidden="true"></new-activityRecouvrement>
+
+<new-activityRequest bsModal #newactivityRequestModal="bs-modal" [modal]="newactivityRequestModal" [lastActivity]="lastActivity"
+                     class="modal fade"
+                     tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                     aria-hidden="true"></new-activityRequest>
+
+<show-activity-si bsModal #activitySIModal="bs-modal" [modal]="activitySIModal"
+                  [activitySI]="activitySI" class="modal fade" tabindex="-1" role="dialog"
+                  aria-labelledby="myModalLabel" aria-hidden="true"></show-activity-si>
+
+<show-activity-request bsModal #activityRequestModal="bs-modal" [modal]="activityRequestModal"
+                       [activityRequest]="activityRequest" class="modal fade" tabindex="-1" role="dialog"
+                       aria-labelledby="myModalLabel" aria-hidden="true"></show-activity-request>
+
+<show-activity-project bsModal #activityProjectModal="bs-modal" [modal]="activityProjectModal"
+                       [activityProject]="activityProject" class="modal fade" tabindex="-1" role="dialog"
+                       aria-labelledby="myModalLabel" aria-hidden="true"></show-activity-project>
+
+<show-activity-recouvrement bsModal #activityRecouvrementModal="bs-modal" [modal]="activityRecouvrementModal"
+                            [activityRecouvrement]="activityRecouvrement" class="modal fade" tabindex="-1" role="dialog"
+                            aria-labelledby="myModalLabel" aria-hidden="true"></show-activity-recouvrement>
+
+<show-activity-commercial bsModal #activityCommercialModal="bs-modal" [modal]="activityCommercialModal"
+                          [activityCommercial]="activityCommercial" class="modal fade" tabindex="-1" role="dialog"
+                          aria-labelledby="myModalLabel" aria-hidden="true"></show-activity-commercial>
+
+<show-activity-holiday bsModal #activityHolidayModal="bs-modal" [modal]="activityHolidayModal"
+                       [activityHoliday]="activityHoliday" class="modal fade" tabindex="-1" role="dialog"
+                       aria-labelledby="myModalLabel" aria-hidden="true"></show-activity-holiday>
+
+<edit-activity-si bsModal #editactivitySIModal="bs-modal" [modal]="editactivitySIModal"
+                  [activitySI]="activitySI" class="modal fade" tabindex="-1" role="dialog"
+                  aria-labelledby="myModalLabel" aria-hidden="true"></edit-activity-si>
+
+<edit-activity-request bsModal #editactivityRequestModal="bs-modal" [modal]="editactivityRequestModal"
+                       [activityRequest]="activityRequest" class="modal fade" tabindex="-1" role="dialog"
+                       aria-labelledby="myModalLabel" aria-hidden="true"></edit-activity-request>
+
+<edit-activity-recouvrement bsModal #editactivityRecouvrementModal="bs-modal" [modal]="editactivityRecouvrementModal"
+                            [activityRecouvrement]="activityRecouvrement" class="modal fade" tabindex="-1" role="dialog"
+                            aria-labelledby="myModalLabel" aria-hidden="true"></edit-activity-recouvrement>
+
+<edit-activity-project bsModal #editactivityProjectModal="bs-modal" [modal]="editactivityProjectModal"
+                       [activityProject]="activityProject" class="modal fade" tabindex="-1" role="dialog"
+                       aria-labelledby="myModalLabel" aria-hidden="true"></edit-activity-project>
+
+<edit-activity-holiday bsModal #editactivityHolidayModal="bs-modal" [modal]="editactivityHolidayModal"
+                       [activityHoliday]="activityHoliday" class="modal fade" tabindex="-1" role="dialog"
+                       aria-labelledby="myModalLabel" aria-hidden="true"></edit-activity-holiday>
+
+<edit-activity-commercial bsModal #editactivityCommercialModal="bs-modal" [modal]="editactivityCommercialModal"
+                          [activityCommercial]="activityCommercial" class="modal fade" tabindex="-1" role="dialog"
+                          aria-labelledby="myModalLabel" aria-hidden="true"></edit-activity-commercial>
+
+<delete-modal bsModal #dangerModal="bs-modal" [modal]="dangerModal" [activity]="activity"
+              (functionDelete)="onDeleteMyActivity(activity)" class="modal fade"
+              tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></delete-modal>

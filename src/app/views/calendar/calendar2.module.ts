@@ -23,6 +23,8 @@ import {CustomModalModule} from "../modal/modal.module";
 import {CalendarHeaderComponent} from "./CalendarHeaderComponent";
 import localeFr from '@angular/common/locales/fr';
 import { registerLocaleData } from '@angular/common';
+import {ActivityModule} from "../activity/activity.module";
+import {AllcalendarComponent} from "./myCalendar/allcalendar.component";
 
 registerLocaleData(localeFr);
 
@@ -53,9 +55,10 @@ registerLocaleData(localeFr);
     AlertModule.forRoot(),
     ModalModule.forRoot(),
     CustomModalModule,
+    ActivityModule
 
   ],
-  declarations: [ CalendarComponent,MyCalendarComponent ],
+  declarations: [ CalendarComponent,MyCalendarComponent,AllcalendarComponent ],
   providers: [AuthenticationService,ActivityService]
 })
 export class CalendarModule2 { }

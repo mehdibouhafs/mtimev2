@@ -1,0 +1,201 @@
+<div class="modal-dialog" role="document">
+  <div class="modal-content">
+
+
+    <div *ngIf="mode==1">
+
+      <div class="modal-header">
+        <h6 class="col-12 modal-title text-center">
+          <p>Modifier Activité SI</p>
+          <div *ngIf="lastActivity" class="badge badge-pill badge-light">
+            Dernière Activité : {{lastActivity?.typeActivite}} Du
+            {{lastActivity?.dteStrt | date: "dd/MM/yy HH:mm"}} à {{lastActivity?.dteEnd | date: "dd/MM/yy HH:mm"}}
+          </div>
+          <div class="alert alert-danger" role="alert" *ngIf="error==2">
+            <strong> Oups ! </strong> {{returnedError}}
+          </div>
+        </h6>
+      </div>
+
+      <form class="form-horizontal" #f="ngForm" (ngSubmit)="onEditActivitySI(f.value)">
+
+
+        <div class="modal-body">
+
+          <div class="form-row">
+            <div class="form-group col-sm-6">
+              <label>Date de debut :</label>
+
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <button class="btn btn-sm btn-primary" type="button"><i class="fa fa-calendar"></i></button>
+                </div>
+                <input class="form-control" id="dateStart" [owlDateTimeTrigger]="dt" [owlDateTime]="dt"
+                       placeholder="Date début"
+                       [(ngModel)]="activitySI.dteStrt" name="dteStrt" required
+                       (ngModelChange)="onDatesChanged()">
+                <owl-date-time #dt></owl-date-time>
+              </div>
+            </div>
+
+            <div class="form-group col-sm-6">
+              <label>Date de fin :</label>
+
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <button class="btn btn-sm btn-primary" type="button"><i class="fa fa-calendar"></i></button>
+                </div>
+                <input class="form-control" id="dateEnd" [min]="activitySI.dteStrt" [owlDateTimeTrigger]="dt1"
+                       [owlDateTime]="dt1"
+                       placeholder="Date et heure de fin"
+                       [(ngModel)]="activitySI.dteEnd" name="dteEnd" (ngModelChange)="onDatesChanged()"
+                       required>
+                <owl-date-time #dt1></owl-date-time>
+              </div>
+              <div class="duree">
+                {{dureeConverted?'Durée : '+dureeConverted:'Selectionnez date de fin !'}}
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-sm-6">
+              <label for="perimetre">Périmétre :</label>
+              <select id="perimetre" class="form-control" [(ngModel)]="activitySI.perimetre" name="nature"
+                      #perimetre="ngModel" required>
+                <option>Mtime</option>
+                <option>SAP</option>
+                <option>Pilotage contrat</option>
+                <option>Encadrement / Plannification</option>
+              </select>
+            </div>
+
+            <div *ngIf="!toDo" class="form-group row col-sm-6 my-auto">
+              <label class="col-sm-3 col-form-label nopadding-right">Statut :</label>
+              <div class="col-sm-9 nopadding my-auto">
+                <span [class]="activitySI.statut?'badge badge-pill badge-success':'badge badge-pill badge-info'">{{activitySI.statut?'Réalisé':'Planifié'}}</span>
+              </div>
+            </div>
+            <div *ngIf="toDo" class="form-group row col-sm-6 my-auto">
+              <label class="col-sm-3 col-form-label nopadding-right">Statut :</label>
+              <div class="col-sm-9 nopadding my-auto">
+                <ngx-toggle
+                  name="statut"
+                  onColor="success"
+                  offColor="info"
+                  onText="Réalisé"
+                  offText="Planifié"
+                  size="sm"
+                  [(value)]="activitySI.statut"
+                  [disabled]="disabledStatut"
+                >
+                </ngx-toggle>
+                <div *ngIf="disabledStatut" class="error">
+                  Vous ne pouvez pas réalisé cette activité maintenant !
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+
+          <div class="form-row">
+
+            <div class="form-group col-sm-6">
+              <label for="comments">Commentaire :</label>
+              <textarea minlength="1" id="comments" name="comments" #comments="ngModel"
+                        [(ngModel)]="activitySI.comments" rows="9" class="form-control" placeholder="Content.."
+                        style="margin-top: 0px; margin-bottom: 0px; height: 56px;" required></textarea>
+              <div *ngIf="comments.invalid && (comments.dirty || comments.touched)"
+                   class="error">
+                <div *ngIf="comments.errors.required">
+                  Commentaire est requis.
+                </div>
+                <div *ngIf="comments.errors.minlength">
+                  Un commentaire doit au minimum contenir 5 caracteres
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-sm btn-danger" (click)="hideModal();">Annuler
+          </button>
+          <button [disabled]="!f.valid" type="submit" class="btn btn-sm btn-primary"><i
+            class="fa fa-dot-circle-o"></i>
+            Enregistrer
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+
+    <div *ngIf="mode==2">
+
+      <div class="modal-header">
+        <h4 class="modal-title">Confirmation N° : {{activitySI?.id}}</h4>
+      </div>
+
+      <div class="modal-body">
+
+        <div class="form-group row">
+          <div class="col-sm-2 nopadding-right"><strong>Début :</strong></div>
+          <div class="col-sm-3 nopadding">
+            <span class="badge badge-pill badge-light">{{activitySI?.dteStrt | date:"dd/MM/yy HH:mm"}}</span>
+          </div>
+          <div class="col-sm-2 nopadding-right"><strong>Fin :</strong></div>
+          <div class="col-sm-3 nopadding">
+            <span class="badge badge-pill badge-light">{{activitySI?.dteEnd | date:"dd/MM/yy HH:mm"}}</span>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <div class="col-sm-2 nopadding-right"><strong>Durée :</strong></div>
+          <div class="col-sm-3 nopadding">
+            <span class="badge badge-pill badge-dark">{{activityService.ShortconvertMinutesToHoursAndMinute(activitySI.durtion)}}</span>
+          </div>
+
+          <div class="col-sm-2 nopadding-right"><strong>Nature :</strong></div>
+          <div class="col-sm-3 nopadding">
+            {{activitySI?.nature}}
+          </div>
+        </div>
+
+
+        <div class="form-group row">
+
+          <div class="col-sm-2 nopadding-right"><strong>Statut :</strong></div>
+          <div class="col-sm-3 nopadding">
+            <span [class]="activitySI.statut?'badge badge-pill badge-success':'badge badge-pill badge-info'">{{activitySI?.statut==true?'Realisé':'Planifié'}}</span>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <div class="col-sm-3"><strong>Commentaire:</strong></div>
+          <div class="col-sm-7 nopadding">
+            {{activitySI?.comments}}
+          </div>
+        </div>
+
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-primary" (click)="hideModal(); mode=1;">
+          <i class="fa fa-check"></i> OK
+        </button>
+      </div>
+
+
+    </div>
+
+
+  </div>
+</div>
+
+

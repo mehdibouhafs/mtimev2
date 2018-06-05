@@ -1,8 +1,64 @@
-// Here you can add other styles
-
 .cdk-overlay-container {
   position: fixed;
   z-index: 1090;
+}
+
+.table-hover tbody tr {
+  cursor: pointer;
+}
+
+.nopadding {
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+.nopadding-right {
+  padding-right: 0px;
+}
+
+.modal-header {
+  background-color: rgb(194, 207, 214);
+  padding: 0.5rem;
+}
+
+.modal-header .modal-title p {
+  font-size: large;
+}
+
+.modal-header p {
+  margin-bottom: 0;
+}
+
+.modal-header .textalert {
+  font-size: small;
+}
+
+.modal-header .badge .info {
+  font-weight: 600;
+}
+
+.modal-header .alert {
+  margin-top: 0.1rem;
+  margin-bottom: 0;
+  padding: 0;
+}
+
+.modal-body label {
+  margin: 0px;
+}
+
+.modal-footer {
+  padding: 0.3rem;
+}
+
+.modal-dialog {
+  width: 50%;
+  max-width: 100%;
+}
+
+.show-details {
+  width: 35%;
+  max-width: 100%;
 }
 
 .my-pagination .ngx-pagination .current {
@@ -27,8 +83,40 @@
   color: #fff;
 }
 
+.btn-primary {
+  background-color: darkblue;
+  border: none;
+}
+
+.btn-primary:disabled {
+  background-color: rgb(194, 207, 214);
+  opacity: 0.4;
+}
+
+.btn-primary:hover, .show > .btn-outline-primary.dropdown-toggle:focus {
+  background-color: rgb(194, 207, 214);
+}
+
+.btn-outline-primary {
+
+  border: none;
+}
+
+.btn-outline-primary:hover, .btn-outline-primary .show .dropdown-toggle:focus {
+  background-color: darkblue;
+}
+
 .error {
-  color: red;
+  height: 2px;
+  width: 100%;
+  font-size: 72%;
+  color: #f86c6b;
+}
+
+.duree {
+  font-size: 12px;
+  color: forestgreen;
+  height: 3px;
 }
 
 .ng-select .ng-control {
@@ -48,4 +136,3 @@
 tr:hover {
   background-color: #f2f2f2;
 }
-

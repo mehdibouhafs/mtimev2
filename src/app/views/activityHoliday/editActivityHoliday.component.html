@@ -1,0 +1,158 @@
+<div class="modal-dialog" role="document">
+  <div class="modal-content">
+
+
+    <div *ngIf="mode==1">
+
+      <div class="modal-header">
+        <h4 class="modal-title">Modifier Activité Congé :</h4>
+        <div class="alert alert-danger" role="alert" *ngIf="error==2">
+          <strong> Oups ! </strong> {{returnedError}}
+        </div>
+      </div>
+
+      <form class="form-horizontal" #f="ngForm" (ngSubmit)="onEditActivityHoliday(f.value)">
+
+        <div class="modal-body">
+
+
+          <div class="form-row">
+            <div class="form-group col-sm-6">
+              <label for="dateStart">Date de début :</label>
+              <input id="dateStart" class="form-control" name="dateStrt"  [(ngModel)]="activityHoliday.dteStrt" (ngModelChange)="onDatesChanged()" [owlDateTimeTrigger]="dt3" [owlDateTime]="dt3" size="16" required>
+              <owl-date-time [pickerType]="'calendar'" #dt3></owl-date-time>
+            </div>
+
+            <div class="form-group col-sm-6">
+              <label for="dateEnd">Date de fin :</label>
+              <input id="dateEnd" class="form-control" placeholder="Date fin"  [owlDateTimeTrigger]="dt4" [owlDateTime]="dt4"
+                     [(ngModel)]="activityHoliday.dteEnd" [min]="activityHoliday.dteStrt" (ngModelChange)="onDatesChanged()" name="dteEnd" required>
+              <owl-date-time [pickerType]="'calendar'" #dt4></owl-date-time>
+            </div>
+
+          </div>
+
+
+          <div class="form-row">
+            <div class="form-group col-sm-6">
+              <label for="comments">Commentaire :</label>
+              <textarea minlength="1" id="comments" name="comments" #comments="ngModel"
+                        [(ngModel)]="activityHoliday.comments" rows="9" class="form-control" placeholder="Content.."
+                        style="margin-top: 0px; margin-bottom: 0px; height: 56px;" required></textarea>
+              <div *ngIf="comments.invalid && (comments.dirty || comments.touched)"
+                   class="error">
+                <div *ngIf="comments.errors.required">
+                  Commentaire est requis.
+                </div>
+                <div *ngIf="comments.errors.minlength">
+                  Un commentaire doit au minimum contenir 5 caracteres
+                </div>
+              </div>
+            </div>
+
+            <div *ngIf="!toDo" class="form-group row col-sm-6 my-auto">
+              <label class="col-sm-3 col-form-label nopadding-right">Statut :</label>
+              <div class="col-sm-9 nopadding my-auto">
+                <span [class]="activityHoliday.statut?'badge badge-pill badge-success':'badge badge-pill badge-info'">{{activityHoliday.statut?'Réalisé':'Planifié'}}</span>
+              </div>
+            </div>
+
+            <div *ngIf="toDo" class="form-group row col-sm-6 my-auto">
+              <label class="col-sm-3 col-form-label nopadding-right">Statut :</label>
+              <div class="col-sm-9 nopadding my-auto">
+                <ngx-toggle
+                  name="statut"
+                  onColor="success"
+                  offColor="info"
+                  onText="Réalisé"
+                  offText="Planifié"
+                  size="sm"
+                  [(value)]="activityHoliday.statut"
+                  [disabled]="disabledStatut"
+                >
+                </ngx-toggle>
+                <div *ngIf="disabledStatut" class="error">
+                  Vous ne pouvez pas réalisé cette activité maintenant !
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-sm btn-danger" (click)="hideModal()"><i class="fa fa-ban"></i> Annuler
+          </button>
+          <button [disabled]="!f.valid" type="submit" class="btn btn-sm btn-primary"><i
+            class="fa fa-dot-circle-o"></i>
+            Submit
+          </button>
+        </div>
+
+      </form>
+
+
+    </div>
+
+    <div *ngIf="mode==2">
+
+
+      <div class="modal-header">
+        <h4 class="modal-title">Confirmation N° : {{activityHoliday?.id}}</h4>
+      </div>
+
+      <div class="modal-body">
+
+
+        <div class="form-group row">
+          <div class="col-sm-2 nopadding-right"><strong>Début :</strong></div>
+          <div class="col-sm-3 nopadding">
+            <span class="badge badge-pill badge-light">{{activityHoliday?.dteStrt | date:"dd/MM/yyyy"}}</span>
+          </div>
+          <div class="col-sm-2 nopadding-right"><strong>Fin :</strong></div>
+          <div class="col-sm-3 nopadding">
+            <span class="badge badge-pill badge-light">{{activityHoliday?.dteEnd | date:"dd/MM/yyyy"}}</span>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <div class="col-sm-2 nopadding-right"><strong>Durée :</strong></div>
+          <div class="col-sm-3 nopadding">
+            {{activityService.ShortconvertMinutesToHoursAndMinute(activityHoliday.durtion)}}
+          </div>
+          <div class="col-sm-2 nopadding-right"><strong>Statut :</strong></div>
+          <div class="col-sm-3 nopadding">
+            <span [class]="activityHoliday.statut?'badge badge-pill badge-success':'badge badge-pill badge-info'">{{activityHoliday?.statut==true?'Realisé':'Planifié'}}</span>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <div class="col-sm-3"><strong>Commentaire:</strong></div>
+          <div class="col-sm-7 nopadding">
+            {{activityHoliday?.comments}}
+          </div>
+        </div>
+
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-primary" (click)="hideModal(); mode=1;">
+          <i class="fa fa-check"></i> OK
+        </button>
+
+      </div>
+
+
+    </div>
+
+
+  </div>
+</div>
+
+
+
+

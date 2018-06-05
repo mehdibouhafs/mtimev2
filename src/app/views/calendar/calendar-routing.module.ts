@@ -1,9 +1,12 @@
-import { NgModule } from '@angular/core';
-import { Routes,
-     RouterModule } from '@angular/router';
+import {NgModule} from '@angular/core';
+import {
+  Routes,
+  RouterModule
+} from '@angular/router';
 
-import { CalendarComponent } from './calendar.component';
+import {CalendarComponent} from './calendar.component';
 import {MyCalendarComponent} from "./myCalendar/my.calendar.component";
+import {AllcalendarComponent} from "./myCalendar/allcalendar.component";
 
 const routes: Routes = [
   {
@@ -13,20 +16,20 @@ const routes: Routes = [
     },
     children: [
       {
-        path: 'calendar',
-        component: CalendarComponent,
-        data: {
-          title: 'calendar'
-        }
-      },
-      {
         path: 'my-calendar',
         component: MyCalendarComponent,
         data: {
           title: 'mycalendar'
         }
       },
-      ]
+      {
+        path: 'all-calendar',
+        component: AllcalendarComponent,
+        data: {
+          title: 'all-calendar'
+        }
+      },
+    ]
   }
 ];
 
@@ -35,4 +38,5 @@ const routes: Routes = [
   exports: [RouterModule],
 
 })
-export class CalendarRoutingModule {}
+export class CalendarRoutingModule {
+}

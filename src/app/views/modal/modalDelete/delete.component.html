@@ -1,17 +1,72 @@
-<div class="modal-dialog modal-danger" role="document">
+<div class="modal-dialog modal-danger show-details" role="document">
   <div class="modal-content">
     <div class="modal-header">
-      <h4 class="modal-title">Confirmation</h4>
+      <h4 class="modal-title">Êtes-vous sûre ?</h4>
       <button type="button" class="close" (click)="hideModal()" aria-label="Close">
         <span aria-hidden="true">&times;</span>
       </button>
     </div>
     <div class="modal-body">
-      <p>Êtes-vous sûre de vouloir suuprimer cet element ?</p>
+      <div class="form-group row">
+        <div class="col-sm-2 nopadding-right"><strong>Début :</strong></div>
+        <div class="col-sm-3 nopadding">
+          <span class="badge badge-pill badge-light">{{activity?.dteStrt | date:"dd/MM/yy HH:mm"}}</span>
+        </div>
+        <div class="col-sm-2 nopadding-right"><strong>Fin :</strong></div>
+        <div class="col-sm-3 nopadding">
+          <span class="badge badge-pill badge-light">{{activity?.dteEnd | date:"dd/MM/yy HH:mm"}}</span>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <div class="col-sm-2 nopadding-right"><strong>Durée :</strong></div>
+        <div class="col-sm-3 nopadding">
+          <span class="badge badge-pill badge-dark">{{ShortconvertMinutesToHoursAndMinute(activity.durtion)}}</span>
+        </div>
+
+        <div class="col-sm-2 nopadding-right"><strong>Nature :</strong></div>
+        <div class="col-sm-3 nopadding">
+          {{activity?.nature}}
+        </div>
+      </div>
+
+      <div class="form-group row">
+
+        <div class="col-sm-2 nopadding-right"><strong>Client :</strong></div>
+        <div class="col-sm-3 nopadding">
+          {{activity?.customer?.name}}
+        </div>
+
+        <div class="col-sm-2 nopadding-right"><strong>Ville :</strong></div>
+        <div class="col-sm-3 nopadding">
+          {{activity?.ville}}
+        </div>
+
+
+      </div>
+
+      <div class="form-group row">
+        <div class="col-sm-2 nopadding-right"><strong>Lieu :</strong></div>
+        <div class="col-sm-3 nopadding">
+          {{activity?.lieu}}
+        </div>
+
+        <div class="col-sm-2 nopadding-right"><strong>Statut :</strong></div>
+        <div class="col-sm-3 nopadding">
+          <span [class]="activity.statut?'badge badge-pill badge-success':'badge badge-pill badge-info'">{{activity.statut?'Realisé':'Planifié'}}</span>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <div class="col-sm-3"><strong>Commentaire:</strong></div>
+        <div class="col-sm-7 nopadding">
+          {{activity?.comments}}
+        </div>
+      </div>
     </div>
     <div class="modal-footer">
-      <button type="button" class="btn btn-secondary" (click)="hideModal()">Non</button>
-      <button type="button" class="btn btn-danger" (click)="callFunctionDelete(); hideModal();">Supprimer</button>
+      <button type="button" class="btn btn-sm btn-secondary" (click)="hideModal()">Non</button>
+      <button type="button" class="btn btn-sm btn-danger" (click)="callFunctionDelete(); hideModal();">Supprimer</button>
     </div>
   </div>
 </div>

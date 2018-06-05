@@ -1,0 +1,43 @@
+<div class="card w-50 text-center mx-auto">
+  <div class="card-header">
+    <i class="fa fa-navicon"></i> Nouvelle Activité
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">Selectionnez le type d'activité :</h5>
+    <div class="list-group">
+      <button type="button" *ngFor="let activityAuthorized of activitiesAuthorozed" (click)="onSelectModal(activityAuthorized)"
+              class="list-group-item list-group-item-action w-50 mx-auto">
+        <i [class]="detectIcon(activityAuthorized)"></i> {{detectName(activityAuthorized)}}
+      </button>
+    </div>
+  </div>
+</div>
+
+<new-activtyProject bsModal #activityProjectModal="bs-modal" [modal]="activityProjectModal" [lastActivity]="lastActivity"
+                    class="modal fade"
+                    tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></new-activtyProject>
+
+<new-activtyCommercial bsModal #activityCommercialModal="bs-modal" [modal]="activityCommercialModal" [lastActivity]="lastActivity"
+                       class="modal fade"
+                       tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                       aria-hidden="true"></new-activtyCommercial>
+
+<new-activityHoliday bsModal #activityHolidayModal="bs-modal" [modal]="activityHolidayModal" [lastActivity]="lastActivity"
+                     class="modal fade"
+                     tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                     aria-hidden="true"></new-activityHoliday>
+
+<new-activityRecouvrement bsModal #activityRecouvrementModal="bs-modal" [modal]="activityRecouvrementModal" [lastActivity]="lastActivity"
+                          class="modal fade"
+                          tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                          aria-hidden="true"></new-activityRecouvrement>
+
+<new-activityRequest bsModal #activityRequestModal="bs-modal" [modal]="activityRequestModal" [lastActivity]="lastActivity"
+                     class="modal fade"
+                     tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                     aria-hidden="true"></new-activityRequest>
+
+<new-activity-si bsModal #activitySIModal="bs-modal" [modal]="activitySIModal" [lastActivity]="lastActivity"
+                     class="modal fade"
+                     tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                     aria-hidden="true"></new-activity-si>

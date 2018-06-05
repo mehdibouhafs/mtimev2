@@ -11,12 +11,41 @@ export class ActivityService{
 
   constructor(private authenticationService:AuthenticationService,private  http:HttpClient){}
 
-  getMyActivitiesByMc(mc:string,page:number,size:number){
-    return this.http.get(this.host+"/findMyActivitiesByMc?username="+this.authenticationService.getUserName()+"&motCle="+mc+"&size="+size+"&page="+page,{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
+  getAllMyActivitiesByDates(dteStrt:string,dteEnd:string){
+    return this.http.get(this.host+'/findAllMyActivitiesByDates?username='+this.authenticationService.getUserName()+"&dteStrt="+dteStrt+"&dteEnd="+dteEnd,{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
   }
 
-  getAllActivitiesByMc(mc:string,page:number,size:number){
-    return this.http.get(this.host+"/findMyActivitiesByMc?motCle="+mc+"&size="+size+"&page="+page,{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
+  getAllMyActivitiesByDatesForDay(dteStrt:string,dteEnd:string){
+    return this.http.get(this.host+'/findAllMyActivitiesByDatesForDay?username='+this.authenticationService.getUserName()+"&dteStrt="+dteStrt+"&dteEnd="+dteEnd,{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
+  }
+
+  getAllActivitiesByDates(dteStrt:string,dteEnd:string){
+    return this.http.get(this.host+'/findAllActivitiesByDates?dteStrt='+dteStrt+"&dteEnd="+dteEnd,{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
+  }
+
+  getAllActivitiesByDatesForDay(dteStrt:string,dteEnd:string){
+    return this.http.get(this.host+'/findAllActivitiesByDatesForDay?dteStrt='+dteStrt+"&dteEnd="+dteEnd,{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
+  }
+
+
+  getActivityTomorrow() {
+    return this.http.get(this.host+"/activitytomorrow?username="+this.authenticationService.getUserName(),{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
+  }
+
+  getActivityToday() {
+    return this.http.get(this.host+"/activitytoday?username="+this.authenticationService.getUserName(),{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
+  }
+
+  getLastActivity() {
+    return this.http.get(this.host+"/lastactivity?username="+this.authenticationService.getUserName(),{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
+  }
+
+  getMyActivitiesByMc(mc:string,page:number,size:number, typeSelected:any){
+    return this.http.get(this.host+"/findMyActivitiesByMc?username="+this.authenticationService.getUserName()+"&motCle="+mc+"&size="+size+"&page="+page+"&type="+typeSelected.toString(),{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
+  }
+
+  getAllActivitiesByMc(mc:string,page:number,size:number, typeSelected:any){
+    return this.http.get(this.host+"/findAllActivitiesByMc?motCle="+mc+"&size="+size+"&page="+page+"&type="+typeSelected.toString(),{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
   }
 
   saveActivity(activity:Activity){
@@ -28,6 +57,7 @@ export class ActivityService{
   }
 
   updateActivity(activity:Activity){
+    console.log("activity a updaté "+JSON.stringify(activity));
     return this.http.put(this.host+'/activities/'+activity.id,activity,{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
   }
 
@@ -35,12 +65,12 @@ export class ActivityService{
     return this.http.delete(this.host+'/activities/'+id,{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
   }
 
-  getAllMyActivitiesByDates(dteStrt:string,dteEnd:string){
-    return this.http.get(this.host+'/findAllMyActivitiesByDates?username='+this.authenticationService.getUserName()+"&dteStrt="+dteStrt+"&dteEnd="+dteEnd,{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
+  getActivityToDo(mc:string,page:number,size:number) {
+    return this.http.get(this.host+"/activityToDo?username="+this.authenticationService.getUserName()+"&motCle="+mc+"&size="+size+"&page="+page,{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
   }
 
-  getAllMyActivitiesByDatesForDay(dteStrt:string,dteEnd:string){
-    return this.http.get(this.host+'/findAllMyActivitiesByDatesForDay?username='+this.authenticationService.getUserName()+"&dteStrt="+dteStrt+"&dteEnd="+dteEnd,{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
+  getMyActivityHoliday(page:number, size:number) {
+    return this.http.get(this.host+"/myactivityholiday?username="+this.authenticationService.getUserName()+"&size="+size+"&page="+page,{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})})
   }
 
   formatDate(date:any){
@@ -79,5 +109,44 @@ export class ActivityService{
       }
   }
 
+  convertMinutesToHoursAndMinute(duree:number) {
+    let days:number, hours:number, minutes:number;
+
+    days = Math.floor(duree/1440);
+    duree = duree%1440;
+
+    hours = Math.floor(duree/60);
+    duree = duree%60;
+
+    minutes = duree;
+
+    if (days>0) {
+      return days + ' jours, ' + hours + ' heures, ' + minutes + ' minutes';
+    }
+
+    else {
+      return hours + ' heures, ' + minutes + ' minutes';
+    }
+  }
+
+  ShortconvertMinutesToHoursAndMinute(duree:number) {
+    let days:number, hours:number, minutes:number;
+
+    days = Math.floor(duree/1440);
+    duree = duree%1440;
+
+    hours = Math.floor(duree/60);
+    duree = duree%60;
+
+    minutes = duree;
+
+    if (days>0) {
+      return days + 'j ' + hours + 'h ' + minutes + 'm';
+    }
+
+    else {
+      return hours + 'h ' + minutes + 'm';
+    }
+  }
 
 }

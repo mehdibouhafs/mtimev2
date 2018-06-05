@@ -1,0 +1,246 @@
+<div class="modal-dialog" role="document">
+  <div class="modal-content">
+
+
+    <div *ngIf="mode==1">
+
+      <div class="modal-header">
+        <h4 class="modal-title">Modifier Activité Commerciale :</h4>
+        <div class="alert alert-danger" role="alert" *ngIf="error==2">
+          <strong> Oups ! </strong> {{returnedError}}
+        </div>
+      </div>
+
+      <form class="form-horizontal" #f="ngForm" (ngSubmit)="onEditActivityCommercial(f.value)">
+
+
+
+        <div class="modal-body">
+
+          <div class="form-row">
+            <div class="form-group col-sm-6">
+              <label>Date de debut :</label>
+
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <button class="btn btn-sm btn-primary" type="button"><i class="fa fa-calendar"></i></button>
+                </div>
+                <input class="form-control" id="dateStart" [owlDateTimeTrigger]="dt" [owlDateTime]="dt" placeholder="Date début"
+                       [(ngModel)]="activityCommercial.dteStrt" name="dteStrt" required
+                       (ngModelChange)="onDatesChanged()">
+                <owl-date-time #dt></owl-date-time>
+              </div>
+            </div>
+
+            <div class="form-group col-sm-6">
+              <label>Date de fin :</label>
+
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <button class="btn btn-sm btn-primary" type="button"><i class="fa fa-calendar"></i></button>
+                </div>
+                <input class="form-control" id="dateEnd" [min]="activityCommercial.dteStrt" [owlDateTimeTrigger]="dt1" [owlDateTime]="dt1"
+                       placeholder="Date et heure de fin"
+                       [(ngModel)]="activityCommercial.dteEnd" name="dteEnd" (ngModelChange)="onDatesChanged()"
+                       required>
+                <owl-date-time #dt1></owl-date-time>
+              </div>
+              <div class="duree">
+                {{dureeConverted?'Durée : '+dureeConverted:'Selectionnez date de fin !'}}
+              </div>
+            </div>
+          </div>
+
+
+          <div class="form-row">
+            <div class="form-group col-sm-6">
+              <label for="nature">Nature :</label>
+              <select id="nature" class="form-control" [(ngModel)]="activityCommercial.nature" name="nature"
+                      #nature="ngModel" required>
+                <option>Projet</option>
+                <option>Réunion</option>
+                <option>Pilotage contrat</option>
+                <option>Encadrement / Plannification</option>
+              </select>
+            </div>
+
+            <div class="form-group col-sm-6">
+              <label for="customers">Client :</label>
+              <ng-select id="customers" [items]="customers"
+                         bindLabel="name"
+                         name="customer"
+                         placeholder="Selectionner un client"
+                         [(ngModel)]="activityCommercial.customer"
+                         (change)="teste()"
+                         required></ng-select>
+            </div>
+          </div>
+
+          <div class="form-row">
+
+            <div class="form-group col-sm-6">
+              <label for="lieu">Lieu :</label>
+              <select id="lieu" class="form-control" [(ngModel)]="activityCommercial.lieu" name="lieu" required>
+                <option>Client</option>
+                <option>Munisys</option>
+                <option>Domicile</option>
+              </select>
+            </div>
+
+            <div class="form-group col-sm-6">
+              <label for="ville">Ville :</label>
+              <select id="ville" class="form-control" [(ngModel)]="activityCommercial.ville" name="ville" required
+                      #ville="ngModel">
+                <option>Casablanca</option>
+                <option>Fes</option>
+                <option>Agadir</option>
+              </select>
+            </div>
+
+
+          </div>
+
+
+          <div class="form-row">
+
+            <div class="form-group col-sm-6">
+              <label for="comments">Commentaire :</label>
+              <textarea minlength="1" id="comments" name="comments" #comments="ngModel"
+                        [(ngModel)]="activityCommercial.comments" rows="9" class="form-control" placeholder="Content.."
+                        style="margin-top: 0px; margin-bottom: 0px; height: 56px;" required></textarea>
+              <div *ngIf="comments.invalid && (comments.dirty || comments.touched)"
+                   class="error">
+                <div *ngIf="comments.errors.required">
+                  Commentaire est requis.
+                </div>
+                <div *ngIf="comments.errors.minlength">
+                  Un commentaire doit au minimum contenir 5 caracteres
+                </div>
+              </div>
+            </div>
+
+            <div *ngIf="!toDo" class="form-group row col-sm-6 my-auto">
+              <label class="col-sm-3 col-form-label nopadding-right">Statut :</label>
+              <div class="col-sm-9 nopadding my-auto">
+                <span [class]="activityCommercial.statut?'badge badge-pill badge-success':'badge badge-pill badge-info'">{{activityCommercial.statut?'Réalisé':'Planifié'}}</span>
+              </div>
+            </div>
+
+            <div *ngIf="toDo" class="form-group row col-sm-6 my-auto">
+              <label class="col-sm-3 col-form-label nopadding-right">Statut :</label>
+              <div class="col-sm-9 nopadding my-auto">
+                <ngx-toggle
+                  name="statut"
+                  onColor="success"
+                  offColor="info"
+                  onText="Réalisé"
+                  offText="Planifié"
+                  size="sm"
+                  [(value)]="activityCommercial.statut"
+                  [disabled]="disabledStatut"
+                >
+                </ngx-toggle>
+                <div *ngIf="disabledStatut" class="error">
+                  Vous ne pouvez pas réalisé cette activité maintenant !
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-sm btn-danger" (click)="hideModal()">Annuler
+          </button>
+          <button [disabled]="!f.valid" type="submit" class="btn btn-sm btn-primary"><i
+            class="fa fa-dot-circle-o"></i>
+            Enregistrer
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+
+    <div *ngIf="mode==2">
+
+      <div class="modal-header">
+        <h4 class="modal-title">Confirmation N° : {{activityCommercial?.id}}</h4>
+      </div>
+
+      <div class="modal-body">
+
+        <div class="form-group row">
+          <div class="col-sm-2 nopadding-right"><strong>Début :</strong></div>
+          <div class="col-sm-3 nopadding">
+            <span class="badge badge-pill badge-light">{{activityCommercial?.dteStrt | date:"dd/MM/yy HH:mm"}}</span>
+          </div>
+          <div class="col-sm-2 nopadding-right"><strong>Fin :</strong></div>
+          <div class="col-sm-3 nopadding">
+            <span class="badge badge-pill badge-light">{{activityCommercial?.dteEnd | date:"dd/MM/yy HH:mm"}}</span>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <div class="col-sm-2 nopadding-right"><strong>Durée :</strong></div>
+          <div class="col-sm-3 nopadding">
+            <span class="badge badge-pill badge-dark">{{activityService.ShortconvertMinutesToHoursAndMinute(activityCommercial.durtion)}}</span>
+          </div>
+
+          <div class="col-sm-2 nopadding-right"><strong>Nature :</strong></div>
+          <div class="col-sm-3 nopadding">
+            {{activityCommercial?.nature}}
+          </div>
+        </div>
+
+        <div class="form-group row">
+
+          <div class="col-sm-2 nopadding-right"><strong>Client :</strong></div>
+          <div class="col-sm-3 nopadding">
+            {{activityCommercial?.customer?.name}}
+          </div>
+
+          <div class="col-sm-2 nopadding-right"><strong>Ville :</strong></div>
+          <div class="col-sm-3 nopadding">
+            {{activityCommercial?.ville}}
+          </div>
+
+
+        </div>
+
+        <div class="form-group row">
+          <div class="col-sm-2 nopadding-right"><strong>Lieu :</strong></div>
+          <div class="col-sm-3 nopadding">
+            {{activityCommercial?.lieu}}
+          </div>
+
+          <div class="col-sm-2 nopadding-right"><strong>Statut :</strong></div>
+          <div class="col-sm-3 nopadding">
+            <span [class]="activityCommercial.statut?'badge badge-pill badge-success':'badge badge-pill badge-info'">{{activityCommercial?.statut==true?'Realisé':'Planifié'}}</span>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <div class="col-sm-3"><strong>Commentaire:</strong></div>
+          <div class="col-sm-7 nopadding">
+            {{activityCommercial?.comments}}
+          </div>
+        </div>
+
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-primary" (click)="hideModal(); mode=1;"><i class="fa fa-check"></i> OK</button>
+      </div>
+
+
+    </div>
+
+
+  </div>
+</div>
+

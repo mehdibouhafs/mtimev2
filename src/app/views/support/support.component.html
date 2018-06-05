@@ -1,0 +1,79 @@
+<div class="animated fadeIn">
+  <!--/.row-->
+  <div class="row">
+    <div class="col-lg-10 mx-auto">
+      <div class="card">
+        <div class="card-header">
+          <i class="fa fa-align-justify"></i> Tickets
+        </div>
+        <div class="card-body">
+          <div class="form-group row">
+            <div class="col-md-4">
+              <div class="input-group">
+                <input id="input2-group2" name="input2-group2" class="form-control form-control-sm" placeholder="Chercher" type="text"
+                       [(ngModel)]="motCle">
+                <span class="input-group-append">
+                          <button type="button" class="btn btn-sm btn-primary" (click)="chercher()"><i
+                            class="fa fa-search"></i></button>
+                        </span>
+              </div>
+            </div>
+          </div>
+          <table class="table table-sm">
+            <thead>
+            <tr>
+              <th>Numéro</th>
+              <th>Date</th>
+              <th>Objet</th>
+              <th>ObjetVal</th>
+              <th>Contrat</th>
+              <th>Client</th>
+              <th>Nature</th>
+              <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let r of pageActivities?.content | paginate: {
+                                                      id: 'activities',
+                                                      itemsPerPage: itemsPerPage,
+                                                      currentPage: currentPage,
+                                                      totalItems: pageActivities?.totalElements}">
+              <td>{{r.rqtExcde}}</td>
+              <td><span class="badge badge-pill badge-light">{{r.rqtDte | date:"dd/MM/yy HH:mm"}}</span>
+              </td>
+              <td>{{r.objDsc}}</td>
+              <td>{{r.objIdentVal}}</td>
+              <td>{{r.cntExcde}}</td>
+              <td>{{r.cpyInCde.name}}</td>
+              <td>{{r.rqtNatDsc}}</td>
+              <td><button class="btn btn-sm btn-primary" (click)="addActivity(r)">Créer</button></td>
+            </tr>
+            </tbody>
+          </table>
+          <pagination-controls
+            class="mypagination"
+            id="activities"
+            (pageChange)="gotoPage($event)"
+            maxSize="15"
+            directionLinks="true"
+            autoHide="true"
+            previousLabel="Précédant"
+            nextLabel="Suivant"
+            screenReaderPaginationLabel="Pagination"
+            screenReaderPageLabel="page"
+            screenReaderCurrentLabel="Vous etes sur la page">
+          </pagination-controls>
+          <div class="col-xs-12 col-12 d-sm-down-none">
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <!--/.col-->
+  </div>
+</div>
+
+<new-activityRequest bsModal #activityRequestModal="bs-modal" [modal]="activityRequestModal" [activityRequest]="activityRequest" [lastActivity]="lastActivity"
+                     class="modal fade"
+                     tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                     aria-hidden="true"></new-activityRequest>

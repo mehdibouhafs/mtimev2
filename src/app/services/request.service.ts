@@ -22,7 +22,9 @@ export class RequestService {
     return this.http.get(this.host + '/requests/' + rqtExcde, {headers: new HttpHeaders({'Authorization': this.autehntificationService.getToken()})});
   }
 
-
+  getMyRequests(motcle:String,page:number,size:number){
+    return this.http.get(this.host+"/myrequests?username="+this.autehntificationService.getUserName()+"&mc="+motcle+"&size="+size+"&page="+page,{headers: new HttpHeaders({'Authorization': this.autehntificationService.getToken()})});
+  }
 
 
 }
