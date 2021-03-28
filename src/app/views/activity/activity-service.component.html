@@ -1,0 +1,161 @@
+<div class="animated fadeIn">
+  <!--/.row-->
+  <div class="row">
+    <div class="col-lg-10 mx-auto">
+      <div class="card">
+        <div class="card-header">
+          <i class="fa fa-group"></i> les activités du groupe
+        </div>
+        <div class="card-body">
+          <div class="form-group row">
+
+            <div class="col-md-4">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <div class="input-group-text"><i
+                    class="fa fa-search"></i></div>
+                </div>
+                <input id="input2-group2" name="input2-group2" class="form-control form-control-sm"
+                       placeholder="Chercher" type="text"
+                       [(ngModel)]="motCle" (keyup)="chercher()">
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <ng-select id="users" name="users"
+                         [items]="users"
+                         bindValue="username"
+                         [hideSelected]="true"
+                         [(ngModel)]="selectedUser"
+                         (change)="chercher()"
+                         placeholder="Selectionnez un utilisateur"
+                         notFoundText="Aucun utilisateur trouvé"
+                         [typeahead]="usersTypeahead"
+                         typeToSearchText="Saisir le nom d'utilisateur">
+
+                <ng-template ng-label-tmp let-item="item">
+                  <img [src]="'assets/img/avatars/'+item.username+'.jpg'"
+                       onerror="this.src='assets/img/avatars/default.jpg'" width="20px" height="20px">
+                  {{item.firstName+' '+item.lastName}}
+                </ng-template>
+                <ng-template ng-option-tmp let-item="item">
+                  <img [src]="'assets/img/avatars/'+item.username+'.jpg'"
+                       onerror="this.src='assets/img/avatars/default.jpg'" width="20px" height="20px">
+                  {{item.firstName+' '+item.lastName}}
+                </ng-template>
+              </ng-select>
+            </div>
+
+            <div class="col-md-4">
+              <ng-select [items]="items"
+                         [(ngModel)]="typeSelected"
+                         (change)="doSearch()"
+                         [searchable]="false"
+                         placeholder="Toutes les activités"
+                         multiple="true"
+                         bindValue="shortType"
+                         bindLabel="type">
+
+                <ng-template ng-label-tmp let-item="item" let-clear="clear">
+                  <span class="ng-value-label"><i [class]="item.logo"></i> {{item.shortType}}</span>
+                  <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
+                </ng-template>
+                <ng-template ng-option-tmp let-item="item">
+                  <i [class]="item.logo"></i> {{item.type}}
+                </ng-template>
+
+              </ng-select>
+            </div>
+
+          </div>
+
+          <table class="table table-sm">
+            <thead>
+            <tr>
+              <th>Type d'activité</th>
+              <th>Début</th>
+              <th>Fin</th>
+              <th>Durée</th>
+              <th>Statut</th>
+              <th>Intervenant</th>
+              <th>Détails</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let a of pageActivities?.content | paginate: {
+                                                      id: 'activities',
+                                                      itemsPerPage: itemsPerPage,
+                                                      currentPage: currentPage,
+                                                      totalItems: pageActivities?.totalElements}">
+              <td>{{a?.typeActivite}}</td>
+              <td><span class="badge badge-pill badge-light">{{a.dteStrt | date:"dd/MM/yy HH:mm"}}</span>
+              </td>
+              <td><span class="badge badge-pill badge-light">{{a.dteEnd | date:"dd/MM/yy HH:mm"}}</span>
+              </td>
+              <td><span class="badge badge-pill badge-dark">{{activityService.ShortconvertMinutesToHoursAndMinute(a.durtion)}}</span>
+              </td>
+              <td><span [class]="a.statut?'badge badge-pill badge-success':'badge badge-pill badge-info'">{{a.statut?'Realisé':'Planifié'}}</span>
+              </td>
+              <td>{{a?.user?.username}}</td>
+              <td>
+                <button class="btn btn-outline-primary btn-sm" (click)="detectModal(a)"><i
+                  class="fa fa-eye"></i></button>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+          <pagination-controls
+            class="mypagination"
+            id="activities"
+            (pageChange)="gotoPage($event)"
+            maxSize="15"
+            directionLinks="true"
+            autoHide="true"
+            previousLabel="Précédant"
+            nextLabel="Suivant"
+            screenReaderPaginationLabel="Pagination"
+            screenReaderPageLabel="page"
+            screenReaderCurrentLabel="Vous etes sur la page">
+          </pagination-controls>
+          <div class="col-xs-12 col-12 d-sm-down-none">
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <!--/.col-->
+  </div>
+</div>
+
+
+<show-activity-request bsModal #activityRequestModal="bs-modal" [modal]="activityRequestModal"
+                       [activityRequest]="activityRequest" class="modal fade" tabindex="-1" role="dialog"
+                       aria-labelledby="myModalLabel" aria-hidden="true"></show-activity-request>
+
+<show-activity-project bsModal #activityProjectModal="bs-modal" [modal]="activityProjectModal"
+                       [activityProject]="activityProject" class="modal fade" tabindex="-1" role="dialog"
+                       aria-labelledby="myModalLabel" aria-hidden="true"></show-activity-project>
+
+<show-activity-recouvrement bsModal #activityRecouvrementModal="bs-modal" [modal]="activityRecouvrementModal"
+                            [activityRecouvrement]="activityRecouvrement" class="modal fade" tabindex="-1" role="dialog"
+                            aria-labelledby="myModalLabel" aria-hidden="true"></show-activity-recouvrement>
+
+<show-activity-commercial bsModal #activityCommercialModal="bs-modal" [modal]="activityCommercialModal"
+                          [activityCommercial]="activityCommercial" class="modal fade" tabindex="-1" role="dialog"
+                          aria-labelledby="myModalLabel" aria-hidden="true"></show-activity-commercial>
+
+<show-activity-holiday bsModal #activityHolidayModal="bs-modal" [modal]="activityHolidayModal"
+                       [activityHoliday]="activityHoliday" class="modal fade" tabindex="-1" role="dialog"
+                       aria-labelledby="myModalLabel" aria-hidden="true"></show-activity-holiday>
+
+<show-activity-si bsModal #activitySIModal="bs-modal" [modal]="activitySIModal"
+                  [activitySI]="activitySI" class="modal fade" tabindex="-1" role="dialog"
+                  aria-labelledby="myModalLabel" aria-hidden="true"></show-activity-si>
+
+<show-activity-avant-vente bsModal #activityAvantVenteModal="bs-modal" [modal]="activityAvantVenteModal"
+                       [activityAvantVente]="activityAvantVente" class="modal fade" tabindex="-1" role="dialog"
+                       aria-labelledby="myModalLabel" aria-hidden="true"></show-activity-avant-vente>
+
+<show-activity-dev-competence bsModal #activityDevCompetenceModal="bs-modal" [modal]="activityDevCompetenceModal"
+                           [activityDevCompetence]="activityDevCompetence" class="modal fade" tabindex="-1" role="dialog"
+                           aria-labelledby="myModalLabel" aria-hidden="true"></show-activity-dev-competence>

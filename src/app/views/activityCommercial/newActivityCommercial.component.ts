@@ -14,6 +14,9 @@ import {DateTimeAdapter} from "ng-pick-datetime";
 import * as moment from "moment-timezone";
 import {ActivityCommercial} from "../../model/model.activityCommercial";
 import {AppAsideComponent} from "../../components/app-aside/app-aside.component";
+import {debounceTime, distinctUntilChanged, switchMap} from "rxjs/operators";
+import {VilleService} from "../../services/ville.service";
+import {NatureService} from "../../services/nature.service";
 
 @Component({
   selector: "new-activtyCommercial",
@@ -23,16 +26,20 @@ export class NewActivityCommercialComponent implements OnInit, OnDestroy {
 
   @Input() modal;
   @Input() lastActivity;
+  @Input() customers: any;
 
 
+  @Output() refresh = new EventEmitter<string>();
+
+  ville:any;
+  natures:any;
 
   isCollapsed: boolean = false;
   iconCollapse: string = "icon-arrow-up";
-  activityCommercial: ActivityCommercial = new ActivityCommercial();
+  @Input() activityCommercial: ActivityCommercial = new ActivityCommercial();
   frmName: any;
   mode: number = 1;
   message: string;
-  customers: any;
   projects: any;
   currentDate: Date = new Date();
   disabledStatut: boolean = false;
@@ -43,10 +50,16 @@ export class NewActivityCommercialComponent implements OnInit, OnDestroy {
   duree: number;
   dureeConverted: string;
 
+  customerTypeahead = new EventEmitter<string>();
 
-  constructor(private activityService: ActivityService, private notificationService: NotificationsService,
+
+  constructor(private natureService:NatureService, private villeService:VilleService, private activityService: ActivityService, private notificationService: NotificationsService,
               private socketService: SocketService, private customerService: CustomerService, private router: Router,
               private authenticationService: AuthenticationService, private projectService: ProjectService, private ref:ChangeDetectorRef) {
+  }
+
+  refreshActivity() {
+    this.refresh.emit("Refresh Activity");
   }
 
 
@@ -65,16 +78,11 @@ export class NewActivityCommercialComponent implements OnInit, OnDestroy {
   toModeOne() {
     this.error = 0;
     this.mode = 1;
-    this.loadCustomers();
     this.activityCommercial = new ActivityCommercial();
     this.activityCommercial.user.username = this.authenticationService.getUserName();
     this.activityCommercial.dteStrt = new Date();
-    this.activityCommercial.ville = "Fes";
     this.activityCommercial.statut = true;
-    this.activityCommercial.nature = "Projet";
-    this.activityCommercial.lieu = "Client";
     this.activityCommercial.typeActivite = "Activité commerciale";
-    this.activityCommercial.comments = "Teste";
     this.duree = null;
     this.dureeConverted = null;
   }
@@ -88,20 +96,45 @@ export class NewActivityCommercialComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.loadCustomers();
     this.activityCommercial.user.username = this.authenticationService.getUserName();
     this.activityCommercial.dteStrt = new Date();
-    this.activityCommercial.statut = false;
-    this.activityCommercial.ville = "Fes";
     this.activityCommercial.statut = true;
-    this.activityCommercial.nature = "Projet";
-    this.activityCommercial.lieu = "Client";
     this.activityCommercial.typeActivite = "Activité commerciale";
-    this.activityCommercial.comments = "Teste";
+    this.serverSideSearch();
+    this.chargerVilles();
+    this.chargerNatures();
   }
 
-  teste() {
+  private serverSideSearch() {
+    this.customerTypeahead.pipe(
+      distinctUntilChanged(),
+      debounceTime(200),
+      switchMap(term => this.customerService.searchCustomer(term))
+    ).subscribe(x => {
+      this.ref.markForCheck();
+      this.customers = x["_embedded"]["customers"];
+    }, (err) => {
+      console.log(err);
+      this.customers = [];
+    });
+  }
 
+  chargerNatures() {
+    this.natureService.getNatureParType("Activity_commerciale").subscribe(
+      data=>{
+        this.natures = data["_embedded"]["nature"];
+      }, err=>{
+        console.log(err);
+      }
+    );
+  }
+
+  chargerVilles() {
+    this.villeService.getAllVilles().subscribe(
+      data=>{
+        this.ville=data["_embedded"]["villes"];
+      }
+    );
   }
 
   onDatesChanged() {
@@ -120,17 +153,6 @@ export class NewActivityCommercialComponent implements OnInit, OnDestroy {
     }
   }
 
-
-  loadCustomers() {
-    this.customerService.getCustomers().subscribe(
-      data => {
-        this.customers = data["_embedded"]["customers"];
-        console.log("customers " + JSON.stringify(this.customers));
-      }, err => {
-        this.authenticationService.logout();
-        this.router.navigateByUrl('/pages/login');
-      });
-  }
 
   collapsed(event: any): void {
     // console.log(event);
@@ -163,11 +185,12 @@ export class NewActivityCommercialComponent implements OnInit, OnDestroy {
         this.activityCommercial = data;
         this.activityCommercial.typeActivite = "Activité commerciale";
         this.mode = 2;
+        this.refreshActivity();
         this.ref.detectChanges();
       }, (err: any) => {
         console.log("error " + JSON.stringify(err));
         this.returnedError = err.error.message;
-        this.error = 2;
+        this.error = 1;
 
       });
 

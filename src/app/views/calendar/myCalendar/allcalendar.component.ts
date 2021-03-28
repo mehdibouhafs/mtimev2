@@ -2,7 +2,7 @@ import {
   Component,
   ChangeDetectionStrategy,
   ViewChild,
-  TemplateRef, OnInit, Input, ViewEncapsulation
+  TemplateRef, OnInit, Input, ViewEncapsulation, ChangeDetectorRef
 } from '@angular/core';
 import {Router} from '@angular/router';
 
@@ -40,6 +40,10 @@ import {ActivityRecouvrement} from "../../../model/model.activityRecouvrement";
 import {ActivityCommercial} from "../../../model/model.activityCommercial";
 import {ActivityProject} from "../../../model/model.activityProject";
 import {ActivityHoliday} from "../../../model/model.activityHoliday";
+import {ActivitySI} from "../../../model/model.activitySI";
+import {ActivityDevCompetence} from "../../../model/model.activityDevCompetence";
+import {ActivityPM} from "../../../model/model.activityPM";
+import {ActivityAvantVente} from "../../../model/model.activityAvantVente";
 
 const colors: any = {
   red: {
@@ -53,16 +57,31 @@ const colors: any = {
   yellow: {
     primary: '#e3bc08',
     secondary: '#FDF1BA'
+  },
+  green: {
+    primary: '#5EBA67',
+    secondary: '#7ACE6B'
+  },
+  orange: {
+    primary: '#F78F05',
+    secondary: '#EFB05E'
+  },
+  silver: {
+    primary: '#C0C0C0',
+    secondary: '#808080'
+  },
+  purple: {
+    primary: '#9400D3',
+    secondary: '#9400D3'
   }
 };
 
 @Component({
-  selector: 'mycalendar-composant',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['my.calendar.component.scss'],
   templateUrl: 'allcalendar.component.html',
   styles: [
-    `
+      `
       .cal-day-selected,
       .cal-day-selected:hover {
         background-color: deeppink !important;
@@ -83,15 +102,23 @@ export class AllcalendarComponent implements OnInit {
   lastActivity:any;
 
 
+
   activity: Activity = new Activity();
   activityRequest: ActivityRequest = new ActivityRequest();
+  activityPM: ActivityPM = new ActivityPM();
   activityRecouvrement: ActivityRecouvrement = new ActivityRecouvrement();
   activityCommercial: ActivityCommercial = new ActivityCommercial();
   activityProject: ActivityProject = new ActivityProject();
+  activityAvantVente:ActivityAvantVente=new ActivityAvantVente();
   activityHoliday: ActivityHoliday = new ActivityHoliday();
+  activityDevCompetence:ActivityDevCompetence = new ActivityDevCompetence();
+  activitySI: ActivitySI = new ActivitySI();
 
   @ViewChild('dangerModal')
   dangerModal;
+
+  @ViewChild('editactivitySIModal')
+  editactivitySIModal;
 
   @ViewChild('editactivityRecouvrementModal')
   editactivityRecouvrementModal;
@@ -108,6 +135,9 @@ export class AllcalendarComponent implements OnInit {
   @ViewChild('editactivityRequestModal')
   editactivityRequestModal;
 
+  @ViewChild('activitySIModal')
+  activitySIModal;
+
   @ViewChild('activityCommercialModal')
   activityCommercialModal;
 
@@ -122,6 +152,9 @@ export class AllcalendarComponent implements OnInit {
 
   @ViewChild('activityRecouvrementModal')
   activityRecouvrementModal;
+
+  @ViewChild('activityDevCompetenceModal')
+  activityDevCompetenceModal;
 
   weekStartsOn: number = DAYS_OF_WEEK.MONDAY;
 
@@ -167,19 +200,18 @@ export class AllcalendarComponent implements OnInit {
       }
     }
   ];
+  dureeConverted:string;
+  eventSelected:any;
 
 
-  constructor(private modal1: NgbModal, private activityService: ActivityService, private authenticationService: AuthenticationService) {
+  constructor(private modal1: NgbModal, private activityService: ActivityService, private authenticationService: AuthenticationService, private router:Router, private ref:ChangeDetectorRef) {
   }
 
   ngOnInit() {
+    if(!this.authenticationService.isLogged())
+      this.router.navigate(['/pages/login']);
+    else
     this.fetchEvents();
-    this.activityService.getLastActivity()
-      .subscribe((data)=>{
-        this.lastActivity = data;
-      }, err=> {
-        console.log(err);
-      });
   }
 
 
@@ -207,9 +239,9 @@ export class AllcalendarComponent implements OnInit {
             map((results: any[]) => {
               return results.map((activity: any) => {
                 return {
-                  title: this.detectIcon(activity.typeActivite)+" "+this.detectAbrevi(activity.typeActivite)+" "+activity.hrStrt+" - "+activity.hrEnd+" "+activity.customer.name+" fait par "+activity.user.username,
+                  title: activity.user.username+" - "+this.detectIcon(activity.typeActivite)+" "+this.detectAbrevi(activity.typeActivite)+" Durée: " +activity.hrEnd+" "+(activity.customer!=null?(activity.customer.name!=null?activity.customer.name:""):""),
                   start: new Date(activity.dteStrt),
-                  end: new Date(activity.dteEnd),
+                  end: activity.dteEnd !=null ?new Date(activity.dteEnd):new Date(activity.dteStrt),
                   color: this.detectColor(activity.typeActivite),
                   actions: this.actions,
                   meta: {
@@ -229,7 +261,7 @@ export class AllcalendarComponent implements OnInit {
                 return {
                   title: activity.typeActivite,
                   start: new Date(activity.dteStrt),
-                  end: new Date(activity.dteEnd),
+                  end: activity.dteEnd !=null ?new Date(activity.dteEnd):new Date(activity.dteStrt),
                   color: this.detectColor(activity.typeActivite),
                   actions: this.actions,
                   meta: {
@@ -248,7 +280,7 @@ export class AllcalendarComponent implements OnInit {
                 return {
                   title: activity.typeActivite,
                   start: new Date(activity.dteStrt),
-                  end: new Date(activity.dteEnd),
+                  end: activity.dteEnd !=null ?new Date(activity.dteEnd):new Date(activity.dteStrt),
                   color: this.detectColor(activity.typeActivite),
                   actions: this.actions,
                   meta: {
@@ -280,11 +312,15 @@ export class AllcalendarComponent implements OnInit {
 
   handleEvent(action: string, event: CalendarEvent): void {
 
-    this.selectActivity(event.meta.activity);
+    this.selectActivity(event);
 
     switch (action) {
       case "Edited": {
         switch (event.meta.activity.typeActivite) {
+          case "Activité SI": {
+            this.editactivitySIModal.show();
+            break;
+          }
           case "Activité projet": {
             this.editactivityProjectModal.show();
             break;
@@ -305,11 +341,16 @@ export class AllcalendarComponent implements OnInit {
             this.editactivityRequestModal.show();
             break;
           }
+          case "Activité dev competence": {
+            this.activityDevCompetenceModal.show();
+            break;
+          }
         }
         break;
       }
       case "Deleted": {
         this.activity = event.meta.activity;
+        this.selectActivity(event);
         this.dangerModal.show();
         break;
       }
@@ -342,36 +383,48 @@ export class AllcalendarComponent implements OnInit {
 
   eventClicked(event: CalendarEvent<{ activity: any }>): void {
 
+    this.selectActivity(event);
+
     switch (event.meta.activity.typeActivite) {
       case "Activité commerciale": {
-        this.activityCommercial = event.meta.activity;
         this.activityCommercialModal.show();
         break;
       }
 
       case "Activité congé": {
-        this.activityHoliday = event.meta.activity;
         this.activityHolidayModal.show();
         break;
       }
 
       case "Activité projet": {
-        this.activityProject = event.meta.activity;
         this.activityProjectModal.show();
         break;
       }
 
       case "Activité recouvrement": {
-        this.activityRecouvrement = event.meta.activity;
         this.activityRecouvrementModal.show();
         break;
       }
 
       case "Activité support": {
-        this.activityRequest = event.meta.activity;
         this.activityRequestModal.show();
         break;
       }
+
+      case "Activité SI": {
+        this.activitySIModal.show();
+        break;
+      }
+
+      case "Activité avant vente": {
+       // this.activityAvantVenteModal.show();
+        break;
+      }
+      case "Activité dev competence": {
+        this.activityDevCompetenceModal.show();
+        break;
+      }
+
       default: {
         break;
       }
@@ -379,41 +432,74 @@ export class AllcalendarComponent implements OnInit {
   }
 
 
-  selectActivity(activity: any) {
-    switch (activity.typeActivite) {
+  selectActivity(event: any) {
+    this.eventSelected = event;
+    this.dureeConverted = this.activityService.convertMinutesToHoursAndMinute(this.activityService.diffBetwenTwoDateInMinutes(event.meta.activity.dteStrt, event.meta.activity.dteEnd));
+    switch (event.meta.activity.typeActivite) {
       case "Activité support" : {
-        this.activityRequest = activity;
-        this.activityRequest.dteStrt = new Date(activity.dteStrt);
-        this.activityRequest.dteEnd = new Date(activity.dteEnd);
+        this.activityRequest = JSON.parse(JSON.stringify(event.meta.activity));
+        this.activityRequest.dteStrt = new Date(event.meta.activity.dteStrt);
+        this.activityRequest.dteEnd = new Date(event.meta.activity.dteEnd);
+        break;
+      }
+
+      case "Activité PM" : {
+        this.activityPM = JSON.parse(JSON.stringify(event.meta.activity));
+        this.activityPM.dteStrt = new Date(event.meta.activity.dteStrt);
+        this.activityPM.dteEnd = new Date(event.meta.activity.dteEnd);
         break;
       }
 
       case "Activité commerciale": {
-        this.activityCommercial = activity;
-        this.activityCommercial.dteStrt = new Date(activity.dteStrt);
-        this.activityCommercial.dteEnd = new Date(activity.dteEnd);
+        this.activityCommercial = JSON.parse(JSON.stringify(event.meta.activity));
+        this.activityCommercial.dteStrt = new Date(event.meta.activity.dteStrt);
+        this.activityCommercial.dteEnd = new Date(event.meta.activity.dteEnd);
         break;
       }
 
       case "Activité recouvrement": {
-        this.activityRecouvrement = activity;
-        this.activityRecouvrement.dteStrt = new Date(activity.dteStrt);
-        this.activityRecouvrement.dteEnd = new Date(activity.dteEnd);
+        this.activityRecouvrement = JSON.parse(JSON.stringify(event.meta.activity));
+        this.activityRecouvrement.dteStrt = new Date(event.meta.activity.dteStrt);
+        this.activityRecouvrement.dteEnd = new Date(event.meta.activity.dteEnd);
         break;
       }
 
       case "Activité projet": {
-        this.activityProject = activity;
-        this.activityProject.dteStrt = new Date(activity.dteStrt);
-        this.activityProject.dteEnd = new Date(activity.dteEnd);
+        this.activityProject = JSON.parse(JSON.stringify(event.meta.activity));
+        this.activityProject.dteStrt = new Date(event.meta.activity.dteStrt);
+        this.activityProject.dteEnd = new Date(event.meta.activity.dteEnd);
+        break;
+      }
+
+      case "Activité avant vente": {
+        this.activityAvantVente = JSON.parse(JSON.stringify(event.meta.activity));
+        this.activityAvantVente.dteStrt = new Date(event.meta.activity.dteStrt);
+        this.activityAvantVente.dteEnd = new Date(event.meta.activity.dteEnd);
+        break;
+      }
+
+      case "Activité SI": {
+        console.log(event.meta.activity);
+
+        this.activitySI = JSON.parse(JSON.stringify(event.meta.activity));
+        this.activitySI.dteStrt = new Date(event.meta.activity.dteStrt);
+        this.activitySI.dteEnd = new Date(event.meta.activity.dteEnd);
         break;
       }
 
       case "Activité congé": {
 
-        this.activityHoliday = activity;
-        this.activityHoliday.dteStrt = new Date(activity.dteStrt);
-        this.activityHoliday.dteEnd = new Date(activity.dteEnd);
+        this.activityHoliday = JSON.parse(JSON.stringify(event.meta.activity));
+        this.activityHoliday.dteStrt = new Date(event.meta.activity.dteStrt);
+        this.activityHoliday.dteEnd = new Date(event.meta.activity.dteEnd);
+        break;
+      }
+
+      case "Activité dev competence": {
+
+        this.activityDevCompetence = JSON.parse(JSON.stringify(event.meta.activity));
+        this.activityDevCompetence.dteStrt = new Date(event.meta.activity.dteStrt);
+        this.activityDevCompetence.dteEnd = new Date(event.meta.activity.dteEnd);
         break;
       }
 
@@ -427,12 +513,17 @@ export class AllcalendarComponent implements OnInit {
 
     this.activityService.deleteActivity(activity.id)
       .subscribe(data => {
-
+        this.events$ = this.events$.map(events=>{
+            return events.filter(iEvent => iEvent !== this.eventSelected);
+          }
+        );
+        this.ref.detectChanges();
       }, err => {
         console.log("err");
       });
 
   }
+
 
   detectColor(type:string) {
     switch (type) {
@@ -442,8 +533,62 @@ export class AllcalendarComponent implements OnInit {
       case "Activité projet": {
         return colors.blue;
       }
+      case "Activité recouvrement": {
+        return colors.red;
+      }
+      case "Activité congé": {
+        return colors.green;
+      }
+      case "Activité commerciale": {
+        return colors.orange;
+      }
+      case "Activité SI": {
+        return colors.silver;
+      }
+      case "Activité PM": {
+        return colors.purple;
+      }
+      case "Activité avant vente": {
+        return colors.purple;
+      }
+      case "Activité dev competence": {
+        return colors.silver;
+      }
     }
   }
+
+  detectIcon(type:string) {
+    switch (type) {
+      case "Activité support": {
+        return "fa fa-bullhorn";
+      }
+      case "Activité projet": {
+        return "fa fa-product-hunt";
+      }
+      case "Activité recouvrement": {
+        return "fa fa-briefcase";
+      }
+      case "Activité congé": {
+        return "fa fa-plane";
+      }
+      case "Activité commerciale": {
+        return "fa fa-shopping-cart";
+      }
+      case "Activité SI": {
+        return "fa fa-support";
+      }
+      case "Activité PM": {
+        return "fa fa-cogs";
+      }
+      case "Activité avant vente": {
+        return "fa fa-cogs";
+      }
+      case "Activité dev competence": {
+        return "fa fa-cogs";
+      }
+    }
+  }
+
 
   detectAbrevi(type:string) {
     switch (type) {
@@ -453,16 +598,26 @@ export class AllcalendarComponent implements OnInit {
       case "Activité projet": {
         return "AP";
       }
-    }
-  }
-
-  detectIcon(type:string) {
-    switch (type) {
-      case "Activité support": {
-        return "<i class=\"fa fa-support\"></i>";
+      case "Activité recouvrement": {
+        return "AR";
       }
-      case "Activité projet": {
-        return "<i class=\"fa fa-product-hunt\"></i>";
+      case "Activité congé": {
+        return "AC";
+      }
+      case "Activité commerciale": {
+        return "ACM";
+      }
+      case "Activité SI": {
+        return "ASSI";
+      }
+      case "Activité PM": {
+        return "APM";
+      }
+      case "Activité avant vente": {
+        return "AAV";
+      }
+      case "Activité dev competence": {
+        return "ADC";
       }
     }
   }

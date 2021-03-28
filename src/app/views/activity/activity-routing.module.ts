@@ -16,12 +16,14 @@ import {EditActivityHolidayComponent} from "../activityHoliday/editActivityHolid
 import {NewActivityCommercialComponent} from "../activityCommercial/newActivityCommercial.component";
 import {NewActivityComponent} from "./new-activity.component";
 import {AllactivitiesComponent} from "./allactivities.component";
+import {ActivityServiceComponent} from "./activity-service.component";
+import {MyApComponent} from "../activityProjectWithoutTest/my-ap.component";
 
 const routes: Routes = [
   {
     path: '',
     data: {
-      title: 'Activity'
+      title: 'Activités'
     },
     children: [
       {
@@ -124,7 +126,7 @@ const routes: Routes = [
         path: 'my-activities',
         component: MyActivitiessComponent,
         data: {
-          title: 'my-activities'
+          title: 'Mes activités'
         }
       },
 
@@ -132,7 +134,23 @@ const routes: Routes = [
         path: 'all-activities',
         component: AllactivitiesComponent,
         data: {
-          title: 'my-activities'
+          title: 'Toutes les activités'
+        }
+      },
+
+      {
+        path: 'activity-service',
+        component: ActivityServiceComponent,
+        data: {
+          title: 'Activités de groupe'
+        }
+      },
+
+      {
+        path: 'my-activity-projet',
+        component: MyApComponent,
+        data: {
+          title: 'Mes activités'
         }
       },
 

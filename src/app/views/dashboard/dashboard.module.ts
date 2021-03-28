@@ -15,6 +15,9 @@ import {OWL_DATE_TIME_LOCALE,OwlDateTimeModule, OwlNativeDateTimeModule} from "n
 import {NgSelectModule} from "@ng-select/ng-select";
 import {NgxToggleModule} from "ngx-toggle";
 import {ActivityModule} from "../activity/activity.module";
+import {DashboardGroupComponent} from "./dashboard-group.component";
+import {UserService} from "../../services/user.service";
+import {ResolverDashboard} from "./resolverDashboard";
 
 
 @NgModule({
@@ -33,7 +36,10 @@ import {ActivityModule} from "../activity/activity.module";
     NgxToggleModule,
     ActivityModule
   ],
-  declarations: [ DashboardComponent ],
-  providers: [AuthenticationService, DashboardService,{provide: OWL_DATE_TIME_LOCALE, useValue: 'fr'}]
+  declarations: [
+    DashboardComponent,
+    DashboardGroupComponent
+  ],
+  providers: [ResolverDashboard, AuthenticationService, DashboardService, UserService,{provide: OWL_DATE_TIME_LOCALE, useValue: 'fr'}]
 })
 export class DashboardModule { }

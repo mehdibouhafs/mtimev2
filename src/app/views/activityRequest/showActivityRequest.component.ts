@@ -1,12 +1,25 @@
-import {Component, Input} from "@angular/core";
+import {ChangeDetectorRef, Component, Input, OnInit} from "@angular/core";
 import {ActivityRequest} from "../../model/model.activityRequest";
+import {AuthenticationService} from "../../services/authentification.service";
 @Component({
   selector: 'show-activity-request',
   templateUrl: 'showActivityRequest.component.html'
 })
-export class ShowActivityRequestComponent {
+export class ShowActivityRequestComponent implements OnInit{
   @Input() modal;
   @Input() activityRequest:ActivityRequest = new ActivityRequest();
+
+  serviceName:any;
+  role:any;
+
+  constructor(
+    private authenticationService: AuthenticationService, private ref: ChangeDetectorRef) {
+
+  }
+
+  ngOnInit(){
+    this.serviceName = this.authenticationService.getServName();
+  }
 
   hideModal() {
     this.modal.hide();

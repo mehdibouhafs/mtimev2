@@ -7,26 +7,34 @@ import {
 import {CalendarComponent} from './calendar.component';
 import {MyCalendarComponent} from "./myCalendar/my.calendar.component";
 import {AllcalendarComponent} from "./myCalendar/allcalendar.component";
+import {CalendarGroupComponent} from "./myCalendar/calendar-group.component";
 
 const routes: Routes = [
   {
     path: '',
     data: {
-      title: 'Calendar'
+      title: 'Calendrier'
     },
     children: [
       {
         path: 'my-calendar',
         component: MyCalendarComponent,
         data: {
-          title: 'mycalendar'
+          title: 'Mon calendrier'
+        }
+      },
+      {
+        path: 'calendar-group',
+        component: CalendarGroupComponent,
+        data: {
+          title: 'Calendrier de groupe'
         }
       },
       {
         path: 'all-calendar',
         component: AllcalendarComponent,
         data: {
-          title: 'all-calendar'
+          title: 'Calendrier admin'
         }
       },
     ]

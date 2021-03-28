@@ -1,135 +1,41 @@
 <div class="animated fadeIn">
 
 
-
   <div class="row">
-    <div class="col-sm-6 col-lg-3">
-      <div class="social-box facebook">
-        <i><h4>Activités globales</h4></i>
-        <div class="chart-wrapper">
-          <div class="chartjs-size-monitor"
-               style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
-            <div class="chartjs-size-monitor-expand"
-                 style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
-              <div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div>
-            </div>
-            <div class="chartjs-size-monitor-shrink"
-                 style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
-              <div style="position:absolute;width:200%;height:200%;left:0; top:0"></div>
-            </div>
-          </div>
-          <canvas id="social-box-chart-1" height="90" width="226" class="chartjs-render-monitor"
-                  style="display: block;"></canvas>
-        </div>
-        <ul>
-          <li>
-            <strong>{{statistics?.realisedActivities}}</strong>
-            <span>réalisés</span>
-          </li>
-          <li>
-            <strong>{{statistics?.planifiedActivities}}</strong>
-            <span>planifiés</span>
-          </li>
-        </ul>
+    <div class="col-md-4">
+      <div class="metric">
+        <span class="icon"><i class="fa fa-bar-chart"></i></span>
+        <p>
+          <span class="number text-right">{{statistics?.realisedActivitiesOnthisMonth}}</span>
+          <span class="title">Activités réalisés</span>
+        </p>
       </div>
     </div>
-    <div class="col-sm-6 col-lg-3">
-      <div class="social-box facebook">
-        <i><h4>{{months[currentDate.getMonth()] + ' ' + currentDate.getFullYear()}}</h4></i>
-        <div class="chart-wrapper">
-          <div class="chartjs-size-monitor"
-               style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
-            <div class="chartjs-size-monitor-expand"
-                 style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
-              <div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div>
-            </div>
-            <div class="chartjs-size-monitor-shrink"
-                 style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
-              <div style="position:absolute;width:200%;height:200%;left:0; top:0"></div>
-            </div>
-          </div>
-          <canvas id="social-box-chart-1" height="90" width="226" class="chartjs-render-monitor"
-                  style="display: block;"></canvas>
-        </div>
-        <ul>
-          <li>
-            <strong>{{statistics?.realisedActivitiesOnthisMonth}}</strong>
-            <span>réalisés</span>
-          </li>
-          <li>
-            <strong>{{statistics?.planifiedActivitiesOnthisMonth}}</strong>
-            <span>planifiés</span>
-          </li>
-        </ul>
+    <div class="col-md-4">
+      <div class="metric">
+        <span class="icon"><i class="fa fa-star"></i></span>
+        <p>
+          <span class="number text-right">{{statistics?.activitiesRealisedOnWeekEndThisMonth}}</span>
+          <span class="title">Activités en week end</span>
+        </p>
       </div>
     </div>
-    <div class="col-sm-6 col-lg-3">
-      <div class="social-box facebook">
-        <i><h4>Activités Week End</h4></i>
-        <div class="chart-wrapper">
-          <div class="chartjs-size-monitor"
-               style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
-            <div class="chartjs-size-monitor-expand"
-                 style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
-              <div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div>
-            </div>
-            <div class="chartjs-size-monitor-shrink"
-                 style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
-              <div style="position:absolute;width:200%;height:200%;left:0; top:0"></div>
-            </div>
-          </div>
-          <canvas id="social-box-chart-1" height="90" width="226" class="chartjs-render-monitor"
-                  style="display: block;"></canvas>
-        </div>
-        <ul>
-          <li>
-            <strong>{{statistics?.activitiesRealisedOnWeekEnd}}</strong>
-            <span>réalisés</span>
-          </li>
-          <li>
-            <strong>{{statistics?.activitiesRealisedOnWeekEndThisMonth}}</strong>
-            <span>réalisés en {{months[currentDate.getMonth()]}}</span>
-          </li>
-        </ul>
-      </div>
-    </div>
-    <div class="col-sm-6 col-lg-3">
-      <div class="social-box facebook">
-        <i><h4>Productivité</h4></i>
-        <div class="chart-wrapper">
-          <div class="chartjs-size-monitor"
-               style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
-            <div class="chartjs-size-monitor-expand"
-                 style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
-              <div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div>
-            </div>
-            <div class="chartjs-size-monitor-shrink"
-                 style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
-              <div style="position:absolute;width:200%;height:200%;left:0; top:0"></div>
-            </div>
-          </div>
-          <canvas id="social-box-chart-1" height="90" width="226" class="chartjs-render-monitor"
-                  style="display: block;"></canvas>
-        </div>
-        <ul>
-          <li>
-            <strong>{{statistics?.productivite.toFixed(2)}} %</strong>
-            <span>Globale</span>
-          </li>
-          <li>
-            <strong>{{statistics?.productiviteThisMonth.toFixed(2)}} %</strong>
-            <span>Mois courant</span>
-          </li>
-        </ul>
+    <div class="col-md-4">
+      <div class="metric">
+        <span class="icon"><i class="fa fa-line-chart"></i></span>
+        <p>
+          <span class="number text-right">{{statistics?.productiviteThisMonth.toFixed(1)}} %</span>
+          <span class="title">Charge de Travail</span>
+        </p>
       </div>
     </div>
   </div>
 
   <div class="card-columns cols-2">
     <div>
-      <div class="card">
+      <div class="card" *ngIf="pageActivities?.content?.length>0">
         <div class="card-header">
-          <i class="fa fa-align-justify"></i> Activités à réalisés
+          <i class="fa fa-align-justify"></i> Activités à réaliser
         </div>
         <div class="card-body">
           <table class="table table-sm table-responsive table-hover">
@@ -181,7 +87,7 @@
     </div>
 
     <div>
-      <div class="card">
+      <div class="card" *ngIf="pageActivitiesHoliday?.content?.length>0">
         <div class="card-header">
           <i class="fa fa-align-justify"></i> Activités congé
         </div>
@@ -265,7 +171,7 @@
   <div *ngIf="statistics" class="card-columns cols-2">
 
 
-    <div class="chart-wrapper">
+    <div *ngIf="pieChartData" class="chart-wrapper">
       <canvas baseChart class="chart"
               [data]="pieChartData"
               [labels]="pieChartLabels"
@@ -277,7 +183,7 @@
       </canvas>
     </div>
 
-    <div class="chart-wrapper">
+    <div *ngIf="pieChartData1" class="chart-wrapper">
       <canvas baseChart class="chart"
               [data]="pieChartData1"
               [labels]="pieChartLabels1"
@@ -293,26 +199,63 @@
 
 </div>
 
-<edit-activity-request bsModal #editactivityRequestModal="bs-modal" [toDo]="true" [disabledStatut]="disabledStatut" [pageActivities]="pageActivities" [index]="indexSelected" [modal]="editactivityRequestModal"
-                       [activityRequest]="activityRequest" class="modal fade" tabindex="-1" role="dialog"
+<edit-activity-request bsModal #editactivityRequestModal="bs-modal" [toDo]="true" [disabledStatut]="disabledStatut"
+                       [modal]="editactivityRequestModal"
+                       [requestOk]="true"
+                       [activityRequest]="activityRequest"
+                       [dureeConverted]="dureeConverted"
+                       (refresh)="ngOnInit()"
+                       class="modal fade" tabindex="-1"
+                       role="dialog"
                        aria-labelledby="myModalLabel" aria-hidden="true"></edit-activity-request>
 
-<edit-activity-si bsModal #editactivitySIModal="bs-modal" [toDo]="true" [disabledStatut]="disabledStatut" [pageActivities]="pageActivities" [index]="indexSelected" [modal]="editactivitySIModal"
-                  [activitySI]="activitySI" class="modal fade" tabindex="-1" role="dialog"
+<edit-activity-si bsModal #editactivitySIModal="bs-modal" [toDo]="true" [disabledStatut]="disabledStatut"
+                  [modal]="editactivitySIModal"
+                  [activitySI]="activitySI"
+                  [dureeConverted]="dureeConverted"
+                  (refresh)="ngOnInit()"
+                  class="modal fade" tabindex="-1" role="dialog"
                   aria-labelledby="myModalLabel" aria-hidden="true"></edit-activity-si>
 
-<edit-activity-recouvrement bsModal #editactivityRecouvrementModal="bs-modal" [toDo]="true" [disabledStatut]="disabledStatut" [pageActivities]="pageActivities" [index]="indexSelected" [modal]="editactivityRecouvrementModal"
-                            [activityRecouvrement]="activityRecouvrement" class="modal fade" tabindex="-1" role="dialog"
+<edit-activity-recouvrement bsModal #editactivityRecouvrementModal="bs-modal" [toDo]="true"
+                            [disabledStatut]="disabledStatut"
+                            [modal]="editactivityRecouvrementModal"
+                            [activityRecouvrement]="activityRecouvrement"
+                            [dureeConverted]="dureeConverted"
+                            (refresh)="ngOnInit()"
+                            class="modal fade"
+                            tabindex="-1" role="dialog"
                             aria-labelledby="myModalLabel" aria-hidden="true"></edit-activity-recouvrement>
 
-<edit-activity-project bsModal #editactivityProjectModal="bs-modal" [toDo]="true" [disabledStatut]="disabledStatut" [pageActivities]="pageActivities" [index]="indexSelected" [modal]="editactivityProjectModal"
-                       [activityProject]="activityProject" class="modal fade" tabindex="-1" role="dialog"
+<edit-activity-project bsModal #editactivityProjectModal="bs-modal" [toDo]="true" [disabledStatut]="disabledStatut"
+                       [modal]="editactivityProjectModal"
+                       [activityProject]="activityProject" [projects]="projects"
+                       [dureeConverted]="dureeConverted"
+                       (refresh)="ngOnInit()"
+                       class="modal fade" tabindex="-1" role="dialog"
                        aria-labelledby="myModalLabel" aria-hidden="true"></edit-activity-project>
 
-<edit-activity-holiday bsModal #editactivityHolidayModal="bs-modal" [toDo]="true" [disabledStatut]="disabledStatut" [pageActivities]="pageActivitiesHoliday" [index]="indexSelectedHoliday" [modal]="editactivityHolidayModal"
-                       [activityHoliday]="activityHoliday" class="modal fade" tabindex="-1" role="dialog"
+<edit-activity-holiday bsModal #editactivityHolidayModal="bs-modal" [toDo]="true" [disabledStatut]="disabledStatut"
+                       [modal]="editactivityHolidayModal"
+                       [activityHoliday]="activityHoliday"
+                       (refresh)="getActivityHoliday()"
+                       class="modal fade" tabindex="-1" role="dialog"
                        aria-labelledby="myModalLabel" aria-hidden="true"></edit-activity-holiday>
 
-<edit-activity-commercial bsModal #editactivityCommercialModal="bs-modal" [toDo]="true" [disabledStatut]="disabledStatut" [pageActivities]="pageActivities" [index]="indexSelected" [modal]="editactivityCommercialModal"
-                          [activityCommercial]="activityCommercial" class="modal fade" tabindex="-1" role="dialog"
+<edit-activity-commercial bsModal #editactivityCommercialModal="bs-modal" [toDo]="true"
+                          [disabledStatut]="disabledStatut"
+                          [modal]="editactivityCommercialModal"
+                          [activityCommercial]="activityCommercial"
+                          [dureeConverted]="dureeConverted"
+                          (refresh)="ngOnInit()"
+                          class="modal fade"
+                          tabindex="-1" role="dialog"
                           aria-labelledby="myModalLabel" aria-hidden="true"></edit-activity-commercial>
+
+<edit-activity-avant-vente bsModal #editactivityAvantVenteModal="bs-modal" [toDo]="true" [disabledStatut]="disabledStatut"
+                       [modal]="editactivityAvantVenteModal"
+                       [activityAvantVente]="activityAvantVente"
+                       [dureeConverted]="dureeConverted"
+                       (refresh)="ngOnInit()"
+                       class="modal fade" tabindex="-1" role="dialog"
+                       aria-labelledby="myModalLabel" aria-hidden="true"></edit-activity-avant-vente>

@@ -23,7 +23,8 @@
       <div *ngFor="let activity of activityTomorrow">
         <div class="callout callout-danger m-0 py-3">
           <div>{{activity?.typeActivite}} <strong>{{activity?.customer?.name}}</strong></div>
-          <small class="text-muted mr-3"><i class="icon-calendar"></i>&nbsp;{{activity?.hrStrt}} - {{activity?.hrEnd}}</small>
+          <small class="text-muted mr-3"><i class="icon-calendar"></i>&nbsp;{{activity?.hrStrt}} - {{activity?.hrEnd}}
+          </small>
           <small class="text-muted"><i class="icon-location-pin"></i>&nbsp;{{activity?.ville}}</small>
         </div>
         <hr class="mx-3 my-0">
@@ -32,91 +33,91 @@
     </tab>
 
     <tab>
-      <ng-template tabHeading><i class="icon-speech"></i></ng-template>
+      <ng-template tabHeading><i class="fa fa-graduation-cap"></i></ng-template>
       <div class="callout m-0 py-2 text-muted text-center bg-light text-uppercase">
         <small><b>Ce mois</b></small>
       </div>
       <hr class="transparent mx-3 my-0">
-      <div class="callout callout-warning m-0 py-3">
-        <div class="avatar float-right">
-          <img src="assets/img/avatars/7.jpg" class="img-avatar" alt="admin@bootstrapmaster.com">
+      <ng-container *ngFor="let f of formationThisMonth;">
+        <div class="callout callout-warning m-0 py-3">
+          <div class="avatar float-right">
+            <img src="assets/img/avatars/formation.jpg" class="img-avatar" alt="formation">
+          </div>
+          <div>   <strong>{{f?.frmName}}</strong></div>
+          <small class="text-muted mr-3"><i class="icon-calendar"></i>&nbsp; {{f?.dateStrt}} - {{f?.dateEnd}}</small>
+          <div class="text-muted"><i class="fa fa-graduation-cap"></i>&nbsp; {{f?.technologie?.nomTechnologie}}</div>
+          <div class="avatars-stack mt-2">
+            <div *ngFor="let c of f.candidats;" class="avatar avatar-xs">
+              <img [src]="'assets/img/avatars/'+c.employe.username+'.jpg'" onerror="this.src='assets/img/avatars/default.jpg'" class="img-avatar" [alt]="c.employe.username">
+            </div>
+          </div>
         </div>
-        <div>Formation <strong>SAP</strong></div>
-        <small class="text-muted mr-3"><i class="icon-calendar"></i>&nbsp; 10:00 - 12:00</small>
-        <small class="text-muted"><i class="icon-location-pin"></i>&nbsp; Casablanca</small>
-      </div>
-      <hr class="mx-3 my-0">
-      <div class="callout callout-info m-0 py-3">
-        <div class="avatar float-right">
-          <img src="assets/img/avatars/4.jpg" class="img-avatar" alt="admin@bootstrapmaster.com">
-        </div>
-        <div>Certification <strong>SQL</strong></div>
-        <small class="text-muted mr-3"><i class="icon-calendar"></i>&nbsp; 10:00</small>
-        <small class="text-muted"><i class="icon-social-skype"></i>&nbsp; On-line</small>
-      </div>
-      <hr class="transparent mx-3 my-0">
+        <hr class="mx-3 my-0">
+      </ng-container>
       <div class="callout m-0 py-2 text-muted text-center bg-light text-uppercase">
         <small><b>Mois prochain</b></small>
       </div>
       <hr class="transparent mx-3 my-0">
-      <div class="callout callout-danger m-0 py-3">
-        <div>Certification F5- <strong>deadline</strong></div>
-        <small class="text-muted mr-3"><i class="icon-calendar"></i>&nbsp; 10:00 - 11:00</small>
-        <small class="text-muted"><i class="icon-home"></i>&nbsp; F5 Security</small>
-        <div class="avatars-stack mt-2">
-          <div class="avatar avatar-xs">
-            <img src="assets/img/avatars/2.jpg" class="img-avatar" alt="admin@bootstrapmaster.com">
+      <ng-container *ngFor="let f of formationNextMonth;">
+        <div class="callout callout-warning m-0 py-3">
+          <div class="avatar float-right">
+            <img src="assets/img/avatars/formation.jpg" class="img-avatar" alt="formation">
           </div>
-          <div class="avatar avatar-xs">
-            <img src="assets/img/avatars/3.jpg" class="img-avatar" alt="admin@bootstrapmaster.com">
-          </div>
-          <div class="avatar avatar-xs">
-            <img src="assets/img/avatars/4.jpg" class="img-avatar" alt="admin@bootstrapmaster.com">
-          </div>
-          <div class="avatar avatar-xs">
-            <img src="assets/img/avatars/5.jpg" class="img-avatar" alt="admin@bootstrapmaster.com">
-          </div>
-          <div class="avatar avatar-xs">
-            <img src="assets/img/avatars/6.jpg" class="img-avatar" alt="admin@bootstrapmaster.com">
+          <div><strong>{{f?.frmName}}</strong></div>
+          <small class="text-muted mr-3"><i class="icon-calendar"></i>&nbsp; {{f?.dateStrt}} - {{f?.dateEnd}}</small>
+          <div class="text-muted"><i class="fa fa-graduation-cap"></i>&nbsp; {{f?.technologie?.nomTechnologie}}</div>
+          <div class="avatars-stack mt-2">
+            <div *ngFor="let c of f.candidats;" class="avatar avatar-xs">
+              <img [src]="'assets/img/avatars/'+c.employe.username+'.jpg'" onerror="this.src='assets/img/avatars/default.jpg'" class="img-avatar" [alt]="c.employe.username">
+            </div>
           </div>
         </div>
+        <hr class="mx-3 my-0">
+      </ng-container>
+    </tab>
+
+    <tab>
+      <ng-template tabHeading><i class="fa fa-certificate"></i></ng-template>
+      <div class="callout m-0 py-2 text-muted text-center bg-light text-uppercase">
+        <small><b>Ce mois</b></small>
       </div>
-      <hr class="mx-3 my-0">
-      <div class="callout callout-success m-0 py-3">
-        <div><strong> Formation </strong> SAP</div>
-        <small class="text-muted mr-3"><i class="icon-calendar"></i>&nbsp; 10:00 - 12:00</small>
-        <small class="text-muted"><i class="icon-location-pin"></i>&nbsp; Palo Alto, CA</small>
-      </div>
-      <hr class="mx-3 my-0">
-      <div class="callout callout-primary m-0 py-3">
-        <div><strong>Service SI</strong></div>
-        <small class="text-muted mr-3"><i class="icon-calendar"></i>&nbsp; 14:00 - 15:00</small>
-        <small class="text-muted"><i class="icon-home"></i>&nbsp; creativeLabs HQ</small>
-        <div class="avatars-stack mt-2">
-          <div class="avatar avatar-xs">
-            <img src="assets/img/avatars/2.jpg" class="img-avatar" alt="admin@bootstrapmaster.com">
+      <hr class="transparent mx-3 my-0">
+      <ng-container *ngFor="let f of certificationThisMonth;">
+        <div class="callout callout-warning m-0 py-3">
+          <div class="avatar float-right">
+            <img src="assets/img/avatars/certification.jpg" class="img-avatar" alt="formation">
           </div>
-          <div class="avatar avatar-xs">
-            <img src="assets/img/avatars/3.jpg" class="img-avatar" alt="admin@bootstrapmaster.com">
-          </div>
-          <div class="avatar avatar-xs">
-            <img src="assets/img/avatars/4.jpg" class="img-avatar" alt="admin@bootstrapmaster.com">
-          </div>
-          <div class="avatar avatar-xs">
-            <img src="assets/img/avatars/5.jpg" class="img-avatar" alt="admin@bootstrapmaster.com">
-          </div>
-          <div class="avatar avatar-xs">
-            <img src="assets/img/avatars/6.jpg" class="img-avatar" alt="admin@bootstrapmaster.com">
-          </div>
-          <div class="avatar avatar-xs">
-            <img src="assets/img/avatars/7.jpg" class="img-avatar" alt="admin@bootstrapmaster.com">
-          </div>
-          <div class="avatar avatar-xs">
-            <img src="assets/img/avatars/8.jpg" class="img-avatar" alt="admin@bootstrapmaster.com">
+          <div>   <strong>{{f?.certName}}</strong></div>
+          <small class="text-muted mr-3"><i class="icon-calendar"></i>&nbsp; {{f?.dateEch}}</small>
+          <div class="text-muted"><i class="fa fa-graduation-cap"></i>&nbsp; {{f?.technologie?.nomTechnologie}}</div>
+          <div class="avatars-stack mt-2">
+            <div *ngFor="let c of f.candidats;" class="avatar avatar-xs">
+              <img [src]="'assets/img/avatars/'+c.employe.username+'.jpg'" onerror="this.src='assets/img/avatars/default.jpg'" class="img-avatar" [alt]="c.employe.username">
+            </div>
           </div>
         </div>
+        <hr class="mx-3 my-0">
+      </ng-container>
+      <div class="callout m-0 py-2 text-muted text-center bg-light text-uppercase">
+        <small><b>Mois prochain</b></small>
       </div>
-      <hr class="mx-3 my-0">
+      <hr class="transparent mx-3 my-0">
+      <ng-container *ngFor="let f of certificationNextMonth;">
+        <div class="callout callout-warning m-0 py-3">
+          <div class="avatar float-right">
+            <img src="assets/img/avatars/certification.jpg" class="img-avatar" alt="formation">
+          </div>
+          <div><strong>{{f?.certName}}</strong></div>
+          <small class="text-muted mr-3"><i class="icon-calendar"></i>&nbsp; {{f?.dateEch}} </small>
+          <div class="text-muted"><i class="fa fa-graduation-cap"></i>&nbsp; {{f?.technologie?.nomTechnologie}}</div>
+          <div class="avatars-stack mt-2">
+            <div *ngFor="let c of f.candidats;" class="avatar avatar-xs">
+              <img [src]="'assets/img/avatars/'+c.employe.username+'.jpg'" onerror="this.src='assets/img/avatars/default.jpg'" class="img-avatar" [alt]="c.employe.username">
+            </div>
+          </div>
+        </div>
+        <hr class="mx-3 my-0">
+      </ng-container>
     </tab>
   </tabset>
 

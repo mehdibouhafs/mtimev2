@@ -8,10 +8,11 @@
         <h6 class="col-12 modal-title text-center">
           <p>Nouvelle Activité support</p>
           <div *ngIf="lastActivity" class="badge badge-pill badge-light">
-            Dernière Activité : {{lastActivity?.typeActivite}} Du
-            {{lastActivity?.dteStrt | date: "dd/MM/yy HH:mm"}} à {{lastActivity?.dteEnd | date: "dd/MM/yy HH:mm"}}
+            Dernière Activité : {{lastActivity?.typeActivite+", "+lastActivity?.nature}} Date
+            {{lastActivity?.dteStrt | date: "dd/MM/yyyy"}},
+            {{lastActivity?.customer?.name}}
           </div>
-          <div class="alert alert-danger" role="alert" *ngIf="error==2">
+          <div class="alert alert-danger" role="alert" *ngIf="error==1">
             <strong> Oups ! </strong> {{returnedError}}
           </div>
         </h6>
@@ -23,74 +24,97 @@
         <div class="modal-body">
 
           <div class="form-row">
-            <div class="form-group col-sm-6 offset-sm-6">
-              <label>Numéro de la demande :</label>
 
-              <div class="input-group">
-                <div class="input-group-prepend">
-                  <div class="input-group-text"><i
-                    class="fa fa-search"></i></div>
-                </div>
-                <input minlength="10" class="form-control" placeholder="Numéro de la demande"
-                       aria-label="Input group example" aria-describedby="btnGroupAddon" maxlength="10" id="rqtExcde"
-                       name="rqtExcde" #rqtExcde="ngModel" [(ngModel)]="activityRequest.request.rqtExcde" size="10"
-                       type="text" (input)="onSearchRequest($event)" required>
-                <div class="input-group-prepend">
-                  <button class="btn btn-primary" type="button" [disabled]="!requestOk" (click)="mode=3"><i
-                    class="fa fa-eye"></i>
-                  </button>
-                </div>
+            <div class="form-group col-sm-6">
+              <label class="control-label">Client :</label>
+              <ng-select id="customers" [items]="customers"
+                         bindLabel="name"
+                         name="customer"
+                         [disabled]="disabledInput"
+                         placeholder="Selectionner un client"
+                         notFoundText="Aucun client trouvé"
+                         [typeahead]="customerTypeahead"
+                         typeToSearchText="Saisir client"
+                         [(ngModel)]="activityRequest.customer"
+                         (change)="onSelectCustomer()"
+                         required></ng-select>
+
+
+            </div>
+
+            <div class="form-group col-sm-6">
+              <label class="control-label">Demande :</label>
+              <ng-select id="requests" [items]="requests"
+                         bindLabel="rqtExcde"
+                         name="requests"
+                         placeholder="Selectionner la demande"
+                         notFoundText="Aucune demande trouvée"
+                         [typeahead]="requestTypeahead"
+                         typeToSearchText="Saisir le N° de la demande"
+                         [(ngModel)]="activityRequest.request"
+                         required>
+
+                <ng-template ng-label-tmp let-item="item">
+                  {{item?.rqtExcde}}  {{item?.objDsc}}
+                </ng-template>
+                <ng-template ng-option-tmp let-item="item" let-search="searchTerm">
+                  {{item?.rqtExcde}}  {{item?.objDsc}}
+                </ng-template>
+              </ng-select>
+
+
+            </div>
+
+
+          </div>
+
+
+            <div class="form-row" *ngIf="activityRequest.request">
+              <div class="form-group col-sm-6">
+                <label for="objexcde" class="control-label">Description de la demande  :</label>
+                <input type="text" id="objexcde" name="objexcde" class="form-control" [ngModel]="activityRequest.request?.objexcde" readonly/>
               </div>
 
-              <div *ngIf="!requestOk">
-                <div *ngIf="rqtExcde.invalid && (rqtExcde.dirty || rqtExcde.touched)"
-                     class="error">
-                  <div *ngIf="rqtExcde.errors.required">
-                    Le numéro de la demande est obligatoire.
-                  </div>
-                  <div *ngIf="rqtExcde.errors.minlength">
-                    Le numéro de la demande doit contenir 10 chiffres.
-                  </div>
-                </div>
-                <div class="error" *ngIf="rqtExcde.valid">
-                  Le numéro de la demande est introuvable
-                </div>
+              <div class="form-group col-sm-6">
+                <label for="objIdentVal" class="control-label">Instance  :</label>
+                <input type="text" class="form-control" name="objIdentVal" id = "objIdentVal"[ngModel]="activityRequest.request?.objIdentVal" readonly/>
               </div>
 
 
             </div>
-          </div>
+
+            <div class="form-row" *ngIf="activityRequest.request">
+              <div class="form-group col-sm-12">
+                <label for="descriptionDemande" class="control-label">Commentaire de la demande   :</label>
+                <textarea minlength="1" id="descriptionDemande" name="descriptionDemande"
+                          [(ngModel)]="activityRequest.request.descriptionDemande" rows="2" class="form-control" placeholder="Commentaire de la demande"
+                          style="margin-top: 0px; margin-bottom: 0px; height: 56px;" readonly></textarea>
+              </div>
+            </div>
+
 
           <div class="form-row">
             <div class="form-group col-sm-6">
-              <label>Date de début :</label>
+              <label>Date :</label>
 
               <div class="input-group">
                 <div class="input-group-prepend">
-                  <button class="btn btn-primary" type="button"><i class="fa fa-calendar"></i></button>
+                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                 </div>
-                <input class="form-control" [owlDateTimeTrigger]="dt" [owlDateTime]="dt"
-                       placeholder="Date début"
-                       [(ngModel)]="activityRequest.dteStrt" name="dteStrt" required (ngModelChange)="onDatesChanged()">
-                <owl-date-time #dt></owl-date-time>
+                <input class="form-control form-control-sm" [owlDateTimeTrigger]="dt" [owlDateTime]="dt" [max]="maxDate"
+                       placeholder="Date"
+                       [(ngModel)]="activityRequest.dteStrt" name="dteStrt"  required >
+                <owl-date-time [pickerType]="'calendar'" #dt></owl-date-time>
               </div>
             </div>
 
             <div class="form-group col-sm-6">
-              <label>Date de fin :</label>
-
-
+              <label for="duree">Durée :</label>
               <div class="input-group">
                 <div class="input-group-prepend">
-                  <button class="btn btn-primary" type="button"><i class="fa fa-calendar"></i></button>
+                  <div class="input-group-text"><i class="fa fa-clock-o"></i></div>
                 </div>
-                <input class="form-control" [min]="activityRequest.dteStrt" [owlDateTimeTrigger]="dt1"
-                       [owlDateTime]="dt1" placeholder="Date et heure de fin"
-                       [(ngModel)]="activityRequest.dteEnd" name="dteEnd" (ngModelChange)="onDatesChanged()" required>
-                <owl-date-time #dt1></owl-date-time>
-              </div>
-              <div *ngIf="dureeConverted" class="duree">
-                {{dureeConverted}}
+                <input id="duree" name="duree" class="form-control form-control-sm" type="time" [(ngModel)]="durtion" (change)="reject()" required/>
               </div>
 
             </div>
@@ -101,90 +125,118 @@
 
             <div class="form-group col-sm-6">
               <label class="control-label" for="nature">Nature de l'activité :</label>
-              <select class="form-control form-control-sm" id="nature" [(ngModel)]="activityRequest.nature"
-                      name="nature" #nature="ngModel" placeholder="Séclectionner la nature de l'activité" required>
-                <option>Request</option>
-                <option>Réunion</option>
-                <option>Nature 3</option>
-                <option>Nature 4</option>
-              </select>
-              <div *ngIf="nature.invalid && (nature.dirty || nature.touched)" class="invalid-feedback">
-                <div *ngIf="nature.errors.required">
-                  La nature est obligatoire.
-                </div>
-              </div>
+              <ng-select id="nature"
+                         [items]="nature"
+                         placeholder="Selectionnez une nature"
+                         bindLabel="name"
+                         bindValue="name"
+                         [(ngModel)]="activityRequest.nature"
+                         name="nature"
+                         required>
+              </ng-select>
             </div>
 
+            <div *ngIf="serviceName=='Value Software' || serviceName=='Value Système' || serviceName=='Value Réseaux et Sécurité'" class="form-group col-sm-6">
+              <label for="produit">Produits :</label>
+              <ng-select [items]="produits"
+                         id="produit"
+                         name="produit"
+                         [multiple]="true"
+                         placeholder="Produit"
+                         bindLabel="produit"
+                         groupBy="groupe"
+                         [(ngModel)]="activityRequest.produits"
+                         [addTag]="true"
+                         required>
+
+              </ng-select>
+            </div>
+
+
+
+          </div>
+
+          <div class="form-row">
             <div class="form-group col-sm-6">
-              <label class="control-label">Client :</label>
-              <ng-select
-                class="ngselects"
-                [items]="customers"
-                bindLabel="name"
-                name="customer"
-                placeholder="Selectionner un client"
-                [(ngModel)]="activityRequest.customer"
-                required>
+              <label for="role">Rôle :</label>
+              <ng-select [items]="role"
+                         id="role"
+                         name="role"
+                         placeholder="Rôle"
+                         bindLabel="name"
+                         bindValue="val"
+                         [searchable]="false"
+                         [(ngModel)]="activityRequest.principal"
+                         required>
+
               </ng-select>
 
 
             </div>
+            <div class="form-group col-sm-6">
+              <label for="etat">Etat :</label>
+              <ng-select [items]="etat"
+                         id="etat"
+                         name="etat"
+                         placeholder="Etat"
+                         bindLabel="name"
+                         bindValue="val"
+                         [searchable]="false"
+                         [(ngModel)]="activityRequest.etat"
+                         required>
 
+              </ng-select>
+
+
+            </div>
           </div>
+
+
+
+
 
           <div class="form-row">
             <div class="form-group col-sm-6">
 
-              <label class="control-label" for="lieu">Lieu :</label>
-              <select class="form-control" id="lieu" [(ngModel)]="activityRequest.lieu" name="lieu"
-                      required>
-                <option>Client</option>
-                <option>Munisys</option>
-                <option>Domicile</option>
-              </select>
+              <label for="lieu">Lieu :</label>
+              <ng-select id="lieu" name="lieu"
+                         [items]="lieu"
+                         placeholder="Lieu"
+                         bindValue="name"
+                         bindLabel="name"
+                         [(ngModel)]="activityRequest.lieu"
+                         required>
+              </ng-select>
             </div>
 
             <div class="form-group col-sm-6">
-              <label class="control-label" for="ville">Ville :</label>
-              <select class="form-control" id="ville" [(ngModel)]="activityRequest.ville" name="ville"
-                      required #ville="ngModel">
-                <option>Casablanca</option>
-                <option>Fes</option>
-                <option>Agadir</option>
-              </select>
-              <div *ngIf="ville.invalid && (ville.dirty || nature.touched)" class="invalid-feedback">
-                <div *ngIf="ville.errors.required">
-                  La ville est obligatoire.
-                </div>
-              </div>
+              <label for="ville">Ville :</label>
+              <ng-select id="ville"
+                         name="ville"
+                         placeholder="Ville"
+                         [items]="ville"
+                         [addTag]="true"
+                         addTagText="Autre ville"
+                         bindLabel="name"
+                         bindValue="name"
+                         [(ngModel)]="activityRequest.ville"
+                         notFoundText="Aucune ville trouvée"
+                         required>
+
+              </ng-select>
             </div>
 
           </div>
 
           <div class="form-row">
 
+
             <div class="form-group col-sm-6">
-              <label class="control-label" for="comments">Commentaire :</label>
+              <label for="comments">Commentaire :</label>
               <textarea minlength="1" id="comments" name="comments" #comments="ngModel"
-                        [(ngModel)]="activityRequest.comments" rows="3" class="form-control form-control-sm"
-                        placeholder="Action" style="margin-top: 0px; margin-bottom: 0px; height: 56px;"
-                        required></textarea>
-              <div *ngIf="comments.invalid && (comments.dirty || comments.touched)"
-                   class="error">
-                <div *ngIf="comments.errors.required">
-                  Commentaire est requis.
-                </div>
-                <div *ngIf="comments.errors.minlength">
-                  Un commentaire doit au minimum contenir 5 caracteres
-                </div>
-              </div>
-            </div>
+                        [(ngModel)]="activityRequest.comments" rows="9" class="form-control" placeholder="Content.."
+                        style="margin-top: 0px; margin-bottom: 0px; height: 56px;" required></textarea>
 
-            <div class="form-group row col-sm-6 my-auto">
-              <label class="col-sm-3 col-form-label nopadding-right">Statut :</label>
-              <div class="col-sm-9 nopadding my-auto">
-                <span [class]="activityRequest.statut?'badge badge-pill badge-success':'badge badge-pill badge-info'">{{activityRequest.statut?'Réalisé':'Planifié'}}</span>
-              </div>
             </div>
 
           </div>
@@ -195,8 +247,13 @@
         <div class="modal-footer">
           <button type="button" class="btn btn-sm btn-danger" (click)="hideModal(); toModeOne();">Annuler
           </button>
-          <button [disabled]="!f.valid || !requestOk" type="submit" class="btn btn-sm btn-primary"><i class="fa fa-dot-circle-o"></i>
+          <button [disabled]="!f.valid" type="submit" class="btn btn-sm btn-primary"><i
+            class="fa fa-dot-circle-o"></i>
             Enregistrer
+          </button>
+          <button [disabled]="!f.valid " (click)="enregisterContinuer()" class="btn btn-sm btn-warning"><i
+            class="fa fa-dot-circle-o"></i>
+            Enregistrer et Continuer
           </button>
         </div>
 
@@ -208,40 +265,106 @@
 
 
       <div class="modal-header">
-        <h4 class="modal-title">Confirmation N° : {{activityRequest?.id}}</h4>
+        <h4 class="modal-title">Confirmation</h4>
       </div>
 
       <div class="modal-body">
 
         <div class="form-group row">
-          <div class="col-sm-2 nopadding-right"><strong>Début :</strong></div>
+
+          <div class="col-sm-2 nopadding-right"><strong>Client :</strong></div>
           <div class="col-sm-3 nopadding">
-            <span class="badge badge-pill badge-light">{{activityRequest?.dteStrt | date:"dd/MM/yy HH:mm"}}</span>
+            {{activityRequest?.customer?.name}}
           </div>
-          <div class="col-sm-2 nopadding-right"><strong>Fin :</strong></div>
+
+          <div class="col-sm-2 nopadding-right"><strong>Demande :</strong></div>
           <div class="col-sm-3 nopadding">
-            <span class="badge badge-pill badge-light">{{activityRequest?.dteEnd | date:"dd/MM/yy HH:mm"}}</span>
+            {{activityRequest?.request?.rqtExcde}}  {{activityRequest?.request?.objDsc}}
           </div>
         </div>
 
         <div class="form-group row">
+          <div class="col-sm-2 nopadding-right"><strong>Description demande :</strong></div>
+          <div class="col-sm-3 nopadding">
+            <span class="badge badge-pill badge-light">{{activityRequest?.request?.objexcde}}</span>
+          </div>
+          <div class="col-sm-2 nopadding-right"><strong>Instance :</strong></div>
+          <div class="col-sm-3 nopadding">
+            <span class="badge badge-pill badge-dark">{{activityRequest?.request?.objIdentVal}}</span>
+          </div>
+
+        </div>
+
+        <div *ngIf="activityRequest?.request?.descriptionDemande!='' && activityRequest?.request?.descriptionDemande!=null" class="form-group row">
+          <div class="col-sm-3"><strong>Commentaire de la demande  :</strong></div>
+          <div class="col-sm-7 nopadding">
+            {{activityRequest?.request?.descriptionDemande}}
+          </div>
+        </div>
+
+
+        <div class="form-group row">
+          <div class="col-sm-2 nopadding-right"><strong>Date :</strong></div>
+          <div class="col-sm-3 nopadding">
+            <span class="badge badge-pill badge-light">{{activityRequest?.dteStrt | date:"dd/MM/yyyy"}}</span>
+          </div>
+
           <div class="col-sm-2 nopadding-right"><strong>Durée :</strong></div>
           <div class="col-sm-3 nopadding">
             <span class="badge badge-pill badge-dark">{{activityService.ShortconvertMinutesToHoursAndMinute(activityRequest.durtion)}}</span>
           </div>
 
-          <div class="col-sm-2 nopadding-right"><strong>Nature :</strong></div>
-          <div class="col-sm-3 nopadding">
-            {{activityRequest?.nature}}
-          </div>
         </div>
 
         <div class="form-group row">
-          <div class="col-sm-2 nopadding-right"><strong>Client :</strong></div>
+
+
+          <div class="col-sm-2 nopadding-right"><strong>Nature Activité :</strong></div>
           <div class="col-sm-3 nopadding">
-            {{activityRequest?.customer.name}}
+            {{activityRequest?.nature}}
           </div>
 
+
+        </div>
+
+        <div class="form-group row">
+
+          <div *ngIf="serviceName=='Value Software' || serviceName=='Value Système' || serviceName=='Value Réseaux et Sécurité'" class="col-sm-3 nopadding-right"><strong>Produits :</strong></div>
+          <div *ngIf="serviceName=='Value Software' || serviceName=='Value Système' || serviceName=='Value Réseaux et Sécurité'" class="col-sm-7 nopadding">
+            <span *ngFor="let p of activityRequest.produits; let i=index;">
+              <span *ngIf="i<activityRequest.produits.length-1">{{p.produit+" | "}}</span>
+              <span *ngIf="i==activityRequest.produits.length-1">{{p.produit}}</span>
+            </span>
+
+          </div>
+
+
+
+        </div>
+
+        <div class="form-group row">
+
+
+
+          <div class="col-sm-2 nopadding-right"><strong>Rôle :</strong></div>
+          <div class="col-sm-3 nopadding">
+            {{activityRequest.principal?"Principal":"Secondaire"}}
+          </div>
+
+
+          <div class="col-sm-2 nopadding-right"><strong>Etat :</strong></div>
+          <div class="col-sm-3 nopadding">
+            {{activityRequest.etat?"Cloturer":"En cours"}}
+          </div>
+
+        </div>
+
+        <div class="form-group row">
+
+          <div class="col-sm-2 nopadding-right"><strong>Lieu :</strong></div>
+          <div class="col-sm-3 nopadding">
+            {{activityRequest?.lieu}}
+          </div>
           <div class="col-sm-2 nopadding-right"><strong>Ville :</strong></div>
           <div class="col-sm-3 nopadding">
             {{activityRequest?.ville}}
@@ -249,19 +372,8 @@
 
         </div>
 
-        <div class="form-group row">
-          <div class="col-sm-2 nopadding-right"><strong>Lieu :</strong></div>
-          <div class="col-sm-3 nopadding">
-            {{activityRequest?.lieu}}
-          </div>
 
-          <div class="col-sm-2 nopadding-right"><strong>Statut :</strong></div>
-          <div class="col-sm-3 nopadding">
-            <span [class]="activityRequest.statut?'badge badge-pill badge-success':'badge badge-pill badge-info'">{{activityRequest?.statut==true?'Realisé':'Planifié'}}</span>
-          </div>
-        </div>
-
-        <div class="form-group row">
+        <div *ngIf="activityRequest?.comments!='' && activityRequest?.comments!=null" class="form-group row">
           <div class="col-sm-3"><strong>Commentaire:</strong></div>
           <div class="col-sm-7 nopadding">
             {{activityRequest?.comments}}
@@ -309,8 +421,8 @@
 
         <div class="form-row">
           <div class="form-group col-sm-6">
-            <label for="descriptionDemande">Description :</label>
-            <input id="descriptionDemande" class="form-control-plaintext" [value]="activityRequest.request.objDsc"
+            <label for="descriptionDemande2">Description :</label>
+            <input id="descriptionDemande2" class="form-control-plaintext" [value]="activityRequest.request.objDsc"
                    readonly>
           </div>
         </div>

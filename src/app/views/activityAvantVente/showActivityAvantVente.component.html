@@ -1,0 +1,79 @@
+<div class="modal-dialog show-details" role="document">
+  <div class="modal-content">
+
+
+    <div class="modal-header">
+      <h4 class="modal-title">Activité avant vente :</h4>
+    </div>
+
+    <div class="modal-body">
+
+      <div class="form-group row">
+
+
+        <div class="col-sm-2 nopadding-right"><strong>Client :</strong></div>
+        <div class="col-sm-3 nopadding">
+          {{activityAvantVente?.customer?.name}}
+        </div>
+
+
+        <div class="col-sm-2 nopadding-right"><strong>Nature :</strong></div>
+        <div class="col-sm-3 nopadding">
+          {{activityAvantVente?.nature}}
+        </div>
+
+      </div>
+
+      <div class="form-group row">
+        <div class="col-sm-2 nopadding-right"><strong>Date :</strong></div>
+        <div class="col-sm-3 nopadding">
+          <span class="badge badge-pill badge-light">{{activityAvantVente?.dteStrt | date:"dd/MM/yyyy"}}</span>
+        </div>
+
+        <div class="col-sm-2 nopadding-right"><strong>Durée :</strong></div>
+        <div class="col-sm-3 nopadding">
+          <span
+            class="badge badge-pill badge-dark">{{ShortconvertMinutesToHoursAndMinute(activityAvantVente.durtion)}}</span>
+        </div>
+
+      </div>
+
+
+
+
+
+
+      <div class="form-group row">
+
+        <div class="col-sm-2 nopadding-right"><strong>Lieu :</strong></div>
+        <div class="col-sm-3 nopadding">
+          {{activityAvantVente?.lieu}}
+        </div>
+
+
+        <div class="col-sm-2 nopadding-right"><strong>Ville :</strong></div>
+        <div class="col-sm-3 nopadding">
+          {{activityAvantVente?.ville}}
+        </div>
+
+
+      </div>
+
+      <div class="form-group row">
+        <div class="col-sm-3 nopadding-right"><strong>Commentaire :</strong></div>
+        <div class="col-sm-9 nopadding">
+          {{activityAvantVente?.comments}}
+        </div>
+      </div>
+
+
+    </div>
+
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-sm btn-primary" (click)="hideModal()"><i class="fa fa-check"></i> OK</button>
+    </div>
+
+
+  </div>
+</div>

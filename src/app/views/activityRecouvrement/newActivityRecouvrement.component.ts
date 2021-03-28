@@ -1,9 +1,8 @@
-import {ChangeDetectorRef, Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {AuthenticationService} from "../../services/authentification.service";
 import {NotificationsService} from "angular2-notifications";
 import {SocketService} from "../../services/socket.service";
 import {Client, Frame, Message} from "stompjs";
-import {Subject} from "rxjs/Subject";
 import {ActivityRecouvrement} from "../../model/model.activityRecouvrement";
 import {ActivityService} from "../../services/activity.service";
 import {CustomerService} from "../../services/customer.service";
@@ -12,6 +11,8 @@ import {Router} from "@angular/router";
 import {ProjectService} from "../../services/project.service";
 import {DateTimeAdapter} from "ng-pick-datetime";
 import * as moment from "moment-timezone";
+import {debounceTime, distinctUntilChanged, switchMap} from "rxjs/operators";
+import {VilleService} from "../../services/ville.service";
 
 @Component({
   selector:"new-activityRecouvrement",
@@ -22,13 +23,18 @@ export class NewActivityRecouvrementComponent implements OnInit,OnDestroy {
   @Input() modal;
   @Input() lastActivity;
 
+  @Output() refresh = new EventEmitter<string>();
+
+  customers : any = [];
+  ville:any;
+
+
   isCollapsed: boolean = false;
   iconCollapse: string = "icon-arrow-up";
-  activityRecouvrement : ActivityRecouvrement = new ActivityRecouvrement();
+  @Input() activityRecouvrement : ActivityRecouvrement = new ActivityRecouvrement();
   frmName:any;
   mode:number=1;
   message : string;
-  customers : any;
   currentDate : Date = new Date();
   disabledStatut:boolean = false;
   dureeFormated : string;
@@ -38,14 +44,17 @@ export class NewActivityRecouvrementComponent implements OnInit,OnDestroy {
   duree: number;
   dureeConverted: string;
 
+  customerTypeahead = new EventEmitter<string>();
 
-  //activityRecouvrement.dteStrt = new Date(); //new Date(2010, 11, 28, 14, 57);
-  //activityRecouvrement.dteEnd = new Date(); //new Date(2010, 11, 28, 14, 57);
-
-  constructor(private activityService:ActivityService,private notificationService: NotificationsService,
+  constructor(private villeService:VilleService, private activityService:ActivityService,private notificationService: NotificationsService,
               private socketService:SocketService,private customerService:CustomerService,private router:Router,
               private authenticationService:AuthenticationService,private projectService:ProjectService, private ref:ChangeDetectorRef) {
   }
+
+  refreshActivity() {
+    this.refresh.emit("Refresh Activity");
+  }
+
 
   hideModal() {
     this.modal.hide();
@@ -66,10 +75,11 @@ export class NewActivityRecouvrementComponent implements OnInit,OnDestroy {
     this.activityRecouvrement.dteStrt = new Date();
     this.activityRecouvrement.ville = "Fes";
     this.activityRecouvrement.statut = true;
-    this.activityRecouvrement.nature = "Projet";
     this.activityRecouvrement.lieu = "Client";
     this.activityRecouvrement.typeActivite = "Activité recouvrement";
     this.activityRecouvrement.comments = "Teste";
+    this.duree = null;
+    this.dureeConverted = null;
   }
 
   ngOnDestroy(){
@@ -81,16 +91,38 @@ export class NewActivityRecouvrementComponent implements OnInit,OnDestroy {
   }
 
   ngOnInit() {
-    this.loadCustomers();
     this.activityRecouvrement.user.username = this.authenticationService.getUserName();
     this.activityRecouvrement.dteStrt = new Date();
     this.activityRecouvrement.statut = false;
     this.activityRecouvrement.ville = "Fes";
     this.activityRecouvrement.statut = true;
-    this.activityRecouvrement.nature = "Projet";
     this.activityRecouvrement.lieu = "Client";
     this.activityRecouvrement.typeActivite = "Activité recouvrement";
     this.activityRecouvrement.comments = "Teste";
+    this.serverSideSearch();
+    this.chargerVilles();
+  }
+
+  chargerVilles() {
+    this.villeService.getAllVilles().subscribe(
+      data=>{
+        this.ville=data["_embedded"]["villes"];
+      }
+    );
+  }
+
+  private serverSideSearch() {
+    this.customerTypeahead.pipe(
+      distinctUntilChanged(),
+      debounceTime(200),
+      switchMap(term => this.customerService.searchCustomer(term))
+    ).subscribe(x => {
+      this.ref.markForCheck();
+      this.customers = x["_embedded"]["customers"];
+    }, (err) => {
+      console.log(err);
+      this.customers = [];
+    });
   }
 
 
@@ -110,18 +142,6 @@ export class NewActivityRecouvrementComponent implements OnInit,OnDestroy {
     }
   }
 
-
-
-  loadCustomers(){
-    this.customerService.getCustomers().subscribe(
-      data=>{
-        this.customers = data["_embedded"]["customers"];
-        console.log("customers " + JSON.stringify(this.customers));
-      },err=>{
-        this.authenticationService.logout();
-        this.router.navigateByUrl('/pages/login');
-      });
-  }
 
   collapsed(event: any): void {
     // console.log(event);
@@ -157,21 +177,15 @@ export class NewActivityRecouvrementComponent implements OnInit,OnDestroy {
         this.activityRecouvrement = data;
         this.activityRecouvrement.typeActivite = "Activité recouvrement";
         this.mode=2;
+        this.refreshActivity();
         this.ref.detectChanges();
 
       },(err:any)=>{
         console.log("error " + JSON.stringify(err));
         this.returnedError = err.error.message;
-        this.error = 2;
-
+        this.error = 1;
       });
   }
-
-
-
-
-
-
 
 
 }

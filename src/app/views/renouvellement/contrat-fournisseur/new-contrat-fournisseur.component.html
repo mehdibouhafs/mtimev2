@@ -1,0 +1,359 @@
+<div class="card">
+  <div *ngIf="mode==1">
+    <div class="card-header">
+      <strong>Nouveau contrat fournisseur</strong>
+    </div>
+    <form #f="ngForm" (ngSubmit)="onSaveContrat()">
+      <div class="card-body">
+
+        <div class="form-row">
+          <div class="form-group col-3 ">
+            <label for="name">Nom contrat :</label>
+            <input id="name" name="name"
+                   type="text" class="form-control form-control-sm "
+                   placeholder="Nom contrat"
+                   [(ngModel)]="contrat.ctrtName" required>
+          </div>
+          <div class="form-group col-2">
+            <label for="date_debut">Date de début :</label>
+            <input id="date_debut" name="date_debut"
+                   type="date" class="form-control form-control-sm"
+                   placeholder="Date de début"
+                   [(ngModel)]="contrat.dteStrt" required>
+          </div>
+          <div class="form-group col-2">
+            <label for="date_fin">Date de fin :</label>
+            <input id="date_fin" name="date_fin"
+                   type="date" class="form-control form-control-sm"
+                   placeholder="Date de fin"
+                   [min]="contrat.dteStrt"
+                   [(ngModel)]="contrat.dteEnd" required>
+          </div>
+          <div class="form-group col-3">
+            <label for="contact">Contact :</label>
+            <input id="contact" name="contact" type="text"
+                   placeholder="Contact"
+                   class="form-control form-control-sm" [(ngModel)]="contrat.contact" required>
+          </div>
+
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-3">
+            <label for="customers">Client :</label>
+            <ng-select id="customers" [items]="customers"
+                       bindLabel="name"
+                       name="customer"
+                       placeholder="Selectionner un client"
+                       notFoundText="Aucun client trouvé"
+                       [typeahead]="customerTypeahead"
+                       (change)="chargerContratsClients()"
+                       typeToSearchText="Saisir un client"
+                       [(ngModel)]="selectedCustomer">
+            </ng-select>
+          </div>
+          <div class="form-group col-3">
+            <label for="contratClient">Contrat client :</label>
+            <ng-select id="contratClient" name="contratClient"
+                       [items]="contratsClients"
+                       placeholder="Contrat client"
+                       [disabled]="!selectedCustomer"
+                       [(ngModel)]="contratClientSelected"
+                       (change)="chargerDistributeurs()"
+                       bindLabel="ctrtName">
+
+            </ng-select>
+          </div>
+          <div class="form-group col-3">
+            <label for="distributeur">Distributeur :</label>
+            <ng-select id="distributeur"
+                       name="distributeur"
+                       bindLabel="name"
+                       placeholder="Distributeur"
+                       [(ngModel)]="selectedDistributeur"
+                       [disabled]="!contratClientSelected"
+                       (change)="chargerProductToList()"
+                       [items]="distributeurs">
+
+            </ng-select>
+          </div>
+        </div>
+
+
+        <p-table *ngIf="contrat.ctrctSupplierProducts.length>0" [value]="contrat.ctrctSupplierProducts">
+          <ng-template pTemplate="caption">
+            Liste des produits
+          </ng-template>
+          <ng-template pTemplate="header">
+
+            <tr>
+              <th>
+                Référence
+              </th>
+              <th>
+                Désignation
+              </th>
+              <th>
+                Editeur
+              </th>
+              <th>
+                Ditributeur
+              </th>
+              <th>
+                Quantité
+              </th>
+              <th>
+                Prix unitaire
+              </th>
+              <th style="width:6em">
+                Action
+              </th>
+            </tr>
+
+
+          </ng-template>
+
+          <ng-template pTemplate="body" let-item>
+
+            <tr>
+              <td>
+                {{item.product.ref}}
+              </td>
+              <td>
+                {{item.product.desig}}
+              </td>
+              <td>
+                {{item.product.editeur}}
+              </td>
+              <td>
+                {{item.product.distributeur.name}}
+              </td>
+              <td pEditableColumn>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <input type="number" [name]="'qte'+item.qte+item.product.ref"
+                           [(ngModel)]="item.qte"
+                           (change)="calculPrixTotal()"
+                           (keyup)="calculPrixTotal()"
+                           min="1" placeholder="Quantité"
+                           [max]="item.qteMax"
+                           class="form-control form-control-sm" required>
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{item.qte}}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td pEditableColumn>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <input type="number" [name]="'prixU'+item.product.ref"
+                           [(ngModel)]="item.prixUnitaire" min="1"
+                           (change)="calculPrixTotal()"
+                           (keyup)="calculPrixTotal()"
+                           placeholder="Prix unitaire" class="form-control form-control-sm">
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{item.prixUnitaire}}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td>
+                <button type="button" class="btn btn-sm btn-danger"
+                        mwlConfirmationPopover
+                        [popoverTitle]="popoverTitle"
+                        [popoverMessage]="popoverMessage"
+                        confirmText="Oui"
+                        cancelText="Non"
+                        placement="left"
+                        (confirm)="remove(item)">
+                  <i class="fa fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="footer">
+            <tr>
+              <td colspan="5">Total</td>
+              <td pEditableColumn>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <input type="number" name="total" min="1"
+                           class="form-control form-control-sm"
+                           placeholder="Prix total"
+                           (change)="clonePrixFromProduct()"
+                           (keyup)="clonePrixFromProduct()"
+                           [(ngModel)]="contrat.price">
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{contrat.price}}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td>
+               <!--  <select class="form-control form-control-sm">
+                  <option>EUR</option>
+                  <option>DOL</option>
+                  <option>MAD</option>
+                </select>-->
+
+                <ng-select id="devise"
+                           name="devise"
+                           bindValue="name"
+                           bindLabel="name"
+                           placeholder="Devise"
+                           [(ngModel)]="contrat.devise"
+                           [disabled]="!contratClientSelected"
+                           [items]="devises">
+
+                </ng-select>
+
+              </td>
+            </tr>
+          </ng-template>
+
+        </p-table>
+
+        <div class="form-row">
+          <div class="form-group col-3">
+            <label for="commentaire">Commentaire :</label>
+            <textarea id="commentaire" name="commentaire"
+                      [(ngModel)]="contrat.commentaire"
+                      placeholder="Commentaire" class="form-control form-control-sm" rows="1" required>
+            </textarea>
+          </div>
+        </div>
+
+      </div>
+      <div class="card-footer">
+        <button type="submit" [disabled]="!f.valid || contrat.ctrctSupplierProducts.length==0 || !contrat.price"
+                class="btn btn-sm btn-primary">
+          Enregistrer
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div *ngIf="mode==2">
+    <div class="card-header">
+      <strong>Confirmation</strong>
+    </div>
+    <div class="card-body">
+
+      <div class="form-row">
+        <div class="form-group col-3">
+          <label for="nameConfirmation"><strong>Nom contrat :</strong></label>
+          <input id="nameConfirmation" name="nameConfirmation"
+                 type="text" readonly class="form-control-plaintext"
+                 [(ngModel)]="contrat.ctrtName">
+        </div>
+        <div class="form-group col-2">
+          <label for="date_debutConfirmation"><strong>Date de début :</strong></label>
+          <input id="date_debutConfirmation" name="date_debutConfirmation"
+                 type="date" readonly class="form-control-plaintext"
+                 [(ngModel)]="contrat.dteStrt">
+        </div>
+        <div class="form-group col-2">
+          <label for="date_finConfirmation"><strong>Date de fin :</strong></label>
+          <input id="date_finConfirmation" name="date_finConfirmation"
+                 type="date" readonly class="form-control-plaintext"
+                 [(ngModel)]="contrat.dteEnd">
+        </div>
+        <div class="form-group col-3">
+          <label for="contactConfirmation"><strong>Contact :</strong></label>
+          <input id="contactConfirmation" name="contactConfirmation" type="text"
+                 readonly class="form-control-plaintext"
+                 [(ngModel)]="contrat.contact">
+        </div>
+
+      </div>
+
+      <div class="form-row">
+
+        <div class="form-group col-3">
+          <label for="commentaireConfirmation"><strong>Commentaire :</strong></label>
+          <textarea id="commentaireConfirmation" name="commentaireConfirmation"
+                    [(ngModel)]="contrat.commentaire"
+                    readonly class="form-control-plaintext">
+          </textarea>
+        </div>
+
+      </div>
+
+      <p-table [value]="contrat.ctrctSupplierProducts">
+        <ng-template pTemplate="caption">
+          Liste des produits
+        </ng-template>
+        <ng-template pTemplate="header">
+
+          <tr>
+            <th>
+              Référence
+            </th>
+            <th>
+              Désignation
+            </th>
+            <th>
+              Editeur
+            </th>
+            <th>
+              Ditributeur
+            </th>
+            <th>
+              Quantité
+            </th>
+            <th>
+              Prix unitaire
+            </th>
+          </tr>
+
+
+        </ng-template>
+
+        <ng-template pTemplate="body" let-item>
+
+          <tr>
+            <td>
+              {{item.product.ref}}
+            </td>
+            <td>
+              {{item.product.desig}}
+            </td>
+            <td>
+              {{item.product.editeur}}
+            </td>
+            <td>
+              {{item.product.distributeur.name}}
+            </td>
+            <td>
+              {{item.qte}}
+            </td>
+            <td>
+              {{item.prixUnitaire}}
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="footer">
+          <tr>
+            <td colspan="5">Total</td>
+            <td>
+              {{contrat.price}}
+            </td>
+          </tr>
+        </ng-template>
+
+      </p-table>
+
+    </div>
+    <div class="card-footer">
+      <button type="button" class="btn btn-sm btn-primary" (click)="toModeOne()">OK</button>
+    </div>
+  </div>
+</div>
+
+
+
+
+

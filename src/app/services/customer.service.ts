@@ -2,18 +2,27 @@ import {Injectable} from "@angular/core";
 import {AuthenticationService} from "./authentification.service";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Customer} from "../model/model.customer";
+import {host} from "./host";
 
 @Injectable()
 export class CustomerService {
 
-  private host:String = "http://localhost:8080";
+  private host = host;
 
   constructor(public  http:HttpClient,private autehntificationService:AuthenticationService){
 
   }
 
+  searchCustomer(name:string){
+    return this.http.get(this.host+"/customers/search/startwith?name="+name,{headers: new HttpHeaders({'Authorization': this.autehntificationService.getToken()})});
+  }
+
+  searchSupplier(name:string){
+    return this.http.get(this.host+"/customers/search/supplierstartwith?name="+name,{headers: new HttpHeaders({'Authorization': this.autehntificationService.getToken()})});
+  }
+
   getCustomers(){
-    return this.http.get(this.host+"/customers",{headers: new HttpHeaders({'Authorization': this.autehntificationService.getToken()})});
+    return this.http.get(this.host+"/customers?size=5",{headers: new HttpHeaders({'Authorization': this.autehntificationService.getToken()})});
   }
 
   saveCustomer(customer:Customer){

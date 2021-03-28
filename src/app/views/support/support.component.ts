@@ -11,11 +11,14 @@ import {ActivityHoliday} from "../../model/model.activityHoliday";
 import * as moment from "moment";
 import _date = moment.unitOfTime._date;
 import {RequestService} from "../../services/request.service";
+import {CustomerService} from "../../services/customer.service";
 
 @Component({
   templateUrl: 'support.component.html'
 })
 export class SupportComponent implements OnInit{
+
+  customers:any;
   pageActivities: any;
   motCle:string="";
   currentPage : number = 1;
@@ -26,22 +29,46 @@ export class SupportComponent implements OnInit{
 
   @ViewChild('activityRequestModal')
   activityRequestModal;
+
+  pageActivityRequest: any;
+  pagesActivityRequest: Array<number>;
+  totalElementActivityRequest:number;
+  rqtExcde:string;
+  @ViewChild('activityByTicket')
+  activityByTicket;
+  lastActivity :any;
   activityRequest:ActivityRequest = new ActivityRequest();
+  activity:ActivityRequest = new ActivityRequest();
 
 
-  constructor(private requestService: RequestService,private  autehntificationService:AuthenticationService,private router:Router ) { }
+  constructor(private requestService: RequestService, private activityService:ActivityService, private  authentificationService:AuthenticationService, private customerService:CustomerService,private router:Router ) { }
 
   isCollapsed: boolean = false;
   iconCollapse: string = "icon-arrow-up";
 
   ngOnInit(){
-    this.doSearch();
-
+    if(!this.authentificationService.isLogged())
+      this.router.navigate(['/pages/login']);
+    else {
+      this.doSearch();
+      this.loadCustomers();
+      this.activityService.getLastActivity().subscribe(
+        data => {
+          this.lastActivity = data;
+        }, err => {
+          console.log(err);
+        }
+      );
+    }
   }
 
   addActivity(r:any) {
-    this.activityRequest.request = JSON.parse(JSON.stringify(r));
-    this.activityRequest.customer = JSON.parse(JSON.stringify(r.cpyInCde));
+    this.activity.user.username = this.authentificationService.getUserName();
+    this.activity.typeActivite = "Activité support";
+    this.activity.dteStrt = new Date();
+    this.activity.request = r;
+    this.activity.customer = r.cpyInCde;
+    this.activityRequest = JSON.parse(JSON.stringify(this.activity));
     this.activityRequestModal.show();
   }
 
@@ -60,7 +87,7 @@ export class SupportComponent implements OnInit{
         this.totalElement = data["totalElements"];
 
       },err=>{
-        this.autehntificationService.logout();
+        this.authentificationService.logout();
         this.router.navigateByUrl('/pages/login');
       });
   }
@@ -69,6 +96,32 @@ export class SupportComponent implements OnInit{
   gotoPage(page:number){
     this.currentPage = page;
     this.doSearch();
+  }
+
+  loadCustomers(){
+    this.customerService.getCustomers().subscribe(
+      data=>{
+        this.customers = data["_embedded"]["customers"];
+        console.log("customers " + JSON.stringify(this.customers));
+      },err=>{
+        this.authentificationService.logout();
+        this.router.navigateByUrl('/pages/login');
+      });
+  }
+
+  chargerModalActivity(rqtExcde:string) {
+    this.rqtExcde = rqtExcde;
+    this.activityService.getActivityRequestByTicket(rqtExcde,1,5).subscribe(
+      data=>{
+        this.pageActivityRequest = data;
+        this.pagesActivityRequest = new Array(data["totalPages"]);
+        this.totalElementActivityRequest = data["totalElements"];
+
+      },err=>{
+        this.authentificationService.logout();
+        this.router.navigateByUrl('/pages/login');
+      });
+    this.activityByTicket.show();
   }
 
 

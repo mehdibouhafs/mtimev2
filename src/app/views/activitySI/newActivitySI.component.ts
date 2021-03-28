@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, Input} from "@angular/core";
+import {ChangeDetectorRef, Component, EventEmitter, Input, Output} from "@angular/core";
 import {ActivitySI} from "../../model/model.activitySI";
 import {ActivityService} from "../../services/activity.service";
 import {NotificationsService} from "angular2-notifications";
@@ -20,11 +20,13 @@ export class NewActivitySIComponent {
   @Input() modal;
   @Input() lastActivity;
 
+  @Output() refresh = new EventEmitter<string>();
+
 
 
   isCollapsed: boolean = false;
   iconCollapse: string = "icon-arrow-up";
-  activitySI: ActivitySI = new ActivitySI();
+  @Input() activitySI: ActivitySI = new ActivitySI();
   frmName: any;
   mode: number = 1;
   message: string;
@@ -41,6 +43,10 @@ export class NewActivitySIComponent {
   constructor(private activityService: ActivityService, private notificationService: NotificationsService,
               private socketService: SocketService, private customerService: CustomerService, private router: Router,
               private authenticationService: AuthenticationService, private projectService: ProjectService, private ref:ChangeDetectorRef) {
+  }
+
+  refreshActivity() {
+    this.refresh.emit("Refresh Activity");
   }
 
 
@@ -67,7 +73,6 @@ export class NewActivitySIComponent {
     this.activitySI.nature = "Support SI";
     this.activitySI.lieu = "Munisys";
     this.activitySI.typeActivite = "Activité SI";
-    this.activitySI.comments = "Teste";
     this.duree = null;
     this.dureeConverted = null;
   }
@@ -88,11 +93,6 @@ export class NewActivitySIComponent {
     this.activitySI.nature = "Support SI";
     this.activitySI.lieu = "Munisys";
     this.activitySI.typeActivite = "Activité SI";
-    this.activitySI.comments = "Teste";
-  }
-
-  teste() {
-
   }
 
   onDatesChanged() {
@@ -144,11 +144,12 @@ export class NewActivitySIComponent {
         this.activitySI = data;
         this.activitySI.typeActivite = "Activité SI";
         this.mode = 2;
+        this.refreshActivity();
         this.ref.detectChanges();
       }, (err: any) => {
         console.log("error " + JSON.stringify(err));
         this.returnedError = err.error.message;
-        this.error = 2;
+        this.error = 1;
 
       });
 

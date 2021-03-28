@@ -1,0 +1,189 @@
+<div class="modal-dialog" role="document">
+  <div class="modal-content">
+
+
+    <div *ngIf="mode==1">
+
+      <div class="modal-header">
+        <h6 class="col-12 modal-title text-center">
+          <p>Modification d'activitée de développement des compétences </p>
+          <div class="alert alert-danger" role="alert" *ngIf="error==1">
+            Oups ! {{returnedError}}
+          </div>
+        </h6>
+      </div>
+
+      <form class="form-horizontal" #f="ngForm" (ngSubmit)="onEditActivityAvantVente(f.value)">
+
+
+
+        <div class="modal-body">
+
+          <div class="form-row">
+            <div class="form-group col-sm-6">
+              <label>Date :</label>
+
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                </div>
+                <input class="form-control form-control-sm"
+                       [owlDateTimeTrigger]="dt" [owlDateTime]="dt" [max]="maxDate"
+                       placeholder="Date"
+                       [(ngModel)]="activityDevCompetence.dteStrt" name="dteStrt" required >
+                <owl-date-time [pickerType]="'calendar'" #dt></owl-date-time>
+              </div>
+            </div>
+
+            <div class="form-group col-sm-6">
+              <label for="duree">Durée :</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <div class="input-group-text"><i class="fa fa-clock-o"></i></div>
+                </div>
+                <input id="duree" name="duree" class="form-control form-control-sm" type="time" [(ngModel)]="activityDevCompetence.duration" (change)="reject()" required/>
+              </div>
+            </div>
+
+            </div>
+
+
+
+          <div class="form-row">
+
+            <div class="form-group col-sm-6">
+              <label for="nature">Action :</label>
+              <ng-select id="nature" name="nature"
+                         [items]="nature"
+                         placeholder="Action"
+                         bindLabel="name"
+                         bindValue="name"
+                         [(ngModel)]="activityDevCompetence.nature"
+                         required>
+
+              </ng-select>
+            </div>
+
+            <div class="form-group col-sm-6">
+              <label for="produit">Produit :</label>
+              <ng-select [items]="produits"
+                         id="produit"
+                         name="produit"
+                         [multiple]="true"
+                         placeholder="Produit"
+                         bindLabel="produit"
+                         groupBy="groupe"
+                         [(ngModel)]="activityDevCompetence.produits"
+                         [addTag]="true"
+                         required>
+
+              </ng-select>
+            </div>
+
+
+          </div>
+
+          <div class="form-row">
+
+
+
+            <div class="form-group col-sm-6">
+              <label for="lieu">Lieu :</label>
+              <ng-select id="lieu"
+                         name="lieu"
+                         [items]="lieu"
+                         bindLabel="name"
+                         bindValue="name"
+                         placeholder="Lieu"
+                         [(ngModel)]="activityDevCompetence.lieu"
+                         required>
+              </ng-select>
+            </div>
+
+
+
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-sm btn-danger" (click)="hideModal()"><i class="fa fa-ban"></i> Annuler
+          </button>
+          <button [disabled]="!f.valid" type="submit" class="btn btn-sm btn-primary"><i
+            class="fa fa-dot-circle-o"></i>
+            Enregistrer
+          </button>
+        </div>
+      </form>
+
+    </div>
+
+    <div *ngIf="mode==2">
+
+      <div class="modal-header">
+        <h4 class="modal-title">Confirmation</h4>
+      </div>
+
+      <div class="modal-body">
+
+
+        <div class="form-group row">
+          <div class="col-sm-2 nopadding-right"><strong>Date :</strong></div>
+          <div class="col-sm-3 nopadding">
+            <span class="badge badge-pill badge-light">{{activityDevCompetence?.dteStrt | date:"dd/MM/yyyy"}}</span>
+          </div>
+          <div class="col-sm-2 nopadding-right"><strong>Durée :</strong></div>
+          <div class="col-sm-3 nopadding">
+          <span
+            class="badge badge-pill badge-dark">{{activityService.ShortconvertMinutesToHoursAndMinute(activityDevCompetence.durtion)}}</span>
+          </div>
+
+        </div>
+
+        <div class="form-group row">
+
+
+          <div class="col-sm-2 nopadding-right"><strong>Action :</strong></div>
+          <div class="col-sm-3 nopadding">
+            {{activityDevCompetence?.nature}}
+          </div>
+
+          <div class="col-sm-2 nopadding-right"><strong>Lieu :</strong></div>
+          <div class="col-sm-3 nopadding">
+            {{activityDevCompetence?.lieu}}
+          </div>
+
+
+
+        </div>
+
+        <div class="form-group row">
+
+          <div class="col-sm-3 nopadding-right"><strong>Produits :</strong></div>
+          <div  class="col-sm-7 nopadding">
+            <span *ngFor="let p of activityDevCompetence.produits; let i=index;">
+              <span *ngIf="i<activityDevCompetence.produits.length-1">{{p.produit+" | "}}</span>
+              <span *ngIf="i==activityDevCompetence.produits.length-1">{{p.produit}}</span>
+            </span>
+
+          </div>
+        </div>
+
+
+
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-primary" (click)="hideModal(); mode=1;">
+          <i class="fa fa-check"></i> OK
+        </button>
+      </div>
+
+
+    </div>
+
+
+  </div>
+</div>
+
+

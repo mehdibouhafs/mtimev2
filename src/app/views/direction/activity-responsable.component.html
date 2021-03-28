@@ -1,0 +1,164 @@
+<div class="animated fadeIn">
+  <!--/.row-->
+  <div class="row">
+    <div class="col-lg-10 mx-auto">
+      <div class="card">
+        <div class="card-header">
+          <i class="fa fa-group"></i> les activités de groupe
+        </div>
+        <div class="card-body">
+          <div class="form-group row">
+
+            <div class="col-md-4">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <div class="input-group-text"><i
+                    class="fa fa-search"></i></div>
+                </div>
+                <input id="input2-group2" name="input2-group2" class="form-control form-control-sm"
+                       placeholder="Chercher" type="text"
+                       [(ngModel)]="motCle" (keyup)="chercher()">
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <ng-select id="users" name="users"
+                         [items]="users"
+                         bindValue="username"
+                         [hideSelected]="true"
+                         [(ngModel)]="selectedUser"
+                         (change)="chercher()"
+                         placeholder="Selectionnez un utilisateur"
+                         notFoundText="Aucun utilisateur trouvé">
+
+                <ng-template ng-label-tmp let-item="item">
+                  <img [src]="'assets/img/avatars/'+item.username+'.jpg'"
+                       onerror="this.src='assets/img/avatars/default.jpg'" width="20px" height="20px">
+                  {{item.firstName+' '+item.lastName}}
+                </ng-template>
+                <ng-template ng-option-tmp let-item="item">
+                  <img [src]="'assets/img/avatars/'+item.username+'.jpg'"
+                       onerror="this.src='assets/img/avatars/default.jpg'" width="20px" height="20px">
+                  {{item.firstName+' '+item.lastName}}
+                </ng-template>
+              </ng-select>
+            </div>
+
+            <div class="col-4">
+              <button class="btn btn-sm btn-primary" (click)="newactivityProjectModal.show()"><i class="fa fa-plus"></i>
+              </button>
+            </div>
+
+          </div>
+
+          <table class="table table-sm">
+            <thead>
+            <tr>
+              <th>Type d'activité</th>
+              <th>Début</th>
+              <th>Fin</th>
+              <th>Durée</th>
+              <th>Statut</th>
+              <th>Intervenant</th>
+              <th>Détails</th>
+              <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let a of pageActivities?.content | paginate: {
+                                                      id: 'activities',
+                                                      itemsPerPage: itemsPerPage,
+                                                      currentPage: currentPage,
+                                                      totalItems: pageActivities?.totalElements}">
+              <td>{{a?.typeActivite}}</td>
+              <td><span class="badge badge-pill badge-light">{{a.dteStrt | date:"dd/MM/yy HH:mm"}}</span>
+              </td>
+              <td><span class="badge badge-pill badge-light">{{a.dteEnd | date:"dd/MM/yy HH:mm"}}</span>
+              </td>
+              <td><span class="badge badge-pill badge-dark">{{activityService.ShortconvertMinutesToHoursAndMinute(a.durtion)}}</span>
+              </td>
+              <td><span [class]="a.statut?'badge badge-pill badge-success':'badge badge-pill badge-info'">{{a.statut?'Realisé':'Planifié'}}</span>
+              </td>
+              <td>{{a?.user?.username}}</td>
+              <td>
+                <button class="btn btn-outline-primary btn-sm" (click)="detectModal(a)"><i
+                  class="fa fa-eye"></i></button>
+              </td>
+              <td>
+                <div *ngIf="!a.statut" class="btn-group" dropdown>
+                  <button dropdownToggle type="button" class="btn btn-outline-primary btn-sm dropdown-toggle">
+                    <i class="fa fa-cog"></i><span class="caret"></span>
+                  </button>
+                  <ul *dropdownMenu class="dropdown-menu" role="menu">
+                    <li role="menuitem">
+                      <button class="dropdown-item small" (click)="onEditMyActivity(a);"><i class="fa fa-edit"></i>
+                        Modifier
+                      </button>
+                    </li>
+                    <li role="menuitem">
+                      <button type="button" class="dropdown-item small" data-toggle="modal"
+                              (click)="selectActivity(a); dangerModal.show();">
+                        <i class="fa fa-remove"></i> Supprimer
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+          <pagination-controls
+            class="mypagination"
+            id="activities"
+            (pageChange)="gotoPage($event)"
+            maxSize="15"
+            directionLinks="true"
+            autoHide="true"
+            previousLabel="Précédant"
+            nextLabel="Suivant"
+            screenReaderPaginationLabel="Pagination"
+            screenReaderPageLabel="page"
+            screenReaderCurrentLabel="Vous etes sur la page">
+          </pagination-controls>
+          <div class="col-xs-12 col-12 d-sm-down-none">
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <!--/.col-->
+  </div>
+</div>
+
+
+
+
+
+
+<edit-activity-project bsModal #editactivityProjectModal="bs-modal"
+                       [modal]="editactivityProjectModal"
+                       [activityProject]="activityProject" [projects]="projects"
+                       [dureeConverted]="dureeConverted"
+                       [disabledStatut]="disabledStatut"
+                       (refresh)="ngOnInit()"
+                       [toDo]="true"
+                       class="modal fade" tabindex="-1" role="dialog"
+                       aria-labelledby="myModalLabel" aria-hidden="true"></edit-activity-project>
+
+
+
+
+
+
+<show-activity-project bsModal #activityProjectModal="bs-modal" [modal]="activityProjectModal"
+                       [activityProject]="activityProject" class="modal fade" tabindex="-1" role="dialog"
+                       aria-labelledby="myModalLabel" aria-hidden="true"></show-activity-project>
+
+<new-ap-responsable bsModal #newactivityProjectModal="bs-modal" [modal]="newactivityProjectModal"
+                    (refresh)="ngOnInit()"
+                    class="modal fade"
+                    tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></new-ap-responsable>
+
+<delete-modal bsModal #dangerModal="bs-modal" [modal]="dangerModal" [activity]="activityProject"
+              (functionDelete)="onDeleteMyActivity(activityProject)" class="modal fade"
+              tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></delete-modal>

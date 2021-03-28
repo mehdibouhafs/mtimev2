@@ -1,0 +1,25 @@
+<div class="animated fadeIn">
+
+
+  <ul class="nav nav-pills" id="myTab1" role="tablist">
+    <li class="nav-item">
+      <a class="nav-link" routerLinkActive="active" id="Renouvellement-tab" data-toggle="tab" routerLink="/renouvellement/all-contrat-fournisseur" role="tab" aria-controls="Renouvellement" aria-selected="false">Renouvellement</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" routerLinkActive="active" id="NewcontratClient-tab" data-toggle="tab" routerLink="/renouvellement/new-contrat-client" role="tab" aria-controls="NewcontratClient" aria-selected="false">Nouveau contrat client</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" routerLinkActive="active" id="NewcontratFournisseur-tab" data-toggle="tab" routerLink="/renouvellement/new-contrat-fournisseur" role="tab" aria-controls="NewcontratFournisseur" aria-selected="false">Nouveau contrat fournisseur</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" routerLinkActive="active" id="ImportContratClient" data-toggle="tab" routerLink="/renouvellement/import-contrat-client" role="tab" aria-controls="ImportContratClient" aria-selected="false">Import fichier Contrat client</a>
+    </li>
+
+  </ul>
+  <div class="tab-content" id="myTab1Content">
+    <router-outlet>
+    </router-outlet>
+  </div>
+
+
+</div>

@@ -1,0 +1,171 @@
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-lg-10 mx-auto">
+      <div class="card">
+        <div class="card-header">
+          <i class="fa fa-align-justify"></i> Gestion des certifications
+        </div>
+        <div class="card-body">
+          <div class="form-group row">
+            <div class="col-md-4">
+              <div class="input-group">
+                <input id="input2-group2" name="input2-group2" class="form-control form-control-sm"
+                       placeholder="Chercher" type="text"
+                       [(ngModel)]="motCle">
+                <span class="input-group-append">
+                          <button type="button" class="btn btn-sm btn-primary" (click)="chercher()"><i
+                            class="fa fa-search"></i></button>
+                        </span>
+              </div>
+            </div>
+          </div>
+          <table class="table table-sm">
+            <thead>
+            <tr>
+              <th>Certification</th>
+              <th>Technologie</th>
+              <th>Editeur</th>
+              <th>Date</th>
+              <th>Détails</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let c of certifications?.content | paginate: {
+                                                      id: 'formations',
+                                                      itemsPerPage: itemsPerPage,
+                                                      currentPage: currentPage,
+                                                      totalItems: certifications?.totalElements}">
+              <td>{{c.certName}}</td>
+              <td>{{c.technologie.nomTechnologie}}</td>
+              <td>{{c.editeur.nomEditeur}}</td>
+              <td>{{c.dateEch}}</td>
+              <td>
+                <button class="btn btn-outline-primary btn-sm"
+                        (click)="selectCertification(c); showCertification.show();">
+                  <i class="fa fa-cog"></i>
+                </button>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+          <pagination-controls
+            class="mypagination"
+            id="formations"
+            (pageChange)="gotoPage($event)"
+            maxSize="15"
+            directionLinks="true"
+            autoHide="true"
+            previousLabel="Précédant"
+            nextLabel="Suivant"
+            screenReaderPaginationLabel="Pagination"
+            screenReaderPageLabel="page"
+            screenReaderCurrentLabel="Vous etes sur la page">
+          </pagination-controls>
+          <div class="col-xs-12 col-12 d-sm-down-none">
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <!--/.col-->
+  </div>
+
+  <div class="row">
+    <div class="col-lg-10 mx-auto">
+      <div class="card">
+        <div class="card-header">
+          <i class="fa fa-align-justify"></i> Gestion des Formations
+        </div>
+        <div class="card-body">
+          <div class="form-group row">
+            <div class="col-md-4">
+              <div class="input-group">
+                <input id="input3-group3" name="input2-group2" class="form-control form-control-sm"
+                       placeholder="Chercher" type="text"
+                       [(ngModel)]="motCleFormation">
+                <span class="input-group-append">
+                          <button type="button" class="btn btn-sm btn-primary" (click)="chercher()"><i
+                            class="fa fa-search"></i></button>
+                        </span>
+              </div>
+            </div>
+          </div>
+          <table class="table table-sm">
+            <thead>
+            <tr>
+              <th>Formation</th>
+              <th>Technologie</th>
+              <th>Editeur</th>
+              <th>Détails</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let f of formations?.content | paginate: {
+                                                      id: 'formationspagination',
+                                                      itemsPerPage: itemsPerPage,
+                                                      currentPage: currentPage,
+                                                      totalItems: formations?.totalElements}">
+              <td>{{f?.frmName}}</td>
+              <td>{{f?.technologie?.nomTechnologie}}</td>
+              <td>{{f?.editeur?.nomEditeur}}</td>
+              <td>
+                <button class="btn btn-outline-primary btn-sm"
+                        (click)="selectFormation(f); showFormation.show();">
+                  <i class="fa fa-cog"></i>
+                </button>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+          <pagination-controls
+            class="mypagination"
+            id="formationspagination"
+            (pageChange)="gotoPageFormation($event)"
+            maxSize="15"
+            directionLinks="true"
+            autoHide="true"
+            previousLabel="Précédant"
+            nextLabel="Suivant"
+            screenReaderPaginationLabel="Pagination"
+            screenReaderPageLabel="page"
+            screenReaderCurrentLabel="Vous etes sur la page">
+          </pagination-controls>
+          <div class="col-xs-12 col-12 d-sm-down-none">
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <!--/.col-->
+  </div>
+</div>
+
+<manage-empcertification bsModal #manageCertification="bs-modal"
+                         [modal]="manageCertification"
+                         [certification]="selectedCertification"
+                         (refresh)="ngOnInit()"
+                         class="modal fade"
+                         tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                         aria-hidden="true"></manage-empcertification>
+
+<manage-empformation bsModal #manageFormation="bs-modal"
+                         [modal]="manageFormation"
+                         [formation]="selectedFormation"
+                         (refresh)="ngOnInit()"
+                         class="modal fade"
+                         tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                         aria-hidden="true"></manage-empformation>
+
+<show-formation bsModal #showFormation="bs-modal"
+                [modal]="showFormation"
+                [formation]="selectedFormation"
+                class="modal fade"
+                tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></show-formation>
+
+<show-certification bsModal #showCertification="bs-modal"
+                    [modal]="showCertification"
+                    [certification]="selectedCertification"
+                    class="modal fade"
+                    tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></show-certification>
+
+

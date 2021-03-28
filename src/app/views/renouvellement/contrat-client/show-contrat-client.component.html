@@ -1,0 +1,100 @@
+<div class="modal-dialog modal-lg" role="document">
+  <div class="modal-content">
+
+    <div class="modal-header">
+      <h4 class="modal-title">Détails contrat client</h4>
+    </div>
+
+    <div class="modal-body">
+
+      <div class="form-group row">
+        <div class="col-sm-3 nopadding-right"><strong>Nom contrat :</strong></div>
+        <div class="col-sm-9 nopadding">
+          {{contrat?.ctrtName}}
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <div class="col-sm-2 nopadding-right"><strong>Début :</strong></div>
+        <div class="col-sm-3 nopadding">
+          {{contrat?.dteStrt}}
+        </div>
+        <div class="col-sm-2 nopadding-right"><strong>Fin :</strong></div>
+        <div class="col-sm-3 nopadding">
+          {{contrat?.dteEnd}}
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <div class="col-sm-2 nopadding-right"><strong>Client :</strong></div>
+        <div class="col-sm-3 nopadding">
+          {{contrat?.customer?.name}}
+        </div>
+        <div class="col-sm-2 nopadding-right"><strong>Pilote :</strong></div>
+        <div class="col-sm-3 nopadding">
+          {{contrat?.pilote}}
+        </div>
+      </div>
+
+      <p-table [value]="contrat.ctrctCustomerProducts">
+        <ng-template pTemplate="caption">
+          Liste des produits
+        </ng-template>
+        <ng-template pTemplate="header">
+
+          <tr>
+            <th>
+              Référence
+            </th>
+            <th>
+              Désignation
+            </th>
+            <th>
+              Editeur
+            </th>
+            <th>
+              Distributeur
+            </th>
+            <th>
+              Quantité
+            </th>
+          </tr>
+
+
+        </ng-template>
+
+        <ng-template pTemplate="body" let-item>
+
+          <tr>
+            <td>
+              {{item.product.ref}}
+            </td>
+            <td>
+              {{item.product.desig}}
+            </td>
+            <td>
+              {{item.product.editeur}}
+            </td>
+            <td>
+              {{item.product.distributeur.name}}
+            </td>
+            <td>
+              {{item.qte}}
+            </td>
+          </tr>
+        </ng-template>
+
+      </p-table>
+
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-sm btn-primary" (click)="modal.hide()"><i class="fa fa-check"></i>
+        OK
+      </button>
+    </div>
+  </div>
+</div>
+
+
+

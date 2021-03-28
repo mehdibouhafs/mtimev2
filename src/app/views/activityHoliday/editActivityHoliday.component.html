@@ -19,13 +19,22 @@
           <div class="form-row">
             <div class="form-group col-sm-6">
               <label for="dateStart">Date de début :</label>
-              <input id="dateStart" class="form-control" name="dateStrt"  [(ngModel)]="activityHoliday.dteStrt" (ngModelChange)="onDatesChanged()" [owlDateTimeTrigger]="dt3" [owlDateTime]="dt3" size="16" required>
+              <input id="dateStart"
+                     class="form-control form-control-sm"
+                     name="dateStrt"
+                     [(ngModel)]="activityHoliday.dteStrt"
+                     (ngModelChange)="onDatesChanged()"
+                     [owlDateTimeTrigger]="dt3"
+                     [owlDateTime]="dt3" size="16" required>
               <owl-date-time [pickerType]="'calendar'" #dt3></owl-date-time>
             </div>
 
             <div class="form-group col-sm-6">
               <label for="dateEnd">Date de fin :</label>
-              <input id="dateEnd" class="form-control" placeholder="Date fin"  [owlDateTimeTrigger]="dt4" [owlDateTime]="dt4"
+              <input id="dateEnd" class="form-control form-control-sm"
+                     placeholder="Date fin"
+                     [owlDateTimeTrigger]="dt4"
+                     [owlDateTime]="dt4"
                      [(ngModel)]="activityHoliday.dteEnd" [min]="activityHoliday.dteStrt" (ngModelChange)="onDatesChanged()" name="dteEnd" required>
               <owl-date-time [pickerType]="'calendar'" #dt4></owl-date-time>
             </div>
@@ -79,6 +88,20 @@
             </div>
 
           </div>
+          <div class="form-row">
+          <div class="form-group col-sm-6">
+            <label for="motif">Motif :</label>
+            <ng-select id="motif"
+                       name="motif"
+                       [items]="motif"
+                       bindLabel="name"
+                       bindValue="name"
+                       placeholder="Motif"
+                       [(ngModel)]="activityHoliday.motif"
+                       required>
+            </ng-select>
+          </div>
+          </div>
 
 
         </div>
@@ -123,10 +146,12 @@
           <div class="col-sm-3 nopadding">
             {{activityService.ShortconvertMinutesToHoursAndMinute(activityHoliday.durtion)}}
           </div>
-          <div class="col-sm-2 nopadding-right"><strong>Statut :</strong></div>
+
+          <div class="col-sm-2 nopadding-right"><strong>Motif :</strong></div>
           <div class="col-sm-3 nopadding">
-            <span [class]="activityHoliday.statut?'badge badge-pill badge-success':'badge badge-pill badge-info'">{{activityHoliday?.statut==true?'Realisé':'Planifié'}}</span>
+            {{activityHoliday?.motif}}
           </div>
+
         </div>
 
         <div class="form-group row">
@@ -135,6 +160,7 @@
             {{activityHoliday?.comments}}
           </div>
         </div>
+
 
 
       </div>

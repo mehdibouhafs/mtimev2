@@ -1,0 +1,263 @@
+<div class="modal-dialog" role="document" xmlns="http://www.w3.org/1999/html">
+  <div class="modal-content modal-lg">
+
+
+    <div *ngIf="mode==1">
+
+      <div class="modal-header">
+        <h6 class="col-12 modal-title text-center">
+          <p>Nouvelle Activité projet</p>
+          <div *ngIf="lastActivity" class="badge badge-pill badge-light">
+            Dernière Activité : {{lastActivity?.typeActivite+", "+lastActivity?.nature}} Du
+            {{lastActivity?.dteStrt | date: "dd/MM/yy HH:mm"}} à {{lastActivity?.dteEnd | date: "dd/MM/yy HH:mm"}},
+            {{lastActivity?.customer?.name}}
+          </div>
+          <div class="alert alert-danger" role="alert" *ngIf="error==1">
+            Oups ! {{returnedError}}
+          </div>
+        </h6>
+      </div>
+
+
+      <form class="form-horizontal" #f="ngForm" (ngSubmit)="onSaveActivityProject(f.value)">
+
+
+        <div class="modal-body">
+
+          <div class="form-row">
+            <div class="form-group col-sm-4">
+              <label>Date :</label>
+
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                </div>
+                <input class="form-control form-control-sm" [owlDateTimeTrigger]="dt" [owlDateTime]="dt"
+                       placeholder="Date"
+                       [(ngModel)]="activityProject.dteStrt" #dteStrt name="dteStrt" required>
+                <owl-date-time [pickerType]="'calendar'" #dt></owl-date-time>
+              </div>
+            </div>
+
+            <div class="form-group col-sm-4">
+              <label for="duree">Durée :</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <div class="input-group-text"><i class="fa fa-clock-o"></i></div>
+                </div>
+                <input class="form-control form-control-sm"
+                       id="duree"
+                       name="duree"
+                       placeholder="Durée"
+                       [(ngModel)]="durtion"
+                       [owlDateTimeTrigger]="dt4"
+                       [owlDateTime]="dt4" required>
+                <owl-date-time [pickerType]="'timer'" [startAt]="startAt" #dt4></owl-date-time>
+              </div>
+            </div>
+
+            <div class="form-group col-sm-4">
+              <label for="nature">Nature :</label>
+              <ng-select id="nature" name="nature"
+                         [items]="nature"
+                         [searchable]="false"
+                         placeholder="Nature"
+                         bindValue="name"
+                         bindLabel="name"
+                         [(ngModel)]="activityProject.nature"
+                         required>
+
+              </ng-select>
+            </div>
+
+
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-sm-6">
+              <label for="customers">Client :</label>
+              <ng-select id="customers" [items]="customers"
+                         bindLabel="name"
+                         name="customer"
+                         placeholder="Client"
+                         notFoundText="Aucun client trouvé"
+                         [typeahead]="customerTypeahead"
+                         typeToSearchText="Saisir client"
+                         (change)="chargerProjects()"
+                         [(ngModel)]="activityProject.customer"
+                         [required]="activityProject.nature!='Réunion'"></ng-select>
+            </div>
+
+            <div class="form-group col-sm-6">
+              <label for="project">Projet :</label>
+              <ng-select id="project" [items]="projects"
+                         bindLabel="prjName"
+                         name="project"
+                         [disabled]="!activityProject.customer"
+                         placeholder="Projet"
+                         [(ngModel)]="activityProject.project"
+                         [required]="activityProject.nature=='Gestion projet'">
+              </ng-select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-sm-6">
+              <label for="lieu">Lieu :</label>
+              <ng-select id="lieu" name="lieu"
+                         [items]="lieu"
+                         [searchable]="false"
+                         placeholder="Lieu"
+                         bindValue="name"
+                         bindLabel="name"
+                         [(ngModel)]="activityProject.lieu"
+                         required>
+
+              </ng-select>
+            </div>
+            <div class="form-group col-sm-6">
+              <label for="ville">Ville :</label>
+              <ng-select id="ville" name="ville"
+                         [items]="ville"
+                         [searchable]="false"
+                         placeholder="Ville"
+                         bindValue="name"
+                         bindLabel="name"
+                         [(ngModel)]="activityProject.ville"
+                         required>
+
+              </ng-select>
+            </div>
+          </div>
+
+          <div class="form-row">
+
+            <div class="form-group col-sm-6">
+              <label for="comments">Commentaire :</label>
+              <textarea minlength="1" id="comments" name="comments" #comments="ngModel"
+                        [(ngModel)]="activityProject.comments" rows="9" class="form-control" placeholder="Content.."
+                        style="margin-top: 0px; margin-bottom: 0px; height: 56px;" required></textarea>
+
+            </div>
+
+            <div class="form-group col-sm-6 container my-auto">
+              <button type="button"
+                      [disabled]="activityProject.ville==null
+                      || activityProject.nature==null
+                      || activityProject.lieu==null
+                      || activityProject.dteStrt==null
+                      || activityProject.comments==null
+                      || activityProject.customer==null"
+                      class="btn btn-sm btn-primary"
+                      (click)="addActivityToList()">Ajouter
+              </button>
+            </div>
+          </div>
+
+
+          <div class="form-row" *ngIf="activitiesSelected.length>0">
+            <table class="table table-sm">
+              <thead>
+              <tr>
+                <th>Date</th>
+                <th>Duree</th>
+                <th>Nature</th>
+                <th>Client</th>
+                <th>Projet</th>
+                <th>Statut</th>
+                <th>Supprimer</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let a of activitiesSelected; let i=index;">
+                <td>{{a.dteStrt | date : 'dd/MM/yyyy'}}</td>
+                <td>{{activityService.ShortconvertMinutesToHoursAndMinute(a.durtion)}}</td>
+                <td>{{a?.nature}}</td>
+                <td>{{a?.customer?.name}}</td>
+                <td>{{a?.project?.prjName}}</td>
+                <td>
+                  <select id="statut"
+                          [name]="'statut'+i"
+                          [(ngModel)]="a.statut">
+                    <option [value]="true">Réalisée</option>
+                    <option [value]="false">Planifiée</option>
+                  </select>
+                </td>
+                <td>
+                  <button type="button" class="btn btn-sm btn-danger"
+                          mwlConfirmationPopover
+                          [popoverTitle]="popoverTitle"
+                          [popoverMessage]="popoverMessage"
+                          confirmText="Oui"
+                          cancelText="Non"
+                          (confirm)="removeActivityFromList(a)"
+                          placement="left">
+                    <i class="fa fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+
+
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-sm btn-danger" (click)="hideModal(); toModeOne();">Annuler
+          </button>
+          <button [disabled]="activitiesSelected.length==0" type="submit" class="btn btn-sm btn-primary"><i
+            class="fa fa-dot-circle-o"></i>
+            Enregistrer
+          </button>
+        </div>
+      </form>
+
+    </div>
+
+    <div *ngIf="mode==2">
+
+      <div class="modal-header">
+        <h4 class="modal-title">Confirmation</h4>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-row" *ngIf="activitiesSelected.length>0">
+          <table class="table table-sm">
+            <thead>
+            <tr>
+              <th>Date</th>
+              <th>Duree</th>
+              <th>Nature</th>
+              <th>Client</th>
+              <th>Projet</th>
+              <th>Statut</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let a of activitiesSelected; let i=index;">
+              <td>{{a.dteStrt | date : 'dd/MM/yyyy'}}</td>
+              <td>{{activityService.ShortconvertMinutesToHoursAndMinute(a.durtion)}}</td>
+              <td>{{a?.nature}}</td>
+              <td>{{a?.customer?.name}}</td>
+              <td>{{a?.project?.prjName}}</td>
+              <td>{{a.statut==true?'Réalisée':'Planifiée'}}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-primary" (click)="hideModal(); toModeOne();">
+          <i class="fa fa-check"></i> OK
+        </button>
+      </div>
+
+
+    </div>
+
+
+  </div>
+</div>
+

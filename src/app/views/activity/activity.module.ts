@@ -1,6 +1,6 @@
 // Angular
 import {CommonModule, DatePipe} from '@angular/common';
-import { NgModule } from '@angular/core';
+import {CUSTOM_ELEMENTS_SCHEMA, NgModule} from '@angular/core';
 import {
   AlertModule,
   BsDropdownModule, CarouselModule, CollapseModule, ModalModule, PaginationModule, PopoverModule, ProgressbarModule,
@@ -34,7 +34,6 @@ import {NewActivityHolidayComponent} from "../activityHoliday/newActivityHoliday
 import {EditActivityHolidayComponent} from "../activityHoliday/editActivityHoliday.component";
 import {NewActivityCommercialComponent} from "../activityCommercial/newActivityCommercial.component";
 import {NewActivityComponent} from "./new-activity.component";
-import {NewActivityModalComponent} from "../newactivitymodal/new-activity-modal.component";
 import {ShowActivityCommercialComponent} from "../activityCommercial/showActivityCommercial.component";
 import {ShowActivityHolidayComponent} from "../activityHoliday/showActivityHoliday.component";
 import {EditActivityCommercialComponent} from "../activityCommercial/editActivityCommercial.component";
@@ -43,6 +42,28 @@ import {NewActivitySIComponent} from "../activitySI/newActivitySI.component";
 import {ShowActivitySIComponent} from "../activitySI/showActivitySI.component";
 import {EditActivitySIComponent} from "../activitySI/editActivitySI.component";
 import {NgxToggleModule} from "ngx-toggle";
+import {ActivityServiceComponent} from "./activity-service.component";
+import {NewApWithoutTestComponent} from "../activityProjectWithoutTest/new-ap-without-test.component";
+import { LOCALE_ID } from '@angular/core';
+import {MyApComponent} from "../activityProjectWithoutTest/my-ap.component";
+import {VilleService} from "../../services/ville.service";
+import {NatureService} from "../../services/nature.service";
+import {ActionService} from "../../services/action.service";
+import {ProduitService} from "../../services/produit.service";
+import {ShowApComponent} from "../activityProjectWithoutTest/show-ap.component";
+import {NewActivityPMComponent} from "../activityPM/newActivityPM.component";
+import {ShowActivityPMComponent} from "../activityPM/showActivityPM.component";
+import {EditActivityPMComponent} from "../activityPM/editActivityPM.component";
+import {NewActivityAvantVenteComponent} from "../activityAvantVente/newActivityAvantVente.component";
+import {EditActivityAvantVenteComponent} from "../activityAvantVente/editActivityAvantVente.component";
+import {ShowActivityAvantVenteComponent} from "../activityAvantVente/showActivityAvantVente.component";
+import {OffreService} from "../../services/offre.service";
+import {ObjectifService} from "../../services/objectif.service";
+import {NewActivityDevCompetenceComponent} from "../activityDevCompetence/newActivityDevCompetence.component";
+import {EditActivityDevCompetenceComponent} from "../activityDevCompetence/editActivityDevCompetence.component";
+import {ShowActivityDevCompetenceComponent} from "../activityDevCompetence/showActivityDevCompetence.component";
+import {MySelectionComponent} from "../calendar/myCalendar/my.selection.component";
+import {NgbModule} from "@ng-bootstrap/ng-bootstrap";
 
 @NgModule({
   imports: [
@@ -68,11 +89,14 @@ import {NgxToggleModule} from "ngx-toggle";
     OwlNativeDateTimeModule,
     AlertModule.forRoot(),
     ModalModule.forRoot(),
-    CustomModalModule
+    CustomModalModule,
+    NgbModule.forRoot()
+
 
   ],
   declarations: [
     AllactivitiesComponent,
+    ActivityServiceComponent,
     NewActivityProjectComponent,
     EditActivityProjectComponent,
     ShowActivityProjectComponent,
@@ -89,11 +113,23 @@ import {NgxToggleModule} from "ngx-toggle";
     NewActivityCommercialComponent,
     EditActivityCommercialComponent,
     ShowActivityCommercialComponent,
+    NewActivityAvantVenteComponent,
+    EditActivityAvantVenteComponent,
+    ShowActivityAvantVenteComponent,
+    NewActivityDevCompetenceComponent,
+    EditActivityDevCompetenceComponent,
+    ShowActivityDevCompetenceComponent,
     NewActivityComponent,
-    NewActivityModalComponent,
     NewActivitySIComponent,
     ShowActivitySIComponent,
     EditActivitySIComponent,
+    NewApWithoutTestComponent,
+    MyApComponent,
+    ShowApComponent,
+    NewActivityPMComponent,
+    ShowActivityPMComponent,
+    EditActivityPMComponent,
+    MySelectionComponent
 
   ],
   exports: [
@@ -114,11 +150,34 @@ import {NgxToggleModule} from "ngx-toggle";
     EditActivityCommercialComponent,
     ShowActivityCommercialComponent,
     NewActivityComponent,
-    NewActivityModalComponent,
     NewActivitySIComponent,
     ShowActivitySIComponent,
     EditActivitySIComponent,
+    ShowApComponent,
+    NewActivityPMComponent,
+    ShowActivityPMComponent,
+    EditActivityPMComponent,
+    NewActivityAvantVenteComponent,
+    EditActivityAvantVenteComponent,
+    ShowActivityAvantVenteComponent,
+    NewActivityDevCompetenceComponent,
+    EditActivityDevCompetenceComponent,
+    ShowActivityDevCompetenceComponent,
+
   ],
-  providers: [ActivityService,SocketService,CustomerService,ProjectService,{provide: OWL_DATE_TIME_LOCALE, useValue: 'fr'},RequestService]
+
+  providers: [
+    OffreService,
+    ObjectifService,
+    ProduitService,
+    NatureService,
+    VilleService,
+    ActivityService,
+    SocketService,
+    CustomerService,
+    ProjectService,
+    {provide: OWL_DATE_TIME_LOCALE, useValue: 'fr'},
+    RequestService
+  ]
 })
 export class ActivityModule { }

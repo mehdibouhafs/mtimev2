@@ -1,0 +1,262 @@
+<div class="modal-dialog" role="document">
+  <div class="modal-content">
+
+    <div *ngIf="mode==1">
+
+
+      <div class="modal-header">
+        <h4 class="modal-title">Formation</h4>
+      </div>
+
+
+      <form #f="ngForm" (ngSubmit)="onSaveFormation()">
+        <div class="modal-body">
+
+          <div class="form-row">
+
+            <div class="form-group col-sm-6">
+              <label>Date de début :</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                </div>
+                <p-calendar
+                  inputStyleClass="form-control form-control-sm"
+                  name="aaa" placeholder="date" [(ngModel)]="dates" selectionMode="multiple" required></p-calendar>
+                {{(dates?dates.length:'0')+' jours'}}
+                <!--<input class="form-control form-control-sm" id="dateStart" [owlDateTimeTrigger]="dt" [owlDateTime]="dt"
+                       placeholder="Date de début"
+                       name="dteStrt" [(ngModel)]="formation.dateStrt" [selectMode]="'single'" required>
+                <owl-date-time [pickerType]="'calendar'" #dt></owl-date-time>-->
+              </div>
+            </div>
+
+            <!--<div class="form-group col-sm-6">
+              <label for="dateEnd">Date de fin :</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                </div>
+                <input class="form-control form-control-sm" id="dateEnd" [owlDateTimeTrigger]="dt1" [owlDateTime]="dt1"
+                       placeholder="Date de fin"
+                       name="dteEnd" [min]="formation.dateStrt" [(ngModel)]="formation.dateEnd" required>
+                <owl-date-time [pickerType]="'calendar'" #dt1></owl-date-time>
+              </div>
+            </div>-->
+
+          </div>
+
+          <div class="form-row">
+
+            <div class="form-group col-sm-6">
+              <label for="formationName">Intitulé de la formation :</label>
+              <input class="form-control form-control-sm" #formationName="ngModel" id="formationName"
+                     name="formationName"
+                     type="text"
+                     minlength="5"
+                     placeholder="Intitulé de la formation" [(ngModel)]="formation.frmName" required>
+              <div class="error" *ngIf="formationName.invalid && (formationName.dirty || formationName.touched)">
+                <div *ngIf="formationName.errors.required">
+                  L'intitulé de la formation est obligatoire
+                </div>
+                <div *ngIf="formationName.errors.minlength">
+                  L'intitulé doit contenir au moins 5 caractéres
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group col-sm-6">
+              <label for="technologie">Technologie :</label>
+              <ng-select id="technologie" name="technologie"
+                         [items]="technologies"
+                         bindLabel="nomTechnologie"
+                         placeholder="Selectionnez Technologie"
+                         notFoundText="Aucune technologie trouvée"
+                         [typeahead]="technologiesTypeahead"
+                         typeToSearchText="Saisir Technologie"
+                         (change)="chargerEditeurs()"
+                         [(ngModel)]="formation.technologie"
+                         required>
+
+              </ng-select>
+            </div>
+          </div>
+
+
+          <div class="form-row">
+
+            <div class="form-group col-sm-6">
+              <label for="editeur">Editeur :</label>
+              <ng-select id="editeur" name="editeur"
+                         [items]="editeurs"
+                         [searchable]="false"
+                         bindLabel="nomEditeur"
+                         placeholder="Selectionnez editeur"
+                         notFoundText="Aucun editeur trouvé"
+                         [disabled]="formation.technologie==null"
+                         [(ngModel)]="formation.editeur"
+                         required>
+
+              </ng-select>
+            </div>
+
+            <div class="form-group col-sm-6">
+              <label for="participants">Participants :</label>
+              <ng-select id="participants" name="participants"
+                         [items]="users"
+                         multiple="true"
+                         bindLabel="username"
+                         [hideSelected]="true"
+                         [(ngModel)]="selectedUsers"
+                         placeholder="Selectionnez les participants"
+                         notFoundText="Aucun salarié trouvé"
+                         [typeahead]="usersTypeahead"
+                         typeToSearchText="Saisir le nom des participants"
+                         required>
+                <ng-template ng-multi-label-tmp let-items="items" let-clear="clear">
+                  <div class="ng-value" *ngIf="items.length > 0">
+                    <span class="ng-value-label"> {{items.length}} participants selectionnés</span>
+                  </div>
+                </ng-template>
+                <ng-template ng-option-tmp let-item="item">
+                  <img [src]="'assets/img/avatars/'+item.username+'.jpg'"
+                       onerror="this.src='assets/img/avatars/default.jpg'" width="20px" height="20px">
+                  {{item.firstName+' '+item.lastName}}
+                </ng-template>
+              </ng-select>
+            </div>
+
+          </div>
+
+          <div class="form-row" *ngIf="selectedUsers.length>0">
+            <table class="table table-sm">
+              <thead>
+              <tr>
+                <th>#</th>
+                <th>Photo</th>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Service</th>
+                <th>Action</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let p of selectedUsers; let  i=index;">
+                <td>{{i+1}}</td>
+                <td><img [src]="'assets/img/avatars/'+p.username+'.jpg'"
+                         onerror="this.src='assets/img/avatars/default.jpg'" class="img-avatar" [alt]="p.username"
+                         width="25px" height="25px"/></td>
+                <td>{{p?.lastName}}</td>
+                <td>{{p?.firstName}}</td>
+                <td>{{p?.service?.servName}}</td>
+                <td>
+                  <button type="button" class="btn btn-sm btn-danger"
+                          mwlConfirmationPopover
+                          [popoverTitle]="popoverTitle"
+                          [popoverMessage]="popoverMessage"
+                          confirmText="Oui"
+                          cancelText="Non"
+                          placement="left"
+                          (confirm)="remove(p)">
+                    <i class="fa fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+
+
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-sm btn-danger" (click)="modal.hide()"><i class="fa fa-ban"></i>
+            Annuler
+          </button>
+          <button type="submit" [disabled]="!f.valid" class="btn btn-sm btn-primary"><i
+            class="fa fa-dot-circle-o"></i>
+            Enregistrer
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div *ngIf="mode==2">
+      <div class="modal-header">
+        <h4 class="modal-title">Confirmation</h4>
+      </div>
+
+      <div class="modal-body">
+
+        <div class="form-group row">
+          <div class="col-sm-3 nopadding-right"><strong>Date de début :</strong></div>
+          <div class="col-sm-2 nopadding">
+            <span class="badge badge-pill badge-light">{{formation?.dateStrt | date:"dd/MM/yy"}}</span>
+          </div>
+          <div class="col-sm-3 nopadding-right"><strong>Date de fin :</strong></div>
+          <div class="col-sm-2 nopadding">
+            <span class="badge badge-pill badge-light">{{formation?.dateEnd | date:"dd/MM/yy"}}</span>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <div class="col-sm-2 nopadding-right"><strong>Intitulé :</strong></div>
+          <div class="col-sm-3 nopadding">
+            <span>{{formation?.frmName}}</span>
+          </div>
+          <div class="col-sm-2 nopadding-right"><strong>Technologie:</strong></div>
+          <div class="col-sm-3 nopadding">
+            <span>{{formation?.technologie?.nomTechnologie}}</span>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <div class="col-sm-2 nopadding-right"><strong>Editeur :</strong></div>
+          <div class="col-sm-3 nopadding">
+            <span>{{formation?.editeur?.nomEditeur}}</span>
+          </div>
+          <div class="col-sm-2 nopadding-right"><strong>Participants :</strong></div>
+          <div class="col-sm-3 nopadding">
+            <span>{{formation?.candidats?.length}} participants</span>
+          </div>
+        </div>
+
+        <div class="form-row" *ngIf="formation.candidats.length>0">
+          <table class="table table-sm">
+            <thead>
+            <tr>
+              <th>#</th>
+              <th>Photo</th>
+              <th>Nom</th>
+              <th>Prénom</th>
+              <th>Service</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let p of formation.candidats; let  i=index;">
+              <td>{{i+1}}</td>
+              <td><img [src]="'assets/img/avatars/'+p.employe.username+'.jpg'"
+                       onerror="this.src='assets/img/avatars/default.jpg'" class="img-avatar" [alt]="p.employe.username"
+                       width="25px" height="25px"/></td>
+              <td>{{p?.employe?.lastName}}</td>
+              <td>{{p?.employe?.firstName}}</td>
+              <td>{{p?.employe?.service?.servName}}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-primary" (click)="toModeOne()"><i class="fa fa-check"></i>
+          OK
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+

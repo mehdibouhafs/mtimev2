@@ -1,0 +1,76 @@
+<div class="modal-dialog" role="document">
+  <div class="modal-content">
+
+
+    <div class="modal-header">
+      <h4 class="modal-title">Détails de la certification</h4>
+    </div>
+
+    <div class="modal-body">
+
+      <div class="form-group row">
+        <div class="col-sm-3 nopadding-right"><strong>Date d'échéance :</strong></div>
+        <div class="col-sm-2 nopadding">
+          <span class="badge badge-pill badge-light">{{certification?.dateEch | date:"dd/MM/yy"}}</span>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <div class="col-sm-2 nopadding-right"><strong>Intitulé :</strong></div>
+        <div class="col-sm-3 nopadding">
+          <span>{{certification?.certName}}</span>
+        </div>
+
+        <div class="col-sm-2"><strong>Technologie:</strong></div>
+        <div class="col-sm-3 nopadding">
+          <span>{{certification?.technologie?.nomTechnologie}}</span>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <div class="col-sm-2 nopadding-right"><strong>Editeur :</strong></div>
+        <div class="col-sm-3 nopadding">
+          <span>{{certification?.editeur?.nomEditeur}}</span>
+        </div>
+        <div class="col-sm-2 nopadding-right"><strong>Participants :</strong></div>
+        <div class="col-sm-3 nopadding">
+          <span>{{certification?.candidats?.length}} candidats</span>
+        </div>
+      </div>
+
+      <div class="form-row" *ngIf="certification.candidats.length>0">
+        <table class="table table-sm">
+          <thead>
+          <tr>
+            <th>Photo</th>
+            <th>Nom</th>
+            <th>Prénom</th>
+            <th>Service</th>
+            <th>Niveau</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let c of certification.candidats">
+            <td><img [src]="'assets/img/avatars/'+c.employe.username+'.jpg'"
+                     onerror="this.src='assets/img/avatars/default.jpg'" class="img-avatar" [alt]="c.employe.username"
+                     width="25px" height="25px"/></td>
+            <td>{{c?.employe?.lastName}}</td>
+            <td>{{c?.employe?.firstName}}</td>
+            <td>{{c?.employe?.service.servName}}</td>
+            <td>{{c?.niveau==""?'Non Renseigné':c?.niveau}}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-sm btn-primary" (click)="modal.hide()"><i class="fa fa-check"></i>
+        OK
+      </button>
+    </div>
+  </div>
+</div>
+
+
+

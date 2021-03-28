@@ -41,6 +41,10 @@ import {ActivityCommercial} from "../../../model/model.activityCommercial";
 import {ActivityProject} from "../../../model/model.activityProject";
 import {ActivityHoliday} from "../../../model/model.activityHoliday";
 import {ActivitySI} from "../../../model/model.activitySI";
+import {ActivityPM} from "../../../model/model.activityPM";
+import {ActivityAvantVente} from "../../../model/model.activityAvantVente";
+import {ActivityDevCompetence} from "../../../model/model.activityDevCompetence";
+import {ProduitService} from "../../../services/produit.service";
 
 const colors: any = {
   red: {
@@ -66,6 +70,10 @@ const colors: any = {
   silver: {
     primary: '#C0C0C0',
     secondary: '#808080'
+  },
+  purple: {
+    primary: '#9400D3',
+    secondary: '#9400D3'
   }
 };
 
@@ -94,7 +102,7 @@ const colors: any = {
 export class MyCalendarComponent implements OnInit {
 
   lastActivity:any;
-
+  projects:any;
 
   activity: Activity = new Activity();
   activityRequest: ActivityRequest = new ActivityRequest();
@@ -103,6 +111,19 @@ export class MyCalendarComponent implements OnInit {
   activityProject: ActivityProject = new ActivityProject();
   activityHoliday: ActivityHoliday = new ActivityHoliday();
   activitySI: ActivitySI = new ActivitySI();
+  activityPM: ActivityPM = new ActivityPM();
+  activityAvantVente:ActivityAvantVente = new ActivityAvantVente();
+  activityDevCompetence:ActivityDevCompetence = new ActivityDevCompetence();
+
+  activityRequestToAdd: ActivityRequest = new ActivityRequest();
+  activityRecouvrementToAdd: ActivityRecouvrement = new ActivityRecouvrement();
+  activityCommercialToAdd: ActivityCommercial = new ActivityCommercial();
+  activityProjectToAdd: ActivityProject = new ActivityProject();
+  activityHolidayToAdd: ActivityHoliday = new ActivityHoliday();
+  activitySIToAdd: ActivitySI = new ActivitySI();
+  activityPMToAdd: ActivityPM = new ActivityPM();
+  activityDevCompetenceToAdd: ActivityDevCompetence = new ActivityDevCompetence();
+  activityAvantVenteToAdd:ActivityAvantVente = new ActivityAvantVente();
 
   eventSelected:any;
 
@@ -127,6 +148,17 @@ export class MyCalendarComponent implements OnInit {
   @ViewChild('editactivityRequestModal')
   editactivityRequestModal;
 
+  @ViewChild('editactivityPMModal')
+  editactivityPMModal;
+
+  @ViewChild('editactivityAvantVenteModal')
+  editactivityAvantVenteModal;
+
+  @ViewChild('editactivityDevCompetenceModal')
+  editactivityDevCompetenceModal;
+
+
+
   @ViewChild('activitySIModal')
   activitySIModal;
 
@@ -142,8 +174,41 @@ export class MyCalendarComponent implements OnInit {
   @ViewChild('activityProjectModal')
   activityProjectModal;
 
+  @ViewChild('activityPMModal')
+  activityPMModal;
+
   @ViewChild('activityRecouvrementModal')
   activityRecouvrementModal;
+
+  @ViewChild('activityAvantVenteModal')
+  activityAvantVenteModal;
+
+  @ViewChild('activityDevCompetenceModal')
+  activityDevCompetenceModal;
+
+  @ViewChild('newactivitySIModal')
+  newactivitySIModal;
+  @ViewChild('newactivityRequestModal')
+  newactivityRequestModal;
+  @ViewChild('newactivityProjectModal')
+  newactivityProjectModal;
+  @ViewChild('newactivityCommercialModal')
+  newactivityCommercialModal;
+  @ViewChild('newactivityRecouvrementModal')
+  newactivityRecouvrementModal;
+  @ViewChild('newactivityHolidayModal')
+  newactivityHolidayModal;
+  @ViewChild('newactivityPMModal')
+  newactivityPMModal;
+  @ViewChild('newactivityAvantVenteModal')
+  newactivityAvantVenteModal;
+  @ViewChild('newactivityDevCompetenceModal')
+  newactivityDevCompetenceModal;
+
+  activitiesAuthorized = [];
+
+
+
 
   weekStartsOn: number = DAYS_OF_WEEK.MONDAY;
 
@@ -155,6 +220,7 @@ export class MyCalendarComponent implements OnInit {
 
   locale: string = 'fr';
 
+  dureeConverted:string;
 
   modalData: {
     action: string;
@@ -191,17 +257,238 @@ export class MyCalendarComponent implements OnInit {
   ];
 
 
-  constructor(private modal1: NgbModal, private activityService: ActivityService, private authenticationService: AuthenticationService,private ref:ChangeDetectorRef) {
+  constructor( private modal1: NgbModal, private activityService: ActivityService, private authenticationService: AuthenticationService, private router:Router, private ref:ChangeDetectorRef) {
   }
 
   ngOnInit() {
-    this.fetchEvents();
-    this.activityService.getLastActivity()
-      .subscribe((data)=>{
-        this.lastActivity = data;
-      }, err=> {
-        console.log(err);
-      });
+
+    if(!this.authenticationService.isLogged())
+      this.router.navigate(['/pages/login']);
+    else {
+      this.chargerActivitiesAuthorized();
+      this.fetchEvents();
+      this.activityService.getLastActivity()
+        .subscribe((data) => {
+          this.lastActivity = data;
+        }, err => {
+          console.log(err);
+        });
+    }
+  }
+
+  chargerActivitiesAuthorized() {
+    let found = false;
+    this.activitiesAuthorized = [];
+    this.authenticationService.getRoles().forEach(authority => {
+      switch (authority) {
+        case "write_si_activity": {
+          this.activitiesAuthorized.forEach(a => {
+            if (a == 'Activité SI')
+              found = true;
+          });
+          if (!found)
+            this.activitiesAuthorized.push('Activité SI');
+          found=false;
+          break;
+        }
+        case "write_recouvrement_activity": {
+          this.activitiesAuthorized.forEach(a => {
+            if (a == 'Activité recouvrement')
+              found = true;
+          });
+          if (!found)
+            this.activitiesAuthorized.push('Activité recouvrement');
+          found=false;
+          break;
+        }
+        case "write_request_activity": {
+          this.activitiesAuthorized.forEach(a => {
+            if (a == 'Activité support')
+              found = true;
+          });
+          if (!found)
+            this.activitiesAuthorized.push('Activité support');
+          found=false;
+          break;
+        }
+        case "write_project_activity": {
+          this.activitiesAuthorized.forEach(a => {
+            if (a == 'Activité projet')
+              found = true;
+          });
+          if (!found)
+            this.activitiesAuthorized.push('Activité projet');
+          found=false;
+          break;
+        }
+        case "write_commercial_activity": {
+          this.activitiesAuthorized.forEach(a => {
+            if (a == 'Activité commerciale')
+              found = true;
+          });
+          if (!found)
+            this.activitiesAuthorized.push('Activité commerciale');
+          found=false;
+          break;
+        }
+        case "write_holiday_activity": {
+          this.activitiesAuthorized.forEach(a => {
+            if (a == 'Activité congé')
+              found = true;
+          });
+          if (!found)
+            this.activitiesAuthorized.push('Activité congé');
+          found=false;
+          break;
+        }
+
+        case "write_pm_activity": {
+          this.activitiesAuthorized.forEach(a => {
+            if (a == 'Activité PM')
+              found = true;
+          });
+          if (!found)
+            this.activitiesAuthorized.push('Activité PM');
+          found=false;
+          break;
+        }
+
+        case "write_avant_vente_activity": {
+          this.activitiesAuthorized.forEach(a => {
+            if (a == 'Activité avant vente')
+              found = true;
+          });
+          if (!found)
+            this.activitiesAuthorized.push('Activité avant vente');
+          found=false;
+          break;
+        }
+
+        case "write_dev_competence_activity": {
+          this.activitiesAuthorized.forEach(a => {
+            if (a == 'Activité dev competence')
+              found = true;
+          });
+          if (!found)
+            this.activitiesAuthorized.push('Activité développement des compétences');
+          found=false;
+          break;
+        }
+      }
+    });
+  }
+
+  onSelectModal(modalSelected: string) {
+    switch (modalSelected) {
+      case "Activité projet": {
+        if(this.startDate ) {
+          this.activityProjectToAdd=new ActivityProject();
+          this.activityProjectToAdd.user.username = this.authenticationService.getUserName();
+          this.activityProjectToAdd.dteStrt = new Date(this.startDate);
+          this.activityProjectToAdd.dteEnd =    this.activityProjectToAdd.dteStrt;
+
+
+          this.activityProjectToAdd.duration = null;
+        }
+        this.newactivityProjectModal.show();
+        break;
+      }
+
+      case "Activité recouvrement": {
+        if(this.startDate ) {
+          this.activityRecouvrementToAdd=new ActivityRecouvrement();
+          this.activityRecouvrementToAdd.user.username = this.authenticationService.getUserName();
+          this.activityRecouvrementToAdd.dteStrt = new Date(this.startDate);
+          this.activityRecouvrementToAdd.dteEnd = this.activityRecouvrementToAdd.dteStrt;
+
+          this.activityRecouvrementToAdd.duration = null;
+        }
+        this.newactivityRecouvrementModal.show();
+        break;
+      }
+
+      case "Activité support": {
+        if(this.startDate ) {
+          this.activityRequestToAdd=new ActivityRequest();
+          this.activityRequestToAdd.user.username = this.authenticationService.getUserName();
+          this.activityRequestToAdd.dteStrt = new Date(this.startDate);
+          this.activityRequestToAdd.dteEnd =this.activityRequestToAdd.dteStrt;
+          this.activityRequestToAdd.request=null;
+
+          this.activityRequestToAdd.duration = null;
+        }
+        this.newactivityRequestModal.show();
+        break;
+      }
+
+      case "Activité congé": {
+        if(this.startDate ) {
+
+          this.activityHolidayToAdd.dteStrt = new Date(this.startDate);
+          this.activityHolidayToAdd.dteEnd = new Date(this.startDate);
+          this.activityHolidayToAdd.user.username = this.authenticationService.getUserName();
+        }
+        this.newactivityHolidayModal.show();
+        break;
+      }
+
+      case "Activité SI": {
+        if(this.startDate ) {
+          this.activitySIToAdd.dteStrt = new Date(this.startDate);
+          this.activitySIToAdd.dteEnd = new Date(this.endDate);
+          this.activitySIToAdd.user.username = this.authenticationService.getUserName();
+        }
+        this.newactivitySIModal.show();
+        break;
+      }
+
+      case "Activité commerciale": {
+        if(this.startDate ) {
+          this.activityCommercialToAdd.dteStrt = new Date(this.startDate);
+          this.activityCommercialToAdd.dteEnd = new Date(this.endDate);
+          this.activityCommercialToAdd.user.username = this.authenticationService.getUserName();
+        }
+        this.newactivityCommercialModal.show();
+        break;
+      }
+
+      case "Activité PM": {
+        if(this.startDate) {
+          this.activityPMToAdd=new ActivityPM();
+          this.activityPMToAdd.dteStrt = new Date(this.startDate);
+          this.activityPMToAdd.dteEnd = new Date(this.endDate);
+          this.activityPMToAdd.user.username = this.authenticationService.getUserName();
+          this.activityPMToAdd.request=null;
+          this.activityPMToAdd.duration = null;
+        }
+        this.newactivityPMModal.show();
+        break;
+      }
+
+      case "Activité avant vente": {
+        if(this.startDate ) {
+          this.activityAvantVenteToAdd=new ActivityAvantVente();
+          this.activityAvantVenteToAdd.dteStrt = new Date(this.startDate);
+          this.activityAvantVenteToAdd.dteEnd = this.activityAvantVenteToAdd.dteStrt;
+          this.activityAvantVenteToAdd.duration = null;
+          this.activityAvantVenteToAdd.user.username = this.authenticationService.getUserName();
+        }
+        this.newactivityAvantVenteModal.show();
+        break;
+      }
+
+      case "Activité développement des compétences": {
+        if(this.startDate) {
+          this.activityDevCompetenceToAdd=new ActivityDevCompetence();
+          this.activityDevCompetenceToAdd.dteStrt = new Date(this.startDate);
+          this.activityDevCompetenceToAdd.dteEnd = this.activityDevCompetenceToAdd.dteStrt;
+          this.activityDevCompetenceToAdd.duration=null;
+          this.activityDevCompetenceToAdd.user.username = this.authenticationService.getUserName();
+        }
+        this.newactivityDevCompetenceModal.show();
+        break;
+      }
+    }
   }
 
 
@@ -229,9 +516,9 @@ export class MyCalendarComponent implements OnInit {
             map((results: any[]) => {
               return results.map((activity: any) => {
                 return {
-                  title: this.detectIcon(activity.typeActivite)+" "+this.detectAbrevi(activity.typeActivite)+" "+activity.hrStrt+" - "+activity.hrEnd+" "+activity.customer.name,
+                  title: "<i class='"+this.detectIcon(activity.typeActivite)+"'></i>"+" "+this.detectAbrevi(activity.typeActivite)+" "+activity.nature+" Durée : "  +activity.hrEnd,
                   start: new Date(activity.dteStrt),
-                  end: new Date(activity.dteEnd),
+                  end: activity.dteEnd !=null ?new Date(activity.dteEnd):new Date(activity.dteStrt),
                   color: this.detectColor(activity.typeActivite),
                   actions: this.actions,
                   meta: {
@@ -249,9 +536,9 @@ export class MyCalendarComponent implements OnInit {
             map((results: any[]) => {
               return results.map((activity: any) => {
                 return {
-                  title: activity.typeActivite,
+                  title: "<i class='"+this.detectIcon(activity.typeActivite)+"'></i>"+" "+this.detectAbrevi(activity.typeActivite)+" "+activity.nature+" Durée : "  +activity.hrEnd,
                   start: new Date(activity.dteStrt),
-                  end: new Date(activity.dteEnd),
+                  end: activity.dteEnd !=null ?new Date(activity.dteEnd):new Date(activity.dteStrt),
                   color: this.detectColor(activity.typeActivite),
                   actions: this.actions,
                   meta: {
@@ -268,9 +555,9 @@ export class MyCalendarComponent implements OnInit {
             map((results: any[]) => {
               return results.map((activity: any) => {
                 return {
-                  title: activity.typeActivite,
+                  title: "<i class='"+this.detectIcon(activity.typeActivite)+"'></i>"+" "+this.detectAbrevi(activity.typeActivite)+"<br/>  Durée : "+activity.hrEnd+"<br/>"+activity.nature,
                   start: new Date(activity.dteStrt),
-                  end: new Date(activity.dteEnd),
+                  end: activity.dteEnd !=null ?new Date(activity.dteEnd):new Date(activity.dteStrt),
                   color: this.detectColor(activity.typeActivite),
                   actions: this.actions,
                   meta: {
@@ -331,6 +618,19 @@ export class MyCalendarComponent implements OnInit {
             this.editactivityRequestModal.show();
             break;
           }
+          case "Activité PM": {
+            this.editactivityPMModal.show();
+            break;
+          }
+          case "Activité avant vente": {
+            this.editactivityAvantVenteModal.show();
+            break;
+          }
+
+          case "Activité dev competence": {
+            this.editactivityDevCompetenceModal.show();
+            break;
+          }
         }
         break;
       }
@@ -364,47 +664,64 @@ export class MyCalendarComponent implements OnInit {
         this.viewDate = date;
       }
     }
+    this.startDate = date;
+    this.endDate=date;
+    this.myModal.show();
+
+
 
   }
 
   eventClicked(event: CalendarEvent<{ activity: any }>): void {
 
+    this.selectActivity(event);
+
     switch (event.meta.activity.typeActivite) {
       case "Activité commerciale": {
-        this.activityCommercial = event.meta.activity;
         this.activityCommercialModal.show();
         break;
       }
 
       case "Activité congé": {
-        this.activityHoliday = event.meta.activity;
         this.activityHolidayModal.show();
         break;
       }
 
       case "Activité projet": {
-        this.activityProject = event.meta.activity;
         this.activityProjectModal.show();
         break;
       }
 
       case "Activité recouvrement": {
-        this.activityRecouvrement = event.meta.activity;
         this.activityRecouvrementModal.show();
         break;
       }
 
       case "Activité support": {
-        this.activityRequest = event.meta.activity;
         this.activityRequestModal.show();
         break;
       }
 
+      case "Activité PM": {
+        this.activityPMModal.show();
+        break;
+      }
+
       case "Activité SI": {
-        this.activitySI = event.meta.activity;
         this.activitySIModal.show();
         break;
       }
+
+      case "Activité avant vente": {
+        this.activityAvantVenteModal.show();
+        break;
+      }
+      case "Activité dev competence": {
+        this.activityDevCompetenceModal.show();
+        break;
+      }
+
+
       default: {
         break;
       }
@@ -414,39 +731,54 @@ export class MyCalendarComponent implements OnInit {
 
   selectActivity(event: any) {
     this.eventSelected = event;
+    this.dureeConverted = this.activityService.convertMinutesToHoursAndMinute(this.activityService.diffBetwenTwoDateInMinutes(event.meta.activity.dteStrt, event.meta.activity.dteEnd));
     switch (event.meta.activity.typeActivite) {
       case "Activité support" : {
-        this.activityRequest = event.meta.activity;
+        this.activityRequest = JSON.parse(JSON.stringify(event.meta.activity));
         this.activityRequest.dteStrt = new Date(event.meta.activity.dteStrt);
         this.activityRequest.dteEnd = new Date(event.meta.activity.dteEnd);
         break;
       }
 
+      case "Activité PM" : {
+        this.activityPM = JSON.parse(JSON.stringify(event.meta.activity));
+        this.activityPM.dteStrt = new Date(event.meta.activity.dteStrt);
+        this.activityPM.dteEnd = new Date(event.meta.activity.dteEnd);
+        break;
+      }
+
       case "Activité commerciale": {
-        this.activityCommercial = event.meta.activity;
+        this.activityCommercial = JSON.parse(JSON.stringify(event.meta.activity));
         this.activityCommercial.dteStrt = new Date(event.meta.activity.dteStrt);
         this.activityCommercial.dteEnd = new Date(event.meta.activity.dteEnd);
         break;
       }
 
       case "Activité recouvrement": {
-        this.activityRecouvrement = event.meta.activity;
+        this.activityRecouvrement = JSON.parse(JSON.stringify(event.meta.activity));
         this.activityRecouvrement.dteStrt = new Date(event.meta.activity.dteStrt);
         this.activityRecouvrement.dteEnd = new Date(event.meta.activity.dteEnd);
         break;
       }
 
       case "Activité projet": {
-        this.activityProject = event.meta.activity;
+        this.activityProject = JSON.parse(JSON.stringify(event.meta.activity));
         this.activityProject.dteStrt = new Date(event.meta.activity.dteStrt);
         this.activityProject.dteEnd = new Date(event.meta.activity.dteEnd);
+        break;
+      }
+
+      case "Activité avant vente": {
+        this.activityAvantVente = JSON.parse(JSON.stringify(event.meta.activity));
+        this.activityAvantVente.dteStrt = new Date(event.meta.activity.dteStrt);
+        this.activityAvantVente.dteEnd = new Date(event.meta.activity.dteEnd);
         break;
       }
 
       case "Activité SI": {
         console.log(event.meta.activity);
 
-        this.activitySI = event.meta.activity;
+        this.activitySI = JSON.parse(JSON.stringify(event.meta.activity));
         this.activitySI.dteStrt = new Date(event.meta.activity.dteStrt);
         this.activitySI.dteEnd = new Date(event.meta.activity.dteEnd);
         break;
@@ -454,9 +786,17 @@ export class MyCalendarComponent implements OnInit {
 
       case "Activité congé": {
 
-        this.activityHoliday = event.meta.activity;
+        this.activityHoliday = JSON.parse(JSON.stringify(event.meta.activity));
         this.activityHoliday.dteStrt = new Date(event.meta.activity.dteStrt);
         this.activityHoliday.dteEnd = new Date(event.meta.activity.dteEnd);
+        break;
+      }
+
+      case "Activité dev competence": {
+
+        this.activityDevCompetence = JSON.parse(JSON.stringify(event.meta.activity));
+        this.activityDevCompetence.dteStrt = new Date(event.meta.activity.dteStrt);
+        this.activityDevCompetence.dteEnd = new Date(event.meta.activity.dteEnd);
         break;
       }
 
@@ -501,6 +841,15 @@ export class MyCalendarComponent implements OnInit {
       case "Activité SI": {
         return colors.silver;
       }
+      case "Activité PM": {
+        return colors.purple;
+      }
+      case "Activité avant vente": {
+        return colors.purple;
+      }
+      case "Activité dev competence": {
+        return colors.silver;
+      }
     }
   }
 
@@ -524,31 +873,119 @@ export class MyCalendarComponent implements OnInit {
       case "Activité SI": {
         return "ASSI";
       }
+      case "Activité PM": {
+        return "APM";
+      }
+      case "Activité avant vente": {
+        return "AAV";
+      }
+      case "Activité dev competence": {
+        return "ADC";
+      }
     }
   }
 
-  detectIcon(type:string) {
+
+  detectIcon(type: string) {
     switch (type) {
       case "Activité support": {
-        return "<i class=\"fa fa-support\"></i>";
+        return "fa fa-bullhorn";
       }
       case "Activité projet": {
-        return "<i class=\"fa fa-product-hunt\"></i>";
+        return "fa fa-product-hunt";
       }
       case "Activité recouvrement": {
-        return "<i class=\"fa fa-calendar-check-o\"></i>";
+        return "fa fa-briefcase";
       }
       case "Activité congé": {
-        return "<i class=\"fa fa-home\"></i>";
+        return "fa fa-plane";
       }
       case "Activité commerciale": {
-        return "<i class=\"fa fa-briefcase\"></i>";
+        return "fa fa-shopping-cart";
       }
       case "Activité SI": {
-        return "<i class=\"fa fa-desktop\"></i>";
+        return "fa fa-support";
+      }
+      case "Activité PM": {
+        return "fa fa-wrench";
+      }
+      case "Activité avant vente": {
+        return "fa fa-magnet";
+      }
+      case "Activité dev competence": {
+        return "fa fa-graduation-cap";
+      }
+      case "Activité développement des compétences": {
+        return "fa fa-graduation-cap";
       }
     }
   }
+
+  nb=0;
+  startDate:Date;
+  endDate:Date;
+  @ViewChild('myModal') myModal;
+
+
+  hourSegmentClicked(date: Date) {
+    this.selectedDayViewDate = date;
+    if(this.nb==0) {
+      this.startDate = date;
+      this.addSelectedDayViewClassFromStart();
+      this.nb++;
+    } else {
+
+      if(this.nb==1) {
+        this.addSelectedDayViewClassRange();
+        this.nb++;
+
+
+      } else {
+        this.nb=1;
+        this.startDate = date;
+        this.addSelectedDayViewClassFromStart();
+      }
+    }
+  }
+
+  beforeDayViewRender(dayView: DayViewHour[]) {
+    this.dayView = dayView;
+    this.addSelectedDayViewClassFromStart();
+  }
+
+  private addSelectedDayViewClassFromStart() {
+    this.dayView.forEach(hourSegment => {
+      hourSegment.segments.forEach(segment => {
+        delete segment.cssClass;
+        if (
+          this.selectedDayViewDate &&
+          segment.date.getTime() === this.selectedDayViewDate.getTime()
+        ) {
+          segment.cssClass = 'cal-day-selected';
+        }
+      });
+    });
+  }
+
+  private addSelectedDayViewClassRange() {
+    this.dayView.forEach(hourSegment => {
+      hourSegment.segments.forEach(segment => {
+        //delete segment.cssClass;
+        if (
+          this.selectedDayViewDate &&
+          segment.date.getTime() > this.startDate.getTime() &&
+          segment.date.getTime() <= this.selectedDayViewDate.getTime()
+        ) {
+          segment.cssClass = 'cal-day-selected';
+          this.endDate = segment.date;
+          if(segment.date.getTime()===this.selectedDayViewDate.getTime())
+
+            this.myModal.show();
+        }
+      });
+    });
+  }
+
 
 
 }

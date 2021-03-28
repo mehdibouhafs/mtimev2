@@ -1,0 +1,466 @@
+<div class="modal-dialog" role="document">
+  <div class="modal-content">
+
+
+    <div *ngIf="mode==1">
+
+      <div class="modal-header">
+        <h6 class="col-12 modal-title text-center">
+          <p>Nouvelle Activité support</p>
+          <div *ngIf="lastActivity" class="badge badge-pill badge-light">
+            Dernière Activité : {{lastActivity?.typeActivite+", "+lastActivity?.nature}} Du
+            {{lastActivity?.dteStrt | date: "dd/MM/yy HH:mm"}} à {{lastActivity?.dteEnd | date: "dd/MM/yy HH:mm"}},
+            {{lastActivity?.customer?.name}}
+          </div>
+          <div class="alert alert-danger" role="alert" *ngIf="error==1">
+            <strong> Oups ! </strong> {{returnedError}}
+          </div>
+        </h6>
+      </div>
+
+      <form class="form-horizontal" #f="ngForm" (ngSubmit)="onSaveActivityRequest(f.value)">
+
+
+        <div class="modal-body">
+
+          <div class="form-row">
+            <div class="form-group col-sm-6">
+              <label>Numéro de la demande :</label>
+
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <div class="input-group-text"><i
+                    class="fa fa-search"></i></div>
+                </div>
+                <input minlength="10" class="form-control form-control-sm" placeholder="Numéro de la demande"
+                       aria-label="Input group example" aria-describedby="btnGroupAddon" maxlength="10" id="rqtExcde"
+                       name="rqtExcde" [disabled]="disabledInput" #rqtExcde="ngModel"
+                       [(ngModel)]="activityRequest.request.rqtExcde" size="10"
+                       type="text" (input)="onSearchRequest($event)" required>
+                <div class="input-group-prepend">
+                  <button class="btn btn-primary" type="button" [disabled]="!requestOk" (click)="mode=3"><i
+                    class="fa fa-eye"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div *ngIf="!requestOk">
+                <div *ngIf="rqtExcde.invalid && (rqtExcde.dirty || rqtExcde.touched)"
+                     class="error">
+                  <div *ngIf="rqtExcde.errors.required">
+                    Le numéro de la demande est obligatoire.
+                  </div>
+                  <div *ngIf="rqtExcde.errors.minlength">
+                    Le numéro de la demande doit contenir 10 chiffres.
+                  </div>
+                </div>
+                <div class="error" *ngIf="rqtExcde.valid">
+                  Le numéro de la demande est introuvable
+                </div>
+              </div>
+
+
+            </div>
+            <div class="form-group col-sm-6">
+              <label for="intervenants">Intervenants :</label>
+              <ng-select id="intervenants" name="intervenants"
+                         [items]="users"
+                         multiple="true"
+                         bindLabel="username"
+                         [hideSelected]="true"
+                         [(ngModel)]="selectedUsers"
+                         placeholder="Selectionnez les intervenants"
+                         notFoundText="Aucun salarié trouvé"
+                         [typeahead]="usersTypeahead"
+                         typeToSearchText="Saisir le nom des intervenants"
+                         required>
+                <ng-template ng-multi-label-tmp let-items="items" let-clear="clear">
+                  <div class="ng-value" *ngIf="items.length > 0">
+                    <span class="ng-value-label"> {{items.length}} intervenants selectionnés</span>
+                  </div>
+                </ng-template>
+                <ng-template ng-option-tmp let-item="item">
+                  <img [src]="'assets/img/avatars/'+item.username+'.jpg'"
+                       onerror="this.src='assets/img/avatars/default.jpg'" width="20px" height="20px">
+                  {{item.firstName+' '+item.lastName}}
+                </ng-template>
+              </ng-select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-sm-6">
+              <label>Date de début :</label>
+
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                </div>
+                <input class="form-control form-control-sm" [owlDateTimeTrigger]="dt" [owlDateTime]="dt"
+                       placeholder="Date début"
+                       [(ngModel)]="activityRequest.dteStrt" name="dteStrt" required (ngModelChange)="onDatesChanged()">
+                <owl-date-time #dt></owl-date-time>
+              </div>
+            </div>
+
+            <div class="form-group col-sm-6">
+              <label>Date de fin :</label>
+
+
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                </div>
+                <input class="form-control form-control-sm" [min]="activityRequest.dteStrt" [owlDateTimeTrigger]="dt1"
+                       [owlDateTime]="dt1" placeholder="Date et heure de fin"
+                       [(ngModel)]="activityRequest.dteEnd" name="dteEnd" (ngModelChange)="onDatesChanged()" required>
+                <owl-date-time #dt1></owl-date-time>
+              </div>
+              <div class="duree">
+                {{dureeConverted?'Durée : '+dureeConverted:'Selectionnez date de fin !'}}
+              </div>
+
+            </div>
+
+          </div>
+
+          <div class="form-row">
+
+            <div class="form-group col-sm-6">
+              <label class="control-label" for="nature">Nature de l'activité :</label>
+              <ng-select id="nature"
+                         [items]="nature"
+                         placeholder="Selectionnez une nature"
+                         bindLabel="name"
+                         bindValue="name"
+                         [(ngModel)]="activityRequest.nature"
+                         name="nature"
+                         required>
+              </ng-select>
+            </div>
+
+            <div class="form-group col-sm-6">
+              <label class="control-label">Client :</label>
+              <ng-select id="customers" [items]="customers"
+                         bindLabel="name"
+                         name="customer"
+                         [disabled]="disabledInput"
+                         placeholder="Selectionner un client"
+                         notFoundText="Aucun client trouvé"
+                         [typeahead]="customerTypeahead"
+                         typeToSearchText="Saisir client"
+                         [(ngModel)]="activityRequest.customer"
+                         required></ng-select>
+
+
+            </div>
+
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-sm-6">
+
+              <label for="lieu">Lieu :</label>
+              <ng-select id="lieu" name="lieu"
+                         [items]="lieu"
+                         placeholder="Lieu"
+                         bindValue="name"
+                         bindLabel="name"
+                         [(ngModel)]="activityRequest.lieu"
+                         required>
+              </ng-select>
+            </div>
+
+            <div class="form-group col-sm-6">
+              <label for="ville">Ville :</label>
+              <ng-select id="ville"
+                         name="ville"
+                         placeholder="Ville"
+                         [items]="ville"
+                         bindLabel="name"
+                         bindValue="name"
+                         [addTag]="true"
+                         addTagText="Autre ville"
+                         [(ngModel)]="activityRequest.ville"
+                         notFoundText="Aucune ville trouvée"
+                         required>
+
+              </ng-select>
+            </div>
+
+          </div>
+
+          <div class="form-row">
+
+            <div class="form-group col-sm-6">
+              <label for="etat">Etat :</label>
+              <ng-select [items]="etat"
+                         id="etat"
+                         name="etat"
+                         placeholder="Etat"
+                         bindLabel="name"
+                         bindValue="val"
+                         [searchable]="false"
+                         [(ngModel)]="activityRequest.etat"
+                         required>
+
+              </ng-select>
+
+
+            </div>
+
+            <div class="form-group col-sm-6">
+              <label for="produit">Produit :</label>
+              <ng-select [items]="produits"
+                         id="produit"
+                         name="produit"
+                         placeholder="Produit"
+                         bindLabel="produit"
+                         bindValue="produit"
+                         [addTag]="true"
+                         addTagText="Autre produit"
+                         [(ngModel)]="activityRequest.produit"
+                         required>
+
+              </ng-select>
+            </div>
+
+            <div class="form-group row col-sm-6 my-auto">
+              <label class="col-sm-3 col-form-label nopadding-right">Statut :</label>
+              <div class="col-sm-9 nopadding my-auto">
+                <span [class]="activityRequest.statut?'badge badge-pill badge-success':'badge badge-pill badge-info'">{{activityRequest.statut?'Réalisé':'Planifié'}}</span>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="form-row" *ngIf="selectedUsers?.length>0">
+            <table class="table table-sm">
+              <thead>
+              <tr>
+                <th>#</th>
+                <th>Photo</th>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Rôle</th>
+                <th>Action</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let p of selectedUsers; let  i=index;">
+                <td>{{i+1}}</td>
+                <td><img [src]="'assets/img/avatars/'+p.username+'.jpg'"
+                         onerror="this.src='assets/img/avatars/default.jpg'" class="img-avatar" [alt]="p.username"
+                         width="25px" height="25px"/></td>
+                <td>{{p?.lastName}}</td>
+                <td>{{p?.firstName}}</td>
+                <td>
+                  <select id="role"
+                          [name]="'role'+p.username"
+                          [(ngModel)]="p.role"
+                          required>
+                    <option [value]="true">Principal</option>
+                    <option [value]="false">Secondaire</option>
+                  </select>
+                </td>
+                <td>
+                  <button type="button" class="btn btn-sm btn-danger"
+                          mwlConfirmationPopover
+                          [popoverTitle]="popoverTitle"
+                          [popoverMessage]="popoverMessage"
+                          confirmText="Oui"
+                          cancelText="Non"
+                          placement="left"
+                          (confirm)="remove(p)">
+                    <i class="fa fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+
+
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-sm btn-danger" (click)="hideModal(); toModeOne();">Annuler
+          </button>
+          <button [disabled]="!f.valid || !requestOk" type="submit" class="btn btn-sm btn-primary"><i
+            class="fa fa-dot-circle-o"></i>
+            Enregistrer
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+
+    <div *ngIf="mode==2">
+
+
+      <div class="modal-header">
+        <h4 class="modal-title">Confirmation</h4>
+      </div>
+
+      <div class="modal-body">
+
+        <div class="form-group row">
+          <div class="col-sm-2 nopadding-right"><strong>Ticket :</strong></div>
+          <div class="col-sm-3 nopadding">
+            {{activityRequest?.request?.rqtExcde}}
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <div class="col-sm-2 nopadding-right"><strong>Début :</strong></div>
+          <div class="col-sm-3 nopadding">
+            <span class="badge badge-pill badge-light">{{activityRequest?.dteStrt | date:"dd/MM/yy HH:mm"}}</span>
+          </div>
+          <div class="col-sm-2 nopadding-right"><strong>Fin :</strong></div>
+          <div class="col-sm-3 nopadding">
+            <span class="badge badge-pill badge-light">{{activityRequest?.dteEnd | date:"dd/MM/yy HH:mm"}}</span>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <div class="col-sm-2 nopadding-right"><strong>Durée :</strong></div>
+          <div class="col-sm-3 nopadding">
+            <span class="badge badge-pill badge-dark">{{activityService.ShortconvertMinutesToHoursAndMinute(activityRequest.durtion)}}</span>
+          </div>
+
+          <div class="col-sm-2 nopadding-right"><strong>Nature :</strong></div>
+          <div class="col-sm-3 nopadding">
+            {{activityRequest?.nature}}
+          </div>
+
+
+        </div>
+
+        <div class="form-group row">
+
+          <div class="col-sm-2 nopadding-right"><strong>Produit :</strong></div>
+          <div class="col-sm-3 nopadding">
+            {{activityRequest?.produit}}
+          </div>
+
+          <div class="col-sm-2 nopadding-right"><strong>Client :</strong></div>
+          <div class="col-sm-3 nopadding">
+            {{activityRequest?.customer?.name}}
+          </div>
+
+        </div>
+
+        <div class="form-group row">
+
+          <div class="col-sm-2 nopadding-right"><strong>Etat :</strong></div>
+          <div class="col-sm-3 nopadding">
+            {{activityRequest.etat?"Cloturer":"En cours"}}
+          </div>
+
+          <div class="col-sm-2 nopadding-right"><strong>Ville :</strong></div>
+          <div class="col-sm-3 nopadding">
+            {{activityRequest?.ville}}
+          </div>
+
+
+        </div>
+
+        <div class="form-group row">
+
+
+          <div class="col-sm-2 nopadding-right"><strong>Lieu :</strong></div>
+          <div class="col-sm-3 nopadding">
+            {{activityRequest?.lieu}}
+          </div>
+
+          <div class="col-sm-2 nopadding-right"><strong>Statut :</strong></div>
+          <div class="col-sm-3 nopadding">
+            <span [class]="activityRequest.statut?'badge badge-pill badge-success':'badge badge-pill badge-info'">{{activityRequest?.statut==true?'Realisé':'Planifié'}}</span>
+          </div>
+
+        </div>
+
+        <div class="form-row" *ngIf="selectedUsers?.length>0">
+          <table class="table table-sm">
+            <thead>
+            <tr>
+              <th>#</th>
+              <th>Photo</th>
+              <th>Nom</th>
+              <th>Prénom</th>
+              <th>Rôle</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let p of selectedUsers; let  i=index;">
+              <td>{{i+1}}</td>
+              <td><img [src]="'assets/img/avatars/'+p.username+'.jpg'"
+                       onerror="this.src='assets/img/avatars/default.jpg'" class="img-avatar" [alt]="p.username"
+                       width="25px" height="25px"/></td>
+              <td>{{p?.lastName}}</td>
+              <td>{{p?.firstName}}</td>
+              <td>{{p?.role?'Principal':'Secondaire'}}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-primary" (click)="toModeDupliquer()">
+          <i class="fa fa-copy"></i> Dupliquer
+        </button>
+        <button type="button" class="btn btn-sm btn-primary" (click)="hideModal(); toModeOne();">
+          <i class="fa fa-check"></i> OK
+        </button>
+      </div>
+
+
+    </div>
+
+    <div *ngIf="mode==3">
+      <div class="modal-header">
+        <h4 class="modal-title">Detail de la demande N° : {{activityRequest?.request?.rqtExcde}}</h4>
+      </div>
+
+      <div class="modal-body">
+
+        <div class="form-row">
+
+          <div class="form-group col-sm-6">
+            <label>Date de la demande :</label>
+            <div>
+              <span
+                class="badge badge-pill badge-light">{{activityRequest?.request?.rqtDte | date: 'dd/MM/yyyy HH:mm'}}</span>
+            </div>
+          </div>
+
+          <div class="form-group col-sm-6">
+            <label for="clientDemande">Client :</label>
+            <input id="clientDemande" class="form-control-plaintext" [value]="activityRequest.request.cpyInCde.name"
+                   readonly>
+          </div>
+
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-sm-6">
+            <label for="descriptionDemande">Description :</label>
+            <input id="descriptionDemande" class="form-control-plaintext" [value]="activityRequest.request.objDsc"
+                   readonly>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-primary" (click)="mode=1">
+          <i class="fa fa-angle-left"></i> Retour
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>

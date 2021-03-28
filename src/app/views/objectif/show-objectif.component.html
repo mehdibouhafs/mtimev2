@@ -1,0 +1,56 @@
+<div class="modal-dialog" role="document">
+  <div class="modal-content">
+
+
+    <div class="modal-header">
+      <h4 class="modal-title">Détails</h4>
+    </div>
+
+    <div class="modal-body">
+
+      <div class="form-group row">
+        <div class="col-sm-3 nopadding-right"><strong>Date d'échéance :</strong></div>
+        <div class="col-sm-2 nopadding">
+          <span class="badge badge-pill badge-light">{{objectif.echeance | date:"dd/MM/yyyy"}}</span>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <div class="col-sm-2 nopadding-right"><strong>Intitulé :</strong></div>
+        <div class="col-sm-5 nopadding">
+          <span>{{objectif?.name}}</span>
+        </div>
+      </div>
+
+      <div class="form-row" *ngIf="objectif.users.length>0">
+        <table class="table table-sm">
+          <thead>
+          <tr>
+            <th>#</th>
+            <th>Nom</th>
+            <th>Prénom</th>
+            <th>Taux</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let u of objectif.users">
+              <td><img [src]="'assets/img/avatars/'+u.user.username+'.jpg'"
+                       onerror="this.src='assets/img/avatars/default.jpg'" class="img-avatar" [alt]="u.user.username"
+                       width="25px" height="25px"/></td>
+              <td>{{u?.user?.lastName}}</td>
+              <td>{{u?.user?.firstName}}</td>
+              <td>{{u?.taux+' %'}}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-sm btn-primary" (click)="modal.hide()"><i class="fa fa-check"></i>
+        OK
+      </button>
+    </div>
+  </div>
+</div>

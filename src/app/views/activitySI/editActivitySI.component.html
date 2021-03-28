@@ -7,11 +7,7 @@
       <div class="modal-header">
         <h6 class="col-12 modal-title text-center">
           <p>Modifier Activité SI</p>
-          <div *ngIf="lastActivity" class="badge badge-pill badge-light">
-            Dernière Activité : {{lastActivity?.typeActivite}} Du
-            {{lastActivity?.dteStrt | date: "dd/MM/yy HH:mm"}} à {{lastActivity?.dteEnd | date: "dd/MM/yy HH:mm"}}
-          </div>
-          <div class="alert alert-danger" role="alert" *ngIf="error==2">
+          <div class="alert alert-danger" role="alert" *ngIf="error==1">
             <strong> Oups ! </strong> {{returnedError}}
           </div>
         </h6>
@@ -28,9 +24,9 @@
 
               <div class="input-group">
                 <div class="input-group-prepend">
-                  <button class="btn btn-sm btn-primary" type="button"><i class="fa fa-calendar"></i></button>
+                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                 </div>
-                <input class="form-control" id="dateStart" [owlDateTimeTrigger]="dt" [owlDateTime]="dt"
+                <input class="form-control form-control-sm" id="dateStart" [owlDateTimeTrigger]="dt" [owlDateTime]="dt"
                        placeholder="Date début"
                        [(ngModel)]="activitySI.dteStrt" name="dteStrt" required
                        (ngModelChange)="onDatesChanged()">
@@ -43,9 +39,9 @@
 
               <div class="input-group">
                 <div class="input-group-prepend">
-                  <button class="btn btn-sm btn-primary" type="button"><i class="fa fa-calendar"></i></button>
+                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                 </div>
-                <input class="form-control" id="dateEnd" [min]="activitySI.dteStrt" [owlDateTimeTrigger]="dt1"
+                <input class="form-control form-control-sm" id="dateEnd" [min]="activitySI.dteStrt" [owlDateTimeTrigger]="dt1"
                        [owlDateTime]="dt1"
                        placeholder="Date et heure de fin"
                        [(ngModel)]="activitySI.dteEnd" name="dteEnd" (ngModelChange)="onDatesChanged()"
@@ -61,12 +57,24 @@
           <div class="form-row">
             <div class="form-group col-sm-6">
               <label for="perimetre">Périmétre :</label>
-              <select id="perimetre" class="form-control" [(ngModel)]="activitySI.perimetre" name="nature"
+              <select id="perimetre" class="form-control form-control-sm" [(ngModel)]="activitySI.perimetre" name="nature"
                       #perimetre="ngModel" required>
                 <option>Mtime</option>
                 <option>SAP</option>
-                <option>Pilotage contrat</option>
-                <option>Encadrement / Plannification</option>
+                <option>KIMOCE</option>
+                <option>SmartEdi HPI</option>
+                <option>SmartEdi HPE</option>
+                <option>Bislink</option>
+                <option>SQL</option>
+                <option>MXLTools</option>
+                <option>Gestion de parc</option>
+                <option>DATAPROTECTOR</option>
+                <option>EXCHANGE</option>
+                <option>Project server</option>
+                <option>Citrix</option>
+                <option>RIFL</option>
+                <option>AGIR</option>
+                <option>Application deploiement</option>
               </select>
             </div>
 

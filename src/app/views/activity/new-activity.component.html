@@ -5,7 +5,11 @@
   <div class="card-body">
     <h5 class="card-title">Selectionnez le type d'activité :</h5>
     <div class="list-group">
-      <button type="button" *ngFor="let activityAuthorized of activitiesAuthorozed" (click)="onSelectModal(activityAuthorized)"
+      <button type="button" (click)="activityProjectEquipeModal.show()"
+              class="list-group-item list-group-item-action w-50 mx-auto">
+        Activité projet equipe
+      </button>
+      <button type="button" *ngFor="let activityAuthorized of activitiesAuthorized" (click)="onSelectModal(activityAuthorized)"
               class="list-group-item list-group-item-action w-50 mx-auto">
         <i [class]="detectIcon(activityAuthorized)"></i> {{detectName(activityAuthorized)}}
       </button>
@@ -41,3 +45,15 @@
                      class="modal fade"
                      tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
                      aria-hidden="true"></new-activity-si>
+
+<new-activityDevCompetence bsModal #activitydevCompetenceModal="bs-modal" [modal]="activitydevCompetenceModal" [lastActivity]="lastActivity"
+                 class="modal fade"
+                 tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                 aria-hidden="true"></new-activityDevCompetence>
+
+<new-ap-without-test bsModal #activityProjectEquipeModal="bs-modal" [modal]="activityProjectEquipeModal" [lastActivity]="lastActivity"
+                 class="modal fade"
+                 tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                 aria-hidden="true"></new-ap-without-test>
+
+

@@ -1,0 +1,123 @@
+<div class="modal-dialog modal-lg" role="document">
+  <div class="modal-content">
+
+
+    <div class="modal-header">
+      <h4 class="modal-title">Détails contrat fournisseur</h4>
+    </div>
+
+    <div class="modal-body">
+
+      <div class="form-group row">
+        <div class="col-sm-3 nopadding-right"><strong>Nom contrat :</strong></div>
+        <div class="col-sm-9 nopadding">
+          {{contrat?.ctrtName}}
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <div class="col-sm-2 nopadding-right"><strong>Début :</strong></div>
+        <div class="col-sm-3 nopadding">
+          {{contrat?.dteStrt}}
+        </div>
+        <div class="col-sm-2 nopadding-right"><strong>Fin :</strong></div>
+        <div class="col-sm-3 nopadding">
+          {{contrat?.dteEnd}}
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <div class="col-sm-2 nopadding-right"><strong>Contact :</strong></div>
+        <div class="col-sm-3 nopadding">
+          {{contrat?.contact}}
+        </div>
+        <div class="col-sm-3 nopadding-right"><strong>Contrat client :</strong></div>
+        <div class="col-sm-3 nopadding">
+          {{contrat?.ctrctCustomer?.ctrtName}}
+        </div>
+      </div>
+
+      <p-table *ngIf="contrat.ctrctSupplierProducts.length>0" [value]="contrat.ctrctSupplierProducts">
+        <ng-template pTemplate="caption">
+          Liste des produits
+        </ng-template>
+        <ng-template pTemplate="header">
+
+          <tr>
+            <th>
+              Référence
+            </th>
+            <th>
+              Désignation
+            </th>
+            <th>
+              Editeur
+            </th>
+            <th>
+              Ditributeur
+            </th>
+            <th>
+              Quantité
+            </th>
+            <th>
+              Prix unitaire
+            </th>
+          </tr>
+
+
+        </ng-template>
+
+        <ng-template pTemplate="body" let-item>
+
+          <tr>
+            <td>
+              {{item.product.ref}}
+            </td>
+            <td>
+              {{item.product.desig}}
+            </td>
+            <td>
+              {{item.product.editeur}}
+            </td>
+            <td>
+              {{item.product.distributeur.name}}
+            </td>
+            <td>
+              {{item.qte}}
+            </td>
+            <td>
+              {{item?.prixUnitaire}}
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="footer">
+          <tr>
+            <td colspan="5">Total</td>
+            <td>
+              {{contrat?.price}}
+            </td>
+          </tr>
+        </ng-template>
+
+      </p-table>
+
+      <div class="form-group row">
+        <div class="col-sm-3 nopadding-right"><strong>Commentaire :</strong></div>
+        <div class="col-sm-9 nopadding">
+          {{contrat?.commentaire}}
+        </div>
+      </div>
+
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-sm btn-primary" (click)="modal.hide()"><i class="fa fa-check"></i>
+        OK
+      </button>
+    </div>
+  </div>
+</div>
+
+
+

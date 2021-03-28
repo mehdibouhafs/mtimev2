@@ -1,0 +1,122 @@
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-header">
+          Gestion des objectifs
+        </div>
+        <div class="card-body">
+
+          <div *ngIf="added" class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>Un objectif est enregistrée avec succes !</strong>
+            <button type="button" class="close" (click)="added=false" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-sm-2">
+
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                </div>
+                <input class="form-control form-control-sm" [owlDateTimeTrigger]="dt2" [owlDateTime]="dt2"
+                       placeholder="Date d'echéance"
+                       [(ngModel)]="objectifToAdd.echeance" name="echeance" required>
+                <owl-date-time [pickerType]="'calendar'" #dt2></owl-date-time>
+              </div>
+            </div>
+
+            <div class="form-group col-sm-4">
+              <input name="intitule" [(ngModel)]="objectifToAdd.name" placeholder="Intitulé" type="text"
+                     class="form-control form-control-sm" required>
+            </div>
+
+            <div class="form-group col-sm-3">
+              <ng-select id="participants"
+                         name="participants"
+                         placeholder="Participants"
+                         [items]="users"
+                         [(ngModel)]="selectedUsers"
+                         [multiple]="true"
+                         bindLabel="username"
+                         [hideSelected]="true"
+                         notFoundText="Aucun utilisateur trouvé"
+                         [typeahead]="usersTypeahead"
+                         typeToSearchText="Saisir le nom d'utilisateur">
+
+              </ng-select>
+            </div>
+
+            <div>
+              <button class="btn btn-sm btn-primary"
+                      mwlConfirmationPopover
+                      [popoverTitle]="'Confirmation'"
+                      [popoverMessage]="'Êtes vous sur de vouloir ajouter/modifier un objectif ?'"
+                      confirmText="Oui"
+                      cancelText="Non"
+                      (confirm)="onSaveObjectif()"
+                      placement="bottom">
+                Ajouter
+              </button>
+            </div>
+
+
+          </div>
+
+          <table class="table table-sm">
+            <thead>
+            <tr>
+              <th>Date d'echéance</th>
+              <th>Intitulé</th>
+              <th>Détails</th>
+              <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let o of objectifs?.content | paginate: {
+                                                      id: 'objectifs',
+                                                      itemsPerPage: itemsPerPage,
+                                                      currentPage: currentPage,
+                                                      totalItems: objectifs?.totalElements}">
+              <td>{{o.echeance}}</td>
+              <td>{{o.name}}</td>
+              <td>
+                <button class="btn btn-outline-primary btn-sm"
+                        (click)="selectObjectif(o); showObjectif.show();">
+                  <i class="fa fa-eye"></i>
+                </button>
+              </td>
+              <td></td>
+            </tr>
+            </tbody>
+          </table>
+          <pagination-controls
+            class="mypagination"
+            id="activities"
+            (pageChange)="gotoPage($event)"
+            maxSize="15"
+            directionLinks="true"
+            autoHide="true"
+            previousLabel="Précédant"
+            nextLabel="Suivant"
+            screenReaderPaginationLabel="Pagination"
+            screenReaderPageLabel="page"
+            screenReaderCurrentLabel="Vous etes sur la page">
+          </pagination-controls>
+          <div class="col-xs-12 col-12 d-sm-down-none">
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<show-objectif bsModal #showObjectif="bs-modal"
+               [objectif]="selectedObjectif"
+               [modal]="showObjectif"
+               class="modal fade"
+               tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+               aria-hidden="true"></show-objectif>

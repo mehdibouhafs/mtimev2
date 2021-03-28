@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from "@angular/core";
+import {ChangeDetectorRef, Component, Input, OnInit} from "@angular/core";
 import {AuthenticationService} from "../../services/authentification.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ActivityProject} from "../../model/model.activityProject";
@@ -8,10 +8,24 @@ import * as moment from "moment-timezone";
   selector: 'show-activity-project',
   templateUrl: 'showActivityProject.component.html'
 })
-export class ShowActivityProjectComponent {
+export class ShowActivityProjectComponent  implements OnInit{
 
   @Input() modal;
   @Input() activityProject: ActivityProject;
+  serviceName:any;
+  role:any;
+
+  constructor(
+              private authenticationService: AuthenticationService, private ref: ChangeDetectorRef) {
+
+  }
+
+  ngOnInit(){
+    this.serviceName = this.authenticationService.getServName();
+  }
+
+
+
 
   hideModal() {
     this.modal.hide();

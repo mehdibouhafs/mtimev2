@@ -18,5 +18,9 @@ export class Request{
 
    rqtStsInCde : number;
 
+    objexcde : string;
+
+    descriptionDemande:string;
+
 
 }

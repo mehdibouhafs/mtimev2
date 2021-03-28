@@ -1,0 +1,197 @@
+<div class="modal-dialog" role="document" xmlns="http://www.w3.org/1999/html">
+  <div class="modal-content">
+
+
+    <div *ngIf="mode==1">
+
+      <div class="modal-header">
+        <h6 class="col-12 modal-title text-center">
+          <p>Nouvelle Activitée de développement des compétences</p>
+          <div *ngIf="lastActivity" class="badge badge-pill badge-light">
+            Dernière Activité : {{lastActivity?.typeActivite+", "+lastActivity?.nature}} Date
+            {{lastActivity?.dteStrt | date: "dd/MM/yyyy"}}
+            {{lastActivity?.customer?.name}}
+          </div>
+          <div class="alert alert-danger" role="alert" *ngIf="error==1">
+            Oups ! {{returnedError}}
+          </div>
+        </h6>
+      </div>
+
+
+      <form class="form-horizontal" #f="ngForm" (ngSubmit)="onSaveActivityAvantVente(f.value)">
+
+
+        <div class="modal-body">
+
+          <div class="form-row">
+            <div class="form-group col-sm-6">
+              <label>Date de début :</label>
+
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                </div>
+                <input class="form-control form-control-sm" [owlDateTimeTrigger]="dt" [owlDateTime]="dt" [max]="maxDate"
+                       placeholder="Date début"
+                       [(ngModel)]="activityDevCompetence.dteStrt" name="dteStrt" required
+                      >
+                <owl-date-time [pickerType]="'calendar'" #dt></owl-date-time>
+              </div>
+            </div>
+
+            <div class="form-group col-sm-6">
+              <label for="duree">Durée :</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <div class="input-group-text"><i class="fa fa-clock-o"></i></div>
+                </div>
+                <input id="duree" name="duree" class="form-control form-control-sm" type="time" [(ngModel)]="activityDevCompetence.duration" (change)="reject()" required/>
+
+              </div>
+
+          </div>
+          </div>
+
+          <div class="form-row">
+
+            <div class="form-group col-sm-6">
+              <label for="nature">Action :</label>
+              <ng-select id="nature" name="nature"
+                         [items]="nature"
+                         placeholder="Action"
+                         bindLabel="name"
+                         bindValue="name"
+                         [(ngModel)]="activityDevCompetence.nature"
+                         required>
+
+              </ng-select>
+            </div>
+
+            <div class="form-group col-sm-6">
+              <label for="produit">Produit :</label>
+              <ng-select [items]="produits"
+                         id="produit"
+                         name="produit"
+                         [multiple]="true"
+                         placeholder="Produit"
+                         bindLabel="produit"
+                         groupBy="groupe"
+                         [(ngModel)]="activityDevCompetence.produits"
+                         [addTag]="true"
+                         required>
+
+              </ng-select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-sm-6">
+              <label for="lieu">Lieu :</label>
+              <ng-select id="lieu" name="lieu"
+                         [items]="lieu"
+                         placeholder="Lieu"
+                         bindValue="name"
+                         bindLabel="name"
+                         [(ngModel)]="activityDevCompetence.lieu"
+                         required>
+              </ng-select>
+
+
+            </div>
+          </div>
+
+
+        </div>
+
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-sm btn-danger" (click)="hideModal(); toModeOne();">Annuler
+          </button>
+          <button [disabled]="!f.valid" type="submit" class="btn btn-sm btn-primary"><i
+            class="fa fa-dot-circle-o"></i>
+            Enregistrer
+          </button>
+          <button [disabled]="!f.valid" (click)="enregisterContinuer()" class="btn btn-sm btn-warning"><i
+            class="fa fa-dot-circle-o"></i>
+            Enregistrer et Continuer
+          </button>
+        </div>
+      </form>
+
+    </div>
+
+    <div *ngIf="mode==2">
+
+      <div class="modal-header">
+        <h4 class="modal-title">Confirmation</h4>
+      </div>
+
+      <div class="modal-body">
+
+        <div class="form-group row">
+          <div class="col-sm-2 nopadding-right"><strong>Début :</strong></div>
+          <div class="col-sm-3 nopadding">
+            <span class="badge badge-pill badge-light">{{activityDevCompetence?.dteStrt | date:"dd/MM/yy"}}</span>
+          </div>
+          <div class="col-sm-2 nopadding-right"><strong>Fin :</strong></div>
+          <div class="col-sm-3 nopadding">
+            <span class="badge badge-pill badge-light">{{activityDevCompetence?.dteEnd | date:"dd/MM/yy"}}</span>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <div class="col-sm-2 nopadding-right"><strong>Durée :</strong></div>
+          <div class="col-sm-3 nopadding">
+          <span
+            class="badge badge-pill badge-dark">{{activityService.ShortconvertMinutesToHoursAndMinute(activityDevCompetence.durtion)}}</span>
+          </div>
+
+          <div class="col-sm-2 nopadding-right"><strong>Action :</strong></div>
+          <div class="col-sm-3 nopadding">
+            {{activityDevCompetence?.nature}}
+          </div>
+
+
+        </div>
+
+        <div class="form-group row">
+
+
+          <div class="col-sm-3 nopadding-right"><strong>Produits :</strong></div>
+          <div  class="col-sm-7 nopadding">
+            <span *ngFor="let p of activityDevCompetence.produits; let i=index;">
+              <span *ngIf="i<activityDevCompetence.produits.length-1">{{p.produit+" | "}}</span>
+              <span *ngIf="i==activityDevCompetence.produits.length-1">{{p.produit}}</span>
+            </span>
+
+          </div>
+        </div>
+
+          <div class="form-row">
+
+          <div class="col-sm-2 nopadding-right"><strong>Lieu :</strong></div>
+          <div class="col-sm-3 nopadding">
+            {{activityDevCompetence?.lieu}}
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="reset" class="btn btn-sm btn-primary" (click)="toModeDupliquer()">
+          <i class="fa fa-copy"></i> Dupliquer
+        </button>
+        <button type="button" class="btn btn-sm btn-primary" (click)="hideModal(); toModeOne();">
+          <i class="fa fa-check"></i> OK
+        </button>
+      </div>
+
+
+    </div>
+
+
+  </div>
+</div>
+

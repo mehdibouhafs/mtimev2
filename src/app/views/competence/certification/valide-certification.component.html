@@ -1,0 +1,145 @@
+<div class="modal-dialog" role="document">
+  <div class="modal-content">
+    <div *ngIf="mode==1">
+
+      <form #f="ngForm" (ngSubmit)="onValideCertification()">
+
+        <div class="modal-header">
+          <h4 class="modal-title">Compléter la certification</h4>
+        </div>
+
+        <div class="modal-body">
+
+          <div class="form-group row">
+            <div class="col-sm-3 nopadding-right"><strong>Date d'échéance :</strong></div>
+            <div class="col-sm-2 nopadding">
+              <span class="badge badge-pill badge-light">{{certification?.dateEch | date:"dd/MM/yy"}}</span>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <div class="col-sm-2 nopadding-right"><strong>Intitulé :</strong></div>
+            <div class="col-sm-3 nopadding">
+              <span>{{certification?.certName}}</span>
+            </div>
+            <div class="col-sm-2 nopadding-right"><strong>Participant :</strong></div>
+            <div class="col-sm-3 nopadding">
+          <span><img [src]="'assets/img/avatars/'+username+'.jpg'"
+                     onerror="this.src='assets/img/avatars/default.jpg'" class="img-avatar" [alt]="username"
+                     width="25px" height="25px"/> {{username}}</span>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <div class="col-sm-2"><strong>Technologie:</strong></div>
+            <div class="col-sm-3 nopadding">
+              <span>{{certification?.technologie?.nomTechnologie}}</span>
+            </div>
+
+            <div class="col-sm-2 nopadding-right"><strong>Editeur :</strong></div>
+            <div class="col-sm-3 nopadding">
+              <span>{{certification?.editeur?.nomEditeur}}</span>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-sm-6">
+              <label for="niveau">Niveau :</label>
+              <input class="form-control form-control-sm" id="niveau"
+                     name="niveau"
+                     type="text"
+                     #niveau="ngModel"
+                     [(ngModel)]="empCertification.niveau"
+                     placeholder="Niveau" required>
+            </div>
+
+            <div class="form-group col-sm-6">
+              <label for="file-input">Fichier (.JPG) :</label>
+              <input class="form-control form-control-sm"
+                     type="file"
+                     id="file-input"
+                     name="file-input"
+                     accept="image/jpeg"
+                     (change)="onFileSelected($event)"
+                     required>
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-sm btn-danger" (click)="toModeOne()"><i class="fa fa-ban"></i>
+            Annuler
+          </button>
+          <button type="submit" class="btn btn-sm btn-primary" [disabled]="!f.valid"><i class="fa fa-check"></i>
+            Enregistrer
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div *ngIf="mode==2">
+      <div class="modal-header">
+        <h4 class="modal-title">Détails de la certification</h4>
+      </div>
+
+      <div class="modal-body">
+
+        <div class="form-group row">
+          <div class="col-sm-3 nopadding-right"><strong>Date d'échéance :</strong></div>
+          <div class="col-sm-2 nopadding">
+            <span class="badge badge-pill badge-light">{{certification?.dateEch | date:"dd/MM/yy"}}</span>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <div class="col-sm-2 nopadding-right"><strong>Intitulé :</strong></div>
+          <div class="col-sm-3 nopadding">
+            <span>{{certification?.certName}}</span>
+          </div>
+          <div class="col-sm-2 nopadding-right"><strong>Participant :</strong></div>
+          <div class="col-sm-3 nopadding">
+            <span><img [src]="'assets/img/avatars/'+username+'.jpg'"
+                       onerror="this.src='assets/img/avatars/default.jpg'" class="img-avatar" [alt]="username"
+                       width="25px" height="25px"/> {{username}}</span>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <div class="col-sm-2"><strong>Technologie:</strong></div>
+          <div class="col-sm-3 nopadding">
+            <span>{{certification?.technologie?.nomTechnologie}}</span>
+          </div>
+
+          <div class="col-sm-2 nopadding-right"><strong>Editeur :</strong></div>
+          <div class="col-sm-3 nopadding">
+            <span>{{certification?.editeur?.nomEditeur}}</span>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <div class="col-sm-2 nopadding-right"><strong>Niveau :</strong></div>
+          <div class="col-sm-3 nopadding">
+            <span>{{empCertification?.niveau}}</span>
+          </div>
+          <div class="col-sm-2 nopadding-right"><strong>Image :</strong></div>
+          <div class="col-sm-3 nopadding">
+            <span>{{empCertification?.url_image_certif==""?'Non renseigné':empCertification?.url_image_certif}}</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-primary" (click)="toModeOne()"><i class="fa fa-check"></i>
+          OK
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+

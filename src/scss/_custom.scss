@@ -3,6 +3,44 @@
   z-index: 1090;
 }
 
+.metric {
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  padding: 20px;
+  margin-bottom: 30px;
+  border: 1px solid #DCE6EB;
+}
+
+.metric .icon {
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  border-radius: 50%;
+  float: left;
+  width: 50px;
+  height: 50px;
+  line-height: 50px;
+  background-color: #46c20d;
+  text-align: center;
+}
+
+.metric .p {
+  margin-bottom: 0;
+  line-height: 1.2;
+  text-align: right;
+}
+
+.metric .number {
+  display: block;
+  font-size: 28px;
+  font-weight: 300;
+}
+
+.metric .title {
+  font-size: 16px;
+  float: right;
+}
+
 .table-hover tbody tr {
   cursor: pointer;
 }
@@ -102,6 +140,10 @@
   border: none;
 }
 
+.header-texte {
+  color: #c21226;
+}
+
 .btn-outline-primary:hover, .btn-outline-primary .show .dropdown-toggle:focus {
   background-color: darkblue;
 }
@@ -136,3 +178,10 @@
 tr:hover {
   background-color: #f2f2f2;
 }
+
+.expired {
+  background-color: #ff8585;
+}
+
+
+

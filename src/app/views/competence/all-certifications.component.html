@@ -1,0 +1,120 @@
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-lg-10 mx-auto">
+      <div class="card">
+        <div class="card-header">
+          <i class="fa fa-align-justify"></i> Toutes les certifications
+        </div>
+        <div class="card-body">
+          <div class="form-group row">
+
+            <div class="col-md-4">
+              <div class="input-group">
+                <input id="input2-group2" name="input2-group2" class="form-control form-control-sm"
+                       placeholder="Chercher" type="text"
+                       [(ngModel)]="motCle">
+                <span class="input-group-append">
+                          <button type="button" class="btn btn-sm btn-primary" (click)="chercher()"><i
+                            class="fa fa-search"></i></button>
+                        </span>
+              </div>
+            </div>
+            <div>
+              <button class="btn btn-sm btn-primary" (click)="addcertification()"><i class="fa fa-plus"></i>
+              </button>
+            </div>
+          </div>
+          <table class="table table-sm">
+            <thead>
+            <tr>
+              <th>Certification</th>
+              <th>Technologie</th>
+              <th>Editeur</th>
+              <th>Date d'échéance</th>
+              <th>Détails</th>
+              <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let c of certifications?.content | paginate: {
+                                                      id: 'formations',
+                                                      itemsPerPage: itemsPerPage,
+                                                      currentPage: currentPage,
+                                                      totalItems: certifications?.totalElements}">
+              <td>{{c.certName}}</td>
+              <td>{{c.technologie.nomTechnologie}}</td>
+              <td>{{c.editeur.nomEditeur}}</td>
+              <td>{{c.dateEch}}</td>
+              <td>
+                <button class="btn btn-outline-primary btn-sm"
+                        (click)="selectCertification(c); showCertification.show();">
+                  <i class="fa fa-eye"></i>
+                </button>
+              </td>
+              <td>
+                <div class="btn-group" dropdown>
+                  <button dropdownToggle type="button" class="btn btn-outline-primary btn-sm dropdown-toggle">
+                    <i class="fa fa-cog"></i><span class="caret"></span>
+                  </button>
+                  <ul *dropdownMenu class="dropdown-menu" role="menu">
+                    <li role="menuitem">
+                      <button class="dropdown-item small" (click)="selectCertification(c); addCertification.show();"><i
+                        class="fa fa-edit"></i>
+                        Modifier
+                      </button>
+                    </li>
+                    <li role="menuitem">
+                      <button type="button" class="dropdown-item small"
+                              (click)="selectCertification(c); dangerModal.show();" data-toggle="modal">
+                        <i class="fa fa-remove"></i> Supprimer
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+          <pagination-controls
+            class="mypagination"
+            id="formations"
+            (pageChange)="gotoPage($event)"
+            maxSize="15"
+            directionLinks="true"
+            autoHide="true"
+            previousLabel="Précédant"
+            nextLabel="Suivant"
+            screenReaderPaginationLabel="Pagination"
+            screenReaderPageLabel="page"
+            screenReaderCurrentLabel="Vous etes sur la page">
+          </pagination-controls>
+          <div class="col-xs-12 col-12 d-sm-down-none">
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <!--/.col-->
+  </div>
+</div>
+
+<add-certification bsModal #addCertification="bs-modal"
+                   [modal]="addCertification"
+                   [certification]="selectedCertification"
+                   [selectedUsers]="selectedUsers"
+                   [editeurs]="editeurs"
+                   (refresh)="ngOnInit()"
+                   class="modal fade"
+                   tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></add-certification>
+
+<show-certification-all-participants bsModal #showCertification="bs-modal"
+                                     [modal]="showCertification"
+                                     [certification]="selectedCertification"
+                                     class="modal fade"
+                                     tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                                     aria-hidden="true"></show-certification-all-participants>
+
+<delete-modal bsModal #dangerModal="bs-modal" [modal]="dangerModal"
+              [certification]="selectedCertification"
+              (functionDelete)="onDeleteCertification(selectedCertification)" class="modal fade"
+              tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></delete-modal>

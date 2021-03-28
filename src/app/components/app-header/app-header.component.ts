@@ -11,6 +11,7 @@ import {SocketService} from "../../services/socket.service";
 
 export class AppHeaderComponent implements OnInit,OnDestroy,AfterViewInit  {
 
+  name:string;
   imgProfil:string;
   link : string = "assets/img/avatars/";
 
@@ -35,8 +36,12 @@ export class AppHeaderComponent implements OnInit,OnDestroy,AfterViewInit  {
   }
 
   ngOnInit(){
-    this.imgProfil = this.link + this.authService.getImgProfil();
-    //this.socketService.connect();
+    if(!this.authService.isLogged()) {
+      this.router.navigateByUrl('/pages/login')
+    } else {
+      this.imgProfil = this.link + this.authService.getImgProfil();
+      this.name = this.authService.getUserName();
+    }
 
   }
   ngAfterViewInit(){
@@ -44,12 +49,7 @@ export class AppHeaderComponent implements OnInit,OnDestroy,AfterViewInit  {
   }
 
   sayHello(){
-    const toast= this.notificationService.info("Bienvenue", "Nous sommes heureux de vous revoir sur MRH", {
-      timeOut: 7000,
-      showProgressBar: false,
-      pauseOnHover: true,
-      clickToClose: false,
-      clickIconToClose: true});
+
   }
 
 
@@ -58,7 +58,6 @@ export class AppHeaderComponent implements OnInit,OnDestroy,AfterViewInit  {
   }
 
   onLogout(){
-    console.log("logout");
     this.authService.logout();
     this.router.navigateByUrl('/pages/login');
   }

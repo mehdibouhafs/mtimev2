@@ -1,0 +1,118 @@
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-lg-10 mx-auto">
+      <div class="card">
+        <div class="card-header">
+          <i class="fa fa-align-justify"></i> Toutes les formations
+        </div>
+        <div class="card-body">
+          <div class="form-group row">
+
+            <div class="col-md-4">
+              <div class="input-group">
+                <input id="input2-group2" name="input2-group2" class="form-control form-control-sm"
+                       placeholder="Chercher" type="text"
+                       [(ngModel)]="motCle">
+                <span class="input-group-append">
+                          <button type="button" class="btn btn-sm btn-primary" (click)="chercher()"><i
+                            class="fa fa-search"></i></button>
+                        </span>
+              </div>
+            </div>
+            <div>
+              <button class="btn btn-sm btn-primary" (click)="addformation()"><i class="fa fa-plus"></i>
+              </button>
+            </div>
+          </div>
+          <table class="table table-sm">
+            <thead>
+            <tr>
+              <th>Formation</th>
+              <th>Technologie</th>
+              <th>Editeur</th>
+              <th>Détails</th>
+              <th>Action</th>
+            </tr>
+            </thead>
+            <tr *ngFor="let f of formations?.content | paginate: {
+                                                      id: 'formations',
+                                                      itemsPerPage: itemsPerPage,
+                                                      currentPage: currentPage,
+                                                      totalItems: formations?.totalElements}">
+              <td>{{f?.frmName}}</td>
+              <td>{{f?.technologie?.nomTechnologie}}</td>
+              <td>{{f?.editeur?.nomEditeur}}</td>
+              <td>
+                <button class="btn btn-outline-primary btn-sm"
+                        (click)="selectFormation(f); showFormation.show();">
+                  <i class="fa fa-eye"></i>
+                </button>
+              </td>
+              <td>
+                <div class="btn-group" dropdown>
+                  <button dropdownToggle type="button" class="btn btn-outline-primary btn-sm dropdown-toggle">
+                    <i class="fa fa-cog"></i><span class="caret"></span>
+                  </button>
+                  <ul *dropdownMenu class="dropdown-menu" role="menu">
+                    <li role="menuitem">
+                      <button class="dropdown-item small" (click)="selectFormation(f); addFormation.show();"><i
+                        class="fa fa-edit"></i>
+                        Modifier
+                      </button>
+                    </li>
+                    <li role="menuitem">
+                      <button type="button" class="dropdown-item small"
+                              (click)="selectFormation(f); dangerModal.show();" data-toggle="modal">
+                        <i class="fa fa-remove"></i> Supprimer
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              </td>
+            </tr>
+          </table>
+          <pagination-controls
+            class="mypagination"
+            id="formations"
+            (pageChange)="gotoPage($event)"
+            maxSize="15"
+            directionLinks="true"
+            autoHide="true"
+            previousLabel="Précédant"
+            nextLabel="Suivant"
+            screenReaderPaginationLabel="Pagination"
+            screenReaderPageLabel="page"
+            screenReaderCurrentLabel="Vous etes sur la page">
+          </pagination-controls>
+          <div class="col-xs-12 col-12 d-sm-down-none">
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <!--/.col-->
+  </div>
+</div>
+
+<add-formation bsModal #addFormation="bs-modal"
+               [modal]="addFormation"
+               [formation]="selectedFormation"
+               [selectedUsers]="selectedUsers"
+               [dates]="dates"
+               [editeurs]="editeurs"
+               (refresh)="ngOnInit()"
+               class="modal fade"
+               tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></add-formation>
+
+<show-formation-all-participants bsModal #showFormation="bs-modal"
+                                 [modal]="showFormation"
+                                 [formation]="selectedFormation"
+                                 class="modal fade"
+                                 tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                                 aria-hidden="true"></show-formation-all-participants>
+
+
+<delete-modal bsModal #dangerModal="bs-modal" [modal]="dangerModal"
+              [formation]="selectedFormation"
+              (functionDelete)="onDeleteFormation(selectedFormation)" class="modal fade"
+              tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></delete-modal>

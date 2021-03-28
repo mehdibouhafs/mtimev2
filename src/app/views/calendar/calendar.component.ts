@@ -131,6 +131,7 @@ export class CalendarComponent implements OnInit {
         this.viewDate = date;
       }
     }
+
   }
 
   eventTimesChanged({

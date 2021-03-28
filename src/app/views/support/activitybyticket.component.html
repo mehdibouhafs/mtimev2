@@ -1,0 +1,62 @@
+<div class="modal-dialog" role="document">
+  <div class="modal-content">
+
+    <div class="modal-header">
+      <h4 class="modal-title">Acticity Request</h4>
+    </div>
+
+    <div class="modal-body">
+
+      <div class="mx-auto">
+        <table class="table table-sm table-responsive">
+          <thead>
+          <tr>
+            <th>Username</th>
+            <th>Nature</th>
+            <th>Début</th>
+            <th>Fin</th>
+            <th>Client</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let a of pageActivityRequest?.content | paginate: {
+                                                      id: 'activitiesRequest',
+                                                      itemsPerPage: size,
+                                                      currentPage: currentPage,
+                                                      totalItems: totalElement}">
+            <td>{{a?.user?.username}}</td>
+            <td>{{a?.nature}}</td>
+            <td><span class="badge badge-pill badge-light">{{a?.dteStrt | date:"dd/MM/yy HH:mm"}}</span></td>
+            <td><span class="badge badge-pill badge-light">{{a?.dteEnd | date:"dd/MM/yy HH:mm"}}</span></td>
+            <td>{{a?.customer?.name}}</td>
+          </tr>
+          </tbody>
+        </table>
+        <pagination-controls
+          class="mypagination"
+          id="activitiesRequest"
+          (pageChange)="gotoPage($event)"
+          maxSize="15"
+          directionLinks="true"
+          autoHide="true"
+          previousLabel="Précédant"
+          nextLabel="Suivant"
+          screenReaderPaginationLabel="Pagination"
+          screenReaderPageLabel="page"
+          screenReaderCurrentLabel="Vous etes sur la page">
+        </pagination-controls>
+        <div class="col-xs-12 col-12 d-sm-down-none">
+        </div>
+      </div>
+
+    </div>
+
+    <div class="modal-footer">
+
+      <button type="button" class="btn btn-sm btn-primary" (click)="hideModal()">
+        <i class="fa fa-check"></i> OK
+      </button>
+    </div>
+
+  </div>
+</div>

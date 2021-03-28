@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, Input} from "@angular/core";
+import {ChangeDetectorRef, Component, EventEmitter, Input, Output} from "@angular/core";
 import {ActivityService} from "../../services/activity.service";
 import {CustomerService} from "../../services/customer.service";
 import {Router} from "@angular/router";
@@ -12,12 +12,13 @@ import {ActivitySI} from "../../model/model.activitySI";
 })
 
 export class EditActivitySIComponent {
+
+  @Output() refresh = new EventEmitter<string>();
+
   @Input() modal;
-  @Input() activitySI:any;
-  @Input() pageActivities: any;
-  @Input() index:any;
-  @Input() toDo:boolean = false;
-  @Input() disabledStatut:boolean = false;
+  @Input() activitySI: any;
+  @Input() toDo: boolean = false;
+  @Input() disabledStatut: boolean = false;
 
   message: string;
   currentDate: Date = new Date();
@@ -27,14 +28,15 @@ export class EditActivitySIComponent {
   returnedError: string;
 
   duree: number;
-  dureeConverted: string;
+  @Input() dureeConverted: string;
 
-  constructor(private activityService: ActivityService, private customerService: CustomerService, private router: Router, private authenticationService: AuthenticationService, private ref:ChangeDetectorRef) {
+  constructor(private activityService: ActivityService, private customerService: CustomerService, private router: Router, private authenticationService: AuthenticationService, private ref: ChangeDetectorRef) {
 
   }
 
   hideModal() {
     this.modal.hide();
+    this.error = 0;
   }
 
   onDatesChanged() {
@@ -55,6 +57,10 @@ export class EditActivitySIComponent {
     }
   }
 
+  refreshActivity() {
+    this.refresh.emit("Rafresh Activity");
+  }
+
   onEditActivitySI() {
     this.activitySI.updatedAt = new Date();
     this.activitySI.hrStrt = moment(this.activitySI.dteStrt).format("HH:mm");
@@ -62,11 +68,13 @@ export class EditActivitySIComponent {
     this.activitySI.durtion = this.activityService.diffBetwenTwoDateInMinutes(this.activitySI.dteStrt, this.activitySI.dteEnd);
     this.activityService.updateActivity(this.activitySI)
       .subscribe((data: ActivitySI) => {
-        this.pageActivities.content.splice(this.index, 1, this.activitySI);
+        this.refreshActivity();
         this.mode = 2;
         this.ref.detectChanges();
-      }), err => {
-      console.log(JSON.parse(err.body).message);
-    };
+      }, err => {
+        console.log(JSON.stringify(err));
+        this.returnedError = err.error.message;
+        this.error = 1;
+      });
   }
 }

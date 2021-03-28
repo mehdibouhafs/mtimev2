@@ -8,10 +8,10 @@
         <h6 class="col-12 modal-title text-center">
           <p>Nouvelle Activité recouvrement</p>
           <div *ngIf="lastActivity" class="badge badge-pill badge-light">
-            Dernière Activité : {{lastActivity?.typeActivite}} Du
-            {{lastActivity?.dteStrt | date: "dd/MM/yy HH:mm"}} à {{lastActivity?.dteEnd | date: "dd/MM/yy HH:mm"}}
+            Dernière Activité : {{lastActivity?.typeActivite+", "+lastActivity?.nature}} Du
+            {{lastActivity?.dteStrt | date: "dd/MM/yy HH:mm"}} à {{lastActivity?.dteEnd | date: "dd/MM/yy HH:mm"}}, {{lastActivity?.customer?.name}}
           </div>
-          <div class="alert alert-danger" role="alert" *ngIf="error==2">
+          <div class="alert alert-danger" role="alert" *ngIf="error==1">
             <strong> Oups ! </strong> {{returnedError}}
           </div>
         </h6>
@@ -27,9 +27,9 @@
               <label for="dateStart">Date de début :</label>
               <div class="input-group">
                 <div class="input-group-prepend">
-                  <button class="btn btn-sm btn-primary" type="button"><i class="fa fa-calendar"></i></button>
+                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                 </div>
-                <input class="form-control" id="dateStart" [owlDateTimeTrigger]="dt" [owlDateTime]="dt" placeholder="Date début"
+                <input class="form-control form-control-sm" id="dateStart" [owlDateTimeTrigger]="dt" [owlDateTime]="dt" placeholder="Date début"
                        [(ngModel)]="activityRecouvrement.dteStrt" name="dteStrt" required
                        (ngModelChange)="onDatesChanged()">
                 <owl-date-time #dt></owl-date-time>
@@ -40,9 +40,9 @@
               <label for="dateEnd">Date de fin :</label>
               <div class="input-group">
                 <div class="input-group-prepend">
-                  <button class="btn btn-sm btn-primary" type="button"><i class="fa fa-calendar"></i></button>
+                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                 </div>
-                <input id="dateEnd" class="form-control" [min]="activityRecouvrement.dteStrt" [owlDateTimeTrigger]="dt1" [owlDateTime]="dt1"
+                <input id="dateEnd" class="form-control form-control-sm" [min]="activityRecouvrement.dteStrt" [owlDateTimeTrigger]="dt1" [owlDateTime]="dt1"
                        placeholder="Date et heure de fin"
                        [(ngModel)]="activityRecouvrement.dteEnd" name="dteEnd" (ngModelChange)="onDatesChanged()"
                        required>
@@ -59,25 +59,24 @@
 
           <div class="form-row">
             <div class="form-group col-sm-6">
-              <label for="client">Client :</label>
-              <ng-select id="client" [items]="customers"
+              <label for="customers">Client :</label>
+              <ng-select id="customers" [items]="customers"
                          bindLabel="name"
                          name="customer"
                          placeholder="Selectionner un client"
+                         notFoundText="Aucun client trouvé"
+                         [typeahead]="customerTypeahead"
+                         typeToSearchText="Saisir client"
                          [(ngModel)]="activityRecouvrement.customer"
-                         required>
-
-              </ng-select>
+                         required></ng-select>
             </div>
 
             <div class="form-group col-sm-6">
               <label for="nature">Nature :</label>
-              <select class="form-control" id="nature" [(ngModel)]="activityRecouvrement.nature" name="nature"
+              <select class="form-control form-control-sm" id="nature" [(ngModel)]="activityRecouvrement.nature" name="nature"
                       #nature="ngModel" required>
                 <option>Recouvrement</option>
                 <option>Réunion</option>
-                <option>Nature 3</option>
-                <option>Nature 4</option>
               </select>
             </div>
           </div>
@@ -86,21 +85,26 @@
 
             <div class="form-group col-sm-6">
               <label for="lieu">Lieu :</label>
-              <select class="form-control" id="lieu" [(ngModel)]="activityRecouvrement.lieu" name="lieu" required>
-                <option>Client</option>
-                <option>Munisys</option>
-                <option>Domicile</option>
+              <select class="form-control form-control-sm" id="lieu" [(ngModel)]="activityRecouvrement.lieu" name="lieu" required>
+                <option>CLIENT</option>
+                <option>MUNISYS</option>
+                <option>DOMICILE</option>
               </select>
             </div>
 
             <div class="form-group col-sm-6">
               <label for="ville">Ville :</label>
-              <select class="form-control" id="ville" [(ngModel)]="activityRecouvrement.ville" name="ville" required
-                      #ville="ngModel">
-                <option>Casablanca</option>
-                <option>Fes</option>
-                <option>Agadir</option>
-              </select>
+              <ng-select id="ville"
+                         name="ville"
+                         placeholder="Ville"
+                         [items]="ville"
+                         bindLabel="name"
+                         bindValue="name"
+                         [(ngModel)]="activityRecouvrement.ville"
+                         notFoundText="Aucune ville trouvée"
+                         required>
+
+              </ng-select>
             </div>
           </div>
 

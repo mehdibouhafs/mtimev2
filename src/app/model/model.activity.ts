@@ -17,12 +17,20 @@ export class Activity {
   statut:boolean;
   comments:string;
 
+  createdBy:User;
+
   createdAt:Date;
   updatedAt:Date;
 
+  principal:boolean;
+  duration:string;
+
+
+
+
   constructor(){
-    this.customer = new Customer();
     this.user = new User();
+    this.createdBy = new User();
   }
 
 

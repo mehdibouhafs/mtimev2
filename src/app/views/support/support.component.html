@@ -25,8 +25,6 @@
               <th>Numéro</th>
               <th>Date</th>
               <th>Objet</th>
-              <th>ObjetVal</th>
-              <th>Contrat</th>
               <th>Client</th>
               <th>Nature</th>
               <th>Action</th>
@@ -38,15 +36,32 @@
                                                       itemsPerPage: itemsPerPage,
                                                       currentPage: currentPage,
                                                       totalItems: pageActivities?.totalElements}">
-              <td>{{r.rqtExcde}}</td>
-              <td><span class="badge badge-pill badge-light">{{r.rqtDte | date:"dd/MM/yy HH:mm"}}</span>
+              <td>{{r?.rqtExcde}}</td>
+              <td><span class="badge badge-pill badge-light">{{r?.rqtDte | date:"dd/MM/yy HH:mm"}}</span>
               </td>
-              <td>{{r.objDsc}}</td>
-              <td>{{r.objIdentVal}}</td>
-              <td>{{r.cntExcde}}</td>
-              <td>{{r.cpyInCde.name}}</td>
-              <td>{{r.rqtNatDsc}}</td>
-              <td><button class="btn btn-sm btn-primary" (click)="addActivity(r)">Créer</button></td>
+              <td>{{r?.objDsc}}</td>
+              <td>{{r?.cpyInCde.name}}</td>
+              <td>{{r?.rqtNatDsc}}</td>
+              <td>
+                <div class="btn-group" dropdown>
+                  <button dropdownToggle type="button" class="btn btn-outline-primary btn-sm dropdown-toggle">
+                    <i class="fa fa-cog"></i><span class="caret"></span>
+                  </button>
+                  <ul *dropdownMenu class="dropdown-menu" role="menu">
+                    <li role="menuitem">
+                      <button class="dropdown-item small" (click)="addActivity(r)">
+                        Créer Intervention
+                      </button>
+                    </li>
+                    <li role="menuitem">
+                      <button type="button" class="dropdown-item small" data-toggle="modal"
+                              (click)="chargerModalActivity(r.rqtExcde)">
+                        Toutes les interventions
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              </td>
             </tr>
             </tbody>
           </table>
@@ -74,6 +89,18 @@
 </div>
 
 <new-activityRequest bsModal #activityRequestModal="bs-modal" [modal]="activityRequestModal" [activityRequest]="activityRequest" [lastActivity]="lastActivity"
+                     [requestOk]="true"
+                     [disabledInput]="true"
                      class="modal fade"
                      tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
                      aria-hidden="true"></new-activityRequest>
+
+<activity-by-ticket bsModal #activityByTicket="bs-modal"
+                    [modal]="activityByTicket"
+                    [pageActivityRequest]="pageActivityRequest"
+                    [totalElement]="totalElementActivityRequest"
+                    [pages]="pagesActivityRequest"
+                    [rqtExcde]="rqtExcde"
+                     class="modal fade"
+                     tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                     aria-hidden="true"></activity-by-ticket>

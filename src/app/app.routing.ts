@@ -17,7 +17,7 @@ export const routes: Routes = [
     path: '',
     component: FullLayoutComponent,
     data: {
-      title: 'Home'
+      title: 'Accueil'
     },
     children: [
       {
@@ -28,14 +28,8 @@ export const routes: Routes = [
         path: 'tickets',
         loadChildren: './views/support/support.module#SupportModule'
       },
-      {
-        path: 'formation',
-        loadChildren: './views/formation/formation.module#FormationModule'
-      },
-      {
-        path: 'certification',
-        loadChildren: './views/certification/certification.module#CertificationModule'
-      },
+
+
       {
         path: 'activity',
         loadChildren: './views/activity/activity.module#ActivityModule'
@@ -43,6 +37,30 @@ export const routes: Routes = [
       {
         path: 'calendar',
         loadChildren: './views/calendar/calendar2.module#CalendarModule2'
+      },
+      {
+        path: 'competence',
+        loadChildren: './views/competence/competence.module#CompetenceModule'
+      },
+      {
+        path: 'projects',
+        loadChildren: './views/projects-management/projects.module#ProjectsModule'
+      },
+      {
+        path: 'cablage',
+        loadChildren: './views/cablage/cablage-activity.module#CablageActivityModule'
+      },
+      {
+        path: 'renouvellement',
+        loadChildren: './views/renouvellement/renouvellement.module#RenouvellementModule'
+      },
+      {
+        path: 'activity-direction',
+        loadChildren: './views/direction/activityDirection.module#ActivityDirectionModule'
+      },
+      {
+        path: 'objectif',
+        loadChildren: './views/objectif/objectif.module#ObjectifModule'
       }
     ]
   },

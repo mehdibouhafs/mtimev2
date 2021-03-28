@@ -9,4 +9,5 @@ export class Project{
   leadrPrj:string;
   bu:string;
   durtionPrj:number;
+  durtionEnMinutes:number;
 }

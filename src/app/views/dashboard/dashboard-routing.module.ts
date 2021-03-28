@@ -5,14 +5,30 @@ import { Routes,
 import { DashboardComponent } from './dashboard.component';
 import {AuthenticationService} from "../../services/authentification.service";
 import {HttpClientModule} from "@angular/common/http";
+import {DashboardGroupComponent} from "./dashboard-group.component";
 
 const routes: Routes = [
   {
     path: '',
-    component: DashboardComponent,
     data: {
-      title: 'Dashboard'
-    }
+      title: ''
+    },
+    children: [
+      {
+        path: '',
+        component: DashboardComponent,
+        data: {
+          title: 'Dashboard'
+        }
+      },
+      {
+        path: 'dashboard-group',
+        component: DashboardGroupComponent,
+        data: {
+          title: 'Dashboard de groupe'
+        }
+      },
+    ]
   }
 ];
 

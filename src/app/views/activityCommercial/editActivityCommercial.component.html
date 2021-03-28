@@ -5,10 +5,16 @@
     <div *ngIf="mode==1">
 
       <div class="modal-header">
-        <h4 class="modal-title">Modifier Activité Commerciale :</h4>
-        <div class="alert alert-danger" role="alert" *ngIf="error==2">
-          <strong> Oups ! </strong> {{returnedError}}
-        </div>
+        <h6 class="col-12 modal-title text-center">
+          <p>Modifier Activité commerciale</p>
+          <div *ngIf="lastActivity" class="badge badge-pill badge-light">
+            Dernière Activité : {{lastActivity?.typeActivite+", "+lastActivity?.nature}} Du
+            {{lastActivity?.dteStrt | date: "dd/MM/yy HH:mm"}} à {{lastActivity?.dteEnd | date: "dd/MM/yy HH:mm"}}, {{lastActivity?.customer?.name}}
+          </div>
+          <div class="alert alert-danger" role="alert" *ngIf="error==1">
+            <strong> Oups ! </strong> {{returnedError}}
+          </div>
+        </h6>
       </div>
 
       <form class="form-horizontal" #f="ngForm" (ngSubmit)="onEditActivityCommercial(f.value)">
@@ -23,11 +29,17 @@
 
               <div class="input-group">
                 <div class="input-group-prepend">
-                  <button class="btn btn-sm btn-primary" type="button"><i class="fa fa-calendar"></i></button>
+                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                 </div>
-                <input class="form-control" id="dateStart" [owlDateTimeTrigger]="dt" [owlDateTime]="dt" placeholder="Date début"
-                       [(ngModel)]="activityCommercial.dteStrt" name="dteStrt" required
-                       (ngModelChange)="onDatesChanged()">
+                <input class="form-control form-control-sm"
+                       id="dateStart"
+                       name="dteStrt"
+                       [owlDateTimeTrigger]="dt"
+                       [owlDateTime]="dt"
+                       placeholder="Date début"
+                       [(ngModel)]="activityCommercial.dteStrt"
+                       (ngModelChange)="onDatesChanged()"
+                       required>
                 <owl-date-time #dt></owl-date-time>
               </div>
             </div>
@@ -37,9 +49,13 @@
 
               <div class="input-group">
                 <div class="input-group-prepend">
-                  <button class="btn btn-sm btn-primary" type="button"><i class="fa fa-calendar"></i></button>
+                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                 </div>
-                <input class="form-control" id="dateEnd" [min]="activityCommercial.dteStrt" [owlDateTimeTrigger]="dt1" [owlDateTime]="dt1"
+                <input class="form-control form-control-sm"
+                       id="dateEnd"
+                       [min]="activityCommercial.dteStrt"
+                       [owlDateTimeTrigger]="dt1"
+                       [owlDateTime]="dt1"
                        placeholder="Date et heure de fin"
                        [(ngModel)]="activityCommercial.dteEnd" name="dteEnd" (ngModelChange)="onDatesChanged()"
                        required>
@@ -55,13 +71,16 @@
           <div class="form-row">
             <div class="form-group col-sm-6">
               <label for="nature">Nature :</label>
-              <select id="nature" class="form-control" [(ngModel)]="activityCommercial.nature" name="nature"
-                      #nature="ngModel" required>
-                <option>Projet</option>
-                <option>Réunion</option>
-                <option>Pilotage contrat</option>
-                <option>Encadrement / Plannification</option>
-              </select>
+              <ng-select id="nature"
+                         name="nature"
+                         [items]="natures"
+                         placeholder="Nature"
+                         bindLabel="name"
+                         bindValue="name"
+                         [(ngModel)]="activityCommercial.nature"
+                         required>
+
+              </ng-select>
             </div>
 
             <div class="form-group col-sm-6">
@@ -70,8 +89,10 @@
                          bindLabel="name"
                          name="customer"
                          placeholder="Selectionner un client"
+                         notFoundText="Aucun client trouvé"
+                         [typeahead]="customerTypeahead"
+                         typeToSearchText="Saisir client"
                          [(ngModel)]="activityCommercial.customer"
-                         (change)="teste()"
                          required></ng-select>
             </div>
           </div>
@@ -80,7 +101,7 @@
 
             <div class="form-group col-sm-6">
               <label for="lieu">Lieu :</label>
-              <select id="lieu" class="form-control" [(ngModel)]="activityCommercial.lieu" name="lieu" required>
+              <select id="lieu" class="form-control form-control-sm" [(ngModel)]="activityCommercial.lieu" name="lieu" required>
                 <option>Client</option>
                 <option>Munisys</option>
                 <option>Domicile</option>
@@ -89,12 +110,17 @@
 
             <div class="form-group col-sm-6">
               <label for="ville">Ville :</label>
-              <select id="ville" class="form-control" [(ngModel)]="activityCommercial.ville" name="ville" required
-                      #ville="ngModel">
-                <option>Casablanca</option>
-                <option>Fes</option>
-                <option>Agadir</option>
-              </select>
+              <ng-select id="ville"
+                         name="ville"
+                         placeholder="Ville"
+                         [items]="ville"
+                         bindLabel="name"
+                         bindValue="name"
+                         [(ngModel)]="activityCommercial.ville"
+                         notFoundText="Aucune ville trouvée"
+                         required>
+
+              </ng-select>
             </div>
 
 

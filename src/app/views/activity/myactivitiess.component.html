@@ -1,7 +1,6 @@
 <div class="animated fadeIn">
-  <!--/.row-->
   <div class="row">
-    <div class="col-lg-10 mx-auto">
+    <div class="col-lg mx-auto">
       <div class="card">
         <div class="card-header">
           <i class="fa fa-align-justify"></i> Mes activitées
@@ -10,36 +9,52 @@
           <div class="form-group row">
             <div class="col-md-4">
               <div class="input-group">
-                <input id="input2-group2" name="input2-group2" class="form-control form-control-sm" placeholder="Chercher" type="text"
-                       [(ngModel)]="motCle">
-                <span class="input-group-append">
-                          <button type="button" class="btn btn-sm btn-primary" (click)="chercher()"><i
-                            class="fa fa-search"></i></button>
-                        </span>
+                <input id="input2-group2" name="input2-group2" class="form-control form-control-sm"
+                       placeholder="Chercher" type="text"
+                       [(ngModel)]="motCle" (keyup)="chercher()">
+                <div class="input-group-append">
+                  <div class="input-group-text"><i
+                    class="fa fa-search"></i></div>
+                </div>
               </div>
             </div>
             <div class="col-md-4">
               <ng-select [items]="items"
                          [(ngModel)]="typeSelected"
                          (change)="doSearch()"
+                         [searchable]="false"
                          placeholder="Toutes les activités"
                          multiple="true"
                          bindValue="shortType"
-                         bindLabel="type">
+                         bindLabel="shortType">
+
+                <ng-template ng-label-tmp let-item="item" let-clear="clear">
+                  <span class="ng-value-label"><i [class]="item.logo"></i> {{item.shortType}}</span>
+                  <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
+                </ng-template>
+                <ng-template ng-option-tmp let-item="item">
+                  <i [class]="item.logo"></i> {{item.type}}
+                </ng-template>
 
               </ng-select>
+            </div>
+            <div>
+              <button class="btn btn-sm btn-primary" (click)="myModal.show()"><i class="fa fa-plus"></i>
+              </button>
             </div>
           </div>
           <table class="table table-sm">
             <thead>
             <tr>
               <th>Type d'activité</th>
-              <th>Debut</th>
+              <th>Nature</th>
+              <th>Début</th>
               <th>Fin</th>
               <th>Durée</th>
+              <th>Client</th>
               <th>Statut</th>
-              <th></th>
-              <th></th>
+              <th>Détails</th>
+              <th>Action</th>
             </tr>
             </thead>
             <tbody>
@@ -49,12 +64,16 @@
                                                       currentPage: currentPage,
                                                       totalItems: pageActivities?.totalElements}">
               <td>{{a.typeActivite}}</td>
-              <td><span class="badge badge-pill badge-light">{{a.dteStrt | date:"dd/MM/yy HH:mm"}}</span>
+              <td>{{a.nature}}</td>
+              <td><span class="badge badge-pill badge-light">{{a.dteStrt | date:"dd/MM/yyyy"}}</span>
               </td>
-              <td><span class="badge badge-pill badge-light">{{a.dteEnd | date:"dd/MM/yy HH:mm"}}</span>
+              <td><span class="badge badge-pill badge-light">{{a.dteEnd | date:"dd/MM/yyyy"}}</span>
               </td>
-              <td><span class="badge badge-pill badge-dark">{{activityService.ShortconvertMinutesToHoursAndMinute(a.durtion)}}</span></td>
-              <td><span [class]="a.statut?'badge badge-pill badge-success':'badge badge-pill badge-info'">{{a.statut?'Realisé':'Planifié'}}</span></td>
+              <td><span class="badge badge-pill badge-dark">{{activityService.ShortconvertMinutesToHoursAndMinute(a.durtion)}}</span>
+              </td>
+              <td>{{a?.customer?.name?.substr(0, 25)}}</td>
+              <td><span [class]="a?.statut?'badge badge-pill badge-success':'badge badge-pill badge-info'">{{a?.statut?'Realisé':'Planifié'}}</span>
+              </td>
               <td>
                 <button class="btn btn-outline-primary btn-sm" (click)="detectModal(a)"><i
                   class="fa fa-eye"></i></button>
@@ -66,7 +85,14 @@
                   </button>
                   <ul *dropdownMenu class="dropdown-menu" role="menu">
                     <li role="menuitem">
-                      <button class="dropdown-item small" (click)="onEditMyActivity(a);"><i class="fa fa-edit"></i> Modifier</button>
+                      <button class="dropdown-item small" (click)="onDuppliquerMyActivity(a);"><i class="fa fa-edit"></i>
+                        Duppliquer
+                      </button>
+                    </li>
+                    <li role="menuitem">
+                      <button class="dropdown-item small" (click)="onEditMyActivity(a);"><i class="fa fa-edit"></i>
+                        Modifier
+                      </button>
                     </li>
                     <li role="menuitem">
                       <button type="button" class="dropdown-item small" data-toggle="modal"
@@ -103,55 +129,237 @@
   </div>
 </div>
 
+<div bsModal #myModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" (click)="myModal.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <h5 class="card-title text-center">Selectionnez le type d'activité :</h5>
 
-<edit-activity-request bsModal #editactivityRequestModal="bs-modal" [pageActivities]="pageActivities" [index]="indexSelected" [modal]="editactivityRequestModal"
-                            [activityRequest]="activityRequest" class="modal fade" tabindex="-1" role="dialog"
-                            aria-labelledby="myModalLabel" aria-hidden="true"></edit-activity-request>
+        <div class="list-group">
+          <button type="button" *ngFor="let activityAuthorized of activitiesAuthorized"
+                  (click)="myModal.hide(); onSelectModal(activityAuthorized);"
+                  class="list-group-item list-group-item-action">
+            <i [class]="detectIcon(activityAuthorized)"></i> {{activityAuthorized}}
+          </button>
+        </div>
 
-<edit-activity-si bsModal #editactivitySIModal="bs-modal" [pageActivities]="pageActivities" [index]="indexSelected" [modal]="editactivitySIModal"
-                       [activitySI]="activitySI" class="modal fade" tabindex="-1" role="dialog"
-                       aria-labelledby="myModalLabel" aria-hidden="true"></edit-activity-si>
 
-<edit-activity-recouvrement bsModal #editactivityRecouvrementModal="bs-modal" [pageActivities]="pageActivities" [index]="indexSelected" [modal]="editactivityRecouvrementModal"
-                       [activityRecouvrement]="activityRecouvrement" class="modal fade" tabindex="-1" role="dialog"
-                       aria-labelledby="myModalLabel" aria-hidden="true"></edit-activity-recouvrement>
+      </div>
+    </div>
+  </div>
+</div>
 
-<edit-activity-project bsModal #editactivityProjectModal="bs-modal" [pageActivities]="pageActivities" [index]="indexSelected" [modal]="editactivityProjectModal"
-                       [activityProject]="activityProject" class="modal fade" tabindex="-1" role="dialog"
+<new-activtyProject bsModal #newactivityProjectModal="bs-modal" [modal]="newactivityProjectModal"
+                    [lastActivity]="lastActivity"
+                    [activityProject]="activityProject" [projects]="projects"
+                    (refresh)="ngOnInit()"
+                    class="modal fade"
+                    tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></new-activtyProject>
+
+<new-activtyCommercial bsModal #newactivityCommercialModal="bs-modal" [modal]="newactivityCommercialModal"
+                       [lastActivity]="lastActivity"
+                       [activityCommercial]="activityCommercial"
+                       (refresh)="ngOnInit()"
+                       class="modal fade"
+                       tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                       aria-hidden="true"></new-activtyCommercial>
+
+<new-activityHoliday bsModal #newactivityHolidayModal="bs-modal" [modal]="newactivityHolidayModal"
+                     [lastActivity]="lastActivity"
+                     [activityHoliday]="activityHoliday"
+                     (refresh)="ngOnInit()"
+                     class="modal fade"
+                     tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                     aria-hidden="true"></new-activityHoliday>
+
+<new-activityRecouvrement bsModal #newactivityRecouvrementModal="bs-modal" [modal]="newactivityRecouvrementModal"
+                          [lastActivity]="lastActivity"
+                          [activityRecouvrement]="activityRecouvrement"
+                          (refresh)="ngOnInit()"
+                          class="modal fade"
+                          tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                          aria-hidden="true"></new-activityRecouvrement>
+
+<new-activityRequest bsModal #newactivityRequestModal="bs-modal" [modal]="newactivityRequestModal"
+                     [lastActivity]="lastActivity"
+                     [activityRequest]="activityRequest"
+                     (refresh)="ngOnInit()"
+                     class="modal fade"
+                     tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                     aria-hidden="true"></new-activityRequest>
+
+<new-activity-si bsModal #newactivitySIModal="bs-modal" [modal]="newactivitySIModal"
+                 [lastActivity]="lastActivity"
+                 (refresh)="ngOnInit()"
+                 class="modal fade"
+                 tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                 aria-hidden="true"></new-activity-si>
+
+<new-activityPM bsModal #newactivityPMModal="bs-modal" [modal]="newactivityPMModal"
+                [lastActivity]="lastActivity"
+                [activityPM]="activityPM"
+                (refresh)="ngOnInit()"
+                class="modal fade"
+                tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true"></new-activityPM>
+
+<new-activtyAvantVente bsModal #newactivityAvantVenteModal="bs-modal" [modal]="newactivityAvantVenteModal"
+                    [lastActivity]="lastActivity"
+                   [activityAvantVente]="activityAvantVente"
+                    (refresh)="ngOnInit()"
+                    class="modal fade"
+                    tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></new-activtyAvantVente>
+
+<new-activityDevCompetence bsModal #newactivityDevCompetenceModal="bs-modal" [modal]="newactivityDevCompetenceModal"
+                       [lastActivity]="lastActivity"
+                       [activityDevCompetence]="activityDevCompetence"
+                       (refresh)="ngOnInit()"
+                       class="modal fade"
+                       tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></new-activityDevCompetence>
+
+
+
+
+<edit-activity-pm bsModal #editactivityPMModal="bs-modal"
+                  [modal]="editactivityPMModal"
+                  [activityPM]="activityPM"
+                  [dureeConverted]="dureeConverted"
+                  [requestOk]="true"
+                  [toDo]="true"
+                  [disabledStatut]="disabledStatus"
+                  (refresh)="ngOnInit()"
+                  class="modal fade" tabindex="-1" role="dialog"
+                  aria-labelledby="myModalLabel" aria-hidden="true"></edit-activity-pm>
+
+<edit-activity-request bsModal #editactivityRequestModal="bs-modal"
+                       [modal]="editactivityRequestModal"
+                       [activityRequest]="activityRequest"
+                       [dureeConverted]="dureeConverted"
+                       [requestOk]="true"
+                       [toDo]="true"
+                       [disabledStatut]="disabledStatus"
+                       (refresh)="ngOnInit()"
+                       class="modal fade" tabindex="-1" role="dialog"
+                       aria-labelledby="myModalLabel" aria-hidden="true"></edit-activity-request>
+
+<edit-activity-si bsModal #editactivitySIModal="bs-modal"
+                  [modal]="editactivitySIModal"
+                  [activitySI]="activitySI"
+                  [dureeConverted]="dureeConverted"
+                  [toDo]="true"
+                  [disabledStatut]="disabledStatus"
+                  (refresh)="ngOnInit()"
+                  class="modal fade" tabindex="-1" role="dialog"
+                  aria-labelledby="myModalLabel" aria-hidden="true"></edit-activity-si>
+
+<edit-activity-recouvrement bsModal #editactivityRecouvrementModal="bs-modal"
+                            [modal]="editactivityRecouvrementModal"
+                            [activityRecouvrement]="activityRecouvrement"
+                            [dureeConverted]="dureeConverted"
+                            [toDo]="true"
+                            [disabledStatut]="disabledStatus"
+                            (refresh)="ngOnInit()"
+                            class="modal fade"
+                            tabindex="-1" role="dialog"
+                            aria-labelledby="myModalLabel" aria-hidden="true"></edit-activity-recouvrement>
+
+<edit-activity-project bsModal #editactivityProjectModal="bs-modal"
+                       [modal]="editactivityProjectModal"
+                       [activityProject]="activityProject" [projects]="projects"
+                       [dureeConverted]="dureeConverted"
+                       [toDo]="true"
+                       [disabledStatut]="disabledStatus"
+                       (refresh)="ngOnInit()"
+                       class="modal fade" tabindex="-1" role="dialog"
                        aria-labelledby="myModalLabel" aria-hidden="true"></edit-activity-project>
 
-<edit-activity-holiday bsModal #editactivityHolidayModal="bs-modal" [pageActivities]="pageActivities" [index]="indexSelected" [modal]="editactivityHolidayModal"
-                       [activityHoliday]="activityHoliday" class="modal fade" tabindex="-1" role="dialog"
+<edit-activity-holiday bsModal #editactivityHolidayModal="bs-modal"
+                       [modal]="editactivityHolidayModal"
+                       [activityHoliday]="activityHoliday"
+                       [toDo]="true"
+                       [disabledStatut]="disabledStatus"
+                       (refresh)="ngOnInit()"
+                       class="modal fade" tabindex="-1" role="dialog"
                        aria-labelledby="myModalLabel" aria-hidden="true"></edit-activity-holiday>
 
-<edit-activity-commercial bsModal #editactivityCommercialModal="bs-modal" [pageActivities]="pageActivities" [index]="indexSelected" [modal]="editactivityCommercialModal"
-                       [activityCommercial]="activityCommercial" class="modal fade" tabindex="-1" role="dialog"
-                       aria-labelledby="myModalLabel" aria-hidden="true"></edit-activity-commercial>
+<edit-activity-commercial bsModal #editactivityCommercialModal="bs-modal"
+                          [modal]="editactivityCommercialModal"
+                          [activityCommercial]="activityCommercial"
+                          [dureeConverted]="dureeConverted"
+                          [toDo]="true"
+                          [disabledStatut]="disabledStatus"
+                          (refresh)="ngOnInit()"
+                          class="modal fade"
+                          tabindex="-1" role="dialog"
+                          aria-labelledby="myModalLabel" aria-hidden="true"></edit-activity-commercial>
+
+<edit-activity-avant-vente bsModal #editactivityAvantVenteModal="bs-modal"
+                       [modal]="editactivityAvantVenteModal"
+                       [activityAvantVente]="activityAvantVente"
+                       [dureeConverted]="dureeConverted"
+                       [toDo]="true"
+                       [disabledStatut]="disabledStatus"
+                       (refresh)="ngOnInit()"
+                       class="modal fade" tabindex="-1" role="dialog"
+                       aria-labelledby="myModalLabel" aria-hidden="true"></edit-activity-avant-vente>
+
+<edit-activity-dev-competence bsModal #editactivityDevCompetenceModal="bs-modal"
+                           [modal]="editactivityDevCompetenceModal"
+                           [activityDevCompetence]="activityDevCompetence"
+                           [dureeConverted]="dureeConverted"
+                           [toDo]="true"
+                           [disabledStatut]="disabledStatus"
+                           (refresh)="ngOnInit()"
+                           class="modal fade" tabindex="-1" role="dialog"
+                           aria-labelledby="myModalLabel" aria-hidden="true"></edit-activity-dev-competence>
+
+
 
 <show-activity-request bsModal #activityRequestModal="bs-modal" [modal]="activityRequestModal"
                        [activityRequest]="activityRequest" class="modal fade" tabindex="-1" role="dialog"
                        aria-labelledby="myModalLabel" aria-hidden="true"></show-activity-request>
 
 <show-activity-project bsModal #activityProjectModal="bs-modal" [modal]="activityProjectModal"
-                          [activityProject]="activityProject" class="modal fade" tabindex="-1" role="dialog"
-                          aria-labelledby="myModalLabel" aria-hidden="true"></show-activity-project>
+                       [activityProject]="activityProject" class="modal fade" tabindex="-1" role="dialog"
+                       aria-labelledby="myModalLabel" aria-hidden="true"></show-activity-project>
 
 <show-activity-recouvrement bsModal #activityRecouvrementModal="bs-modal" [modal]="activityRecouvrementModal"
-                       [activityRecouvrement]="activityRecouvrement" class="modal fade" tabindex="-1" role="dialog"
-                       aria-labelledby="myModalLabel" aria-hidden="true"></show-activity-recouvrement>
+                            [activityRecouvrement]="activityRecouvrement" class="modal fade" tabindex="-1" role="dialog"
+                            aria-labelledby="myModalLabel" aria-hidden="true"></show-activity-recouvrement>
 
 <show-activity-commercial bsModal #activityCommercialModal="bs-modal" [modal]="activityCommercialModal"
                           [activityCommercial]="activityCommercial" class="modal fade" tabindex="-1" role="dialog"
                           aria-labelledby="myModalLabel" aria-hidden="true"></show-activity-commercial>
 
 <show-activity-holiday bsModal #activityHolidayModal="bs-modal" [modal]="activityHolidayModal"
-                          [activityHoliday]="activityHoliday" class="modal fade" tabindex="-1" role="dialog"
-                          aria-labelledby="myModalLabel" aria-hidden="true"></show-activity-holiday>
+                       [activityHoliday]="activityHoliday" class="modal fade" tabindex="-1" role="dialog"
+                       aria-labelledby="myModalLabel" aria-hidden="true"></show-activity-holiday>
 
 <show-activity-si bsModal #activitySIModal="bs-modal" [modal]="activitySIModal"
-                       [activitySI]="activitySI" class="modal fade" tabindex="-1" role="dialog"
-                       aria-labelledby="myModalLabel" aria-hidden="true"></show-activity-si>
+                  [activitySI]="activitySI" class="modal fade" tabindex="-1" role="dialog"
+                  aria-labelledby="myModalLabel" aria-hidden="true"></show-activity-si>
+
+<show-activity-pm bsModal #activityPMModal="bs-modal" [modal]="activityPMModal"
+                  [activityPM]="activityPM" class="modal fade" tabindex="-1" role="dialog"
+                  aria-labelledby="myModalLabel" aria-hidden="true"></show-activity-pm>
+
+<show-activity-avant-vente bsModal #activityAvantVenteModal="bs-modal" [modal]="activityAvantVenteModal"
+                       [activityAvantVente]="activityAvantVente" class="modal fade" tabindex="-1" role="dialog"
+                       aria-labelledby="myModalLabel" aria-hidden="true"></show-activity-avant-vente>
+
+<show-activity-dev-competence bsModal #activityDevCompetenceModal="bs-modal" [modal]="activityDevCompetenceModal"
+                           [activityDevCompetence]="activityDevCompetence" class="modal fade" tabindex="-1" role="dialog"
+                           aria-labelledby="myModalLabel" aria-hidden="true"></show-activity-dev-competence>
+
 
 <delete-modal bsModal #dangerModal="bs-modal" [modal]="dangerModal" [activity]="activity"
               (functionDelete)="onDeleteMyActivity(activity)" class="modal fade"
               tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></delete-modal>
+
+

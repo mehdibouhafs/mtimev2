@@ -1,0 +1,138 @@
+<div class="modal-dialog show-details" role="document">
+  <div class="modal-content">
+
+
+    <div class="modal-header">
+      <h4 class="modal-title">Activité PM</h4>
+    </div>
+
+    <div class="modal-body">
+
+      <div class="form-group row">
+
+        <div class="col-sm-2 nopadding-right"><strong>Client :</strong></div>
+        <div class="col-sm-3 nopadding">
+          {{activityPM?.customer?.name}}
+        </div>
+
+        <div class="col-sm-2 nopadding-right"><strong>Ticket :</strong></div>
+        <div class="col-sm-3 nopadding">
+          {{activityPM?.request?.rqtExcde}}  {{activityPM?.request?.objDsc}}   {{activityPM?.request?.objexcde}} {{activityPM?.request?.objIdentVal}}
+        </div>
+
+      </div>
+
+      <div class="form-group row">
+
+        <div class="col-sm-2 nopadding-right"><strong>Description Demande :</strong></div>
+        <div class="col-sm-3 nopadding">
+          {{activityPM?.request?.objexcde}}
+        </div>
+
+        <div class="col-sm-2 nopadding-right"><strong>Instance :</strong></div>
+        <div class="col-sm-3 nopadding">
+          {{activityPM?.request?.objIdentVal}}
+        </div>
+      </div>
+
+      <div *ngIf="activityPM?.request?.descriptionDemande!='' && activityPM?.request?.descriptionDemande!=null" class="form-group row">
+        <div class="col-sm-3"><strong>Commentaire de la demande  :</strong></div>
+        <div class="col-sm-7 nopadding">
+          {{activityPM?.request?.descriptionDemande}}
+        </div>
+      </div>
+
+
+      <div class="form-group row">
+        <div class="col-sm-2 nopadding-right"><strong>Date :</strong></div>
+        <div class="col-sm-3 nopadding">
+          <span class="badge badge-pill badge-light">{{activityPM?.dteStrt | date:"dd/MM/yyyy"}}</span>
+        </div>
+        <div class="col-sm-2 nopadding-right"><strong>Durée :</strong></div>
+        <div class="col-sm-3 nopadding">
+          <span class="badge badge-pill badge-dark">{{ShortconvertMinutesToHoursAndMinute(activityPM.durtion)}}</span>
+        </div>
+
+      </div>
+
+      <div class="form-group row">
+
+
+        <div class="col-sm-2 nopadding-right"><strong>Nature Activité :</strong></div>
+        <div class="col-sm-3 nopadding">
+          {{activityPM?.nature}}
+        </div>
+
+
+      </div>
+
+      <div class="form-group row">
+
+        <div class="col-sm-3 nopadding-right"><strong>Produits :</strong></div>
+        <div  class="col-sm-7 nopadding">
+            <span *ngFor="let p of activityPM.produits; let i=index;">
+              <span *ngIf="i<activityPM.produits.length-1">{{p.produit+" | "}}</span>
+              <span *ngIf="i==activityPM.produits.length-1">{{p.produit}}</span>
+            </span>
+
+        </div>
+      </div>
+
+
+
+
+
+      <div class="form-group row">
+
+        <div class="col-sm-2 nopadding-right"><strong>Rôle :</strong></div>
+        <div class="col-sm-3 nopadding">
+          {{activityPM.principal?"Principal":"Secondaire"}}
+        </div>
+
+        <div class="col-sm-2 nopadding-right"><strong>Etat :</strong></div>
+        <div class="col-sm-3 nopadding">
+          {{activityPM.etat?"Cloturer":"En cours"}}
+        </div>
+
+
+      </div>
+
+      <div class="form-group row">
+
+        <div class="col-sm-2 nopadding-right"><strong>Lieu :</strong></div>
+        <div class="col-sm-3 nopadding">
+          {{activityPM?.lieu}}
+        </div>
+
+        <div class="col-sm-2 nopadding-right"><strong>Ville :</strong></div>
+        <div class="col-sm-3 nopadding">
+          {{activityPM?.ville}}
+        </div>
+
+      </div>
+
+      <div class="form-group row">
+        <div *ngIf="activityPM?.comments!='' && activityPM?.comments!=null" class="form-group row">
+          <div class="col-sm-3"><strong>Commentaire:</strong></div>
+          <div class="col-sm-7 nopadding">
+            {{activityPM?.comments}}
+          </div>
+        </div>
+
+      </div>
+
+
+
+
+    </div>
+
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-sm btn-primary" (click)="hideModal()"><i class="fa fa-check"></i> OK</button>
+    </div>
+
+
+  </div>
+</div>
+
+

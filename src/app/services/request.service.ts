@@ -1,12 +1,13 @@
 import {Injectable} from "@angular/core";
 import {AuthenticationService} from "./authentification.service";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {host} from "./host";
 
 
 @Injectable()
 export class RequestService {
 
-  private host:String = "http://localhost:8080";
+  private host = host;
 
   constructor(public  http:HttpClient,private autehntificationService:AuthenticationService){
 
@@ -20,6 +21,14 @@ export class RequestService {
 
   getRequest(rqtExcde:string) {
     return this.http.get(this.host + '/requests/' + rqtExcde, {headers: new HttpHeaders({'Authorization': this.autehntificationService.getToken()})});
+  }
+
+  getRequestByCustomerCodeAndService(codeCustomer:string,serviceName :string) {
+    return this.http.get(this.host + '/requests/customer/' + codeCustomer+"/service/"+serviceName, {headers: new HttpHeaders({'Authorization': this.autehntificationService.getToken()})});
+  }
+
+  getRequestByCustomerCodeAndServiceAndNature(codeCustomer:string,serviceName :string,nature:string) {
+    return this.http.get(this.host + '/requestsByNature/customer/' + codeCustomer+"/service/"+serviceName, {headers: new HttpHeaders({'Authorization': this.autehntificationService.getToken()})});
   }
 
   getMyRequests(motcle:String,page:number,size:number){

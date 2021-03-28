@@ -1,0 +1,80 @@
+<div class="card">
+
+  <div class="card-header">
+    <i class="fa fa-bell"></i> Renouvellement
+
+
+  </div>
+
+
+
+  <div class="card-body">
+    <div class="form-row">
+      <div class="form-group col-3">
+      </div>
+      <div class="form-group col-3">
+
+      </div>
+      <div class="form-group col-3">
+
+      </div>
+      <div class="form-group col-3">
+          <ng-select id="statut"
+                     name="statut"
+                     bindValue="id"
+                     bindLabel="name"
+                     placeholder="Statut"
+                     [(ngModel)]="statut"
+                     (change)="chargerContractClientFiltre()"
+                     [items]="statuts">
+          </ng-select>
+      </div>
+    </div>
+
+    <p-treeTable [value]="files" *ngIf="files">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Nom contrat</th>
+          <th>Date de début</th>
+          <th>Date de fin</th>
+          <th>Client</th>
+          <th style="width: 6em;">Action</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
+        <tr [ngStyle]="{'background-color':rowData?.statut === 'Expired' ? '#ff8585' : '' }">
+          <td>
+            <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
+            <span *ngIf="rowData?.statut==='Expired'" class="badge badge-danger">Expirer</span>
+            {{(rowData.type==='CCL'?'CCL ':'CF ')+rowData.name}}
+          </td>
+          <td>{{rowData.debut}}</td>
+          <td>{{rowData.fin}}
+            <!--<span *ngIf="rowData?.statut==='Encours'" class="badge badge-primary">En cours</span>-->
+          </td>
+          <td>{{rowData.client}}</td>
+          <td>
+            <button type="button" (click)="showContrat(rowData)" class="btn btn-sm btn-primary">
+              <i class="fa fa-eye"></i>
+            </button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-treeTable>
+
+  </div>
+
+</div>
+
+
+<show-contrat-fournisseur bsModal #showContratFournisseur="bs-modal"
+                          [modal]="showContratFournisseur"
+                          [contrat]="SelectedContratFournisseur"
+                          class="modal fade" tabindex="-1" role="dialog"
+                          aria-labelledby="myModalLabel" aria-hidden="true"></show-contrat-fournisseur>
+
+<show-contrat-client bsModal #showContratClient="bs-modal"
+                     [modal]="showContratClient"
+                     [contrat]="SelectedContratClient"
+                     class="modal fade" tabindex="-1" role="dialog"
+                     aria-labelledby="myModalLabel" aria-hidden="true"></show-contrat-client>

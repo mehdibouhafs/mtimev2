@@ -1,0 +1,404 @@
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-header">
+          <div class="form-row">
+            <div class="col-md-4">
+              <div class="input-group">
+                <input id="input2-group2" name="input2-group2" class="form-control form-control-sm"
+                       placeholder="Chercher" type="text"
+                       [(ngModel)]="motCle" (keyup)="chercher()">
+                <div class="input-group-append">
+                  <div class="input-group-text"><i
+                    class="fa fa-search"></i></div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="input-group">
+                <input class="form-control form-control-sm" [owlDateTimeTrigger]="dt" [owlDateTime]="dt"
+                       placeholder="Selectionnez une date"
+                       name="dteStrt"
+                       [(ngModel)]="selectedDate"
+                       (ngModelChange)="chercher()">
+                <owl-date-time [pickerType]="'calendar'" #dt></owl-date-time>
+                <div class="input-group-append">
+                  <div class="input-group-text"><i
+                    class="fa fa-calendar"></i></div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <button class="btn btn-sm btn-primary"
+                      style="margin-top: 0"
+                      (click)="activityProjectEquipeModal.show()">
+                <i class="fa fa-plus"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+
+          <div *ngIf="added" class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>Une activité est enregistrée avec succes !</strong>
+            <button type="button" class="close" (click)="added=false" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+
+          <form #f="ngForm">
+
+            <div class="form-row">
+              <div class="form-group col-sm-2">
+
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                  </div>
+                  <input class="form-control form-control-sm" [owlDateTimeTrigger]="dt2" [owlDateTime]="dt2"
+                         placeholder="Date"
+                         [(ngModel)]="activityProjectToAdd.dteStrt" name="dteStrt" required>
+                  <owl-date-time [pickerType]="'calendar'" #dt2></owl-date-time>
+                </div>
+              </div>
+
+              <div class="form-group col-sm-2">
+
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <div class="input-group-text"><i class="fa fa-clock-o"></i></div>
+                  </div>
+                  <input class="form-control form-control-sm"
+                         name="duree"
+                         placeholder="Durée"
+                         [(ngModel)]="duree"
+                         [owlDateTimeTrigger]="dt4"
+                         [owlDateTime]="dt4" required>
+                  <owl-date-time [pickerType]="'timer'" [startAt]="startAt" #dt4></owl-date-time>
+                </div>
+
+              </div>
+
+              <div class="form-group col-sm-3">
+                <ng-select name="nature" [items]="nature"
+                           [searchable]="false"
+                           placeholder="Nature"
+                           bindValue="name"
+                           bindLabel="name"
+                           [(ngModel)]="activityProjectToAdd.nature"
+                           required>
+
+                </ng-select>
+              </div>
+
+              <div class="form-group col-sm-5">
+                <ng-select id="customers" [items]="customers"
+                           bindLabel="name"
+                           name="customer"
+                           placeholder="Client"
+                           notFoundText="Aucun client trouvé"
+                           [typeahead]="customerTypeahead"
+                           typeToSearchText="Saisir client"
+                           (change)="chargerProjects(); chargerOffres();"
+                           [(ngModel)]="activityProjectToAdd.customer"
+                           [required]="activityProjectToAdd.nature!='Réunion'"></ng-select>
+              </div>
+
+            </div>
+
+            <div class="form-row">
+
+              <div
+                *ngIf="activityProjectToAdd.nature!=null && (activityProjectToAdd.nature=='Gestion de projet' || activityProjectToAdd.nature=='Pilotage Contrat' || activityProjectToAdd.nature=='Avant-Vente')"
+                class="form-group col-sm-4">
+                <ng-select id="project" [items]="projects"
+                           bindLabel="prjName"
+                           name="project"
+                           [disabled]="!activityProjectToAdd.customer"
+                           placeholder="Projet"
+                           [(ngModel)]="activityProjectToAdd.project"
+                >
+                </ng-select>
+              </div>
+
+              <div
+                *ngIf="activityProjectToAdd.nature!=null && activityProjectToAdd.nature!='Gestion de projet' && activityProjectToAdd.nature!='Pilotage Contrat' && activityProjectToAdd.nature!='Avant-Vente'"
+                class="form-group col-sm-4">
+                <ng-select id="offre" [items]="offres"
+                           bindLabel="name"
+                           name="offre"
+                           [disabled]="!activityProjectToAdd.customer"
+                           placeholder="Offre"
+                           [(ngModel)]="activityProjectToAdd.offre"
+                >
+                </ng-select>
+              </div>
+
+              <div class="form-group col-sm-3">
+                <ng-select name="lieu" [items]="lieu"
+                           [searchable]="false"
+                           placeholder="Lieu"
+                           bindValue="name"
+                           bindLabel="name"
+                           [(ngModel)]="activityProjectToAdd.lieu"
+                           required>
+
+                </ng-select>
+              </div>
+
+              <div class="form-group col-sm-3">
+                <ng-select name="ville" [items]="ville"
+                           placeholder="Ville"
+                           bindValue="name"
+                           bindLabel="name"
+                           addTag="true"
+                           [(ngModel)]="activityProjectToAdd.ville"
+                           required>
+
+                </ng-select>
+              </div>
+
+              <div class="form-group col-sm-2">
+                <ng-select
+                  name="statut"
+                  placeholder="Statut"
+                  [items]="statut"
+                  bindValue="value"
+                  bindLabel="name"
+                  [(ngModel)]="activityProjectToAdd.statut" required>
+
+                </ng-select>
+              </div>
+
+            </div>
+
+            <div class="form-row">
+
+              <div class="form-group col-sm-3">
+                <input name="comment" [(ngModel)]="activityProjectToAdd.comments" placeholder="Commentaire" type="text"
+                       class="form-control form-control-sm" required>
+              </div>
+
+              <div class="form-group col-sm-4">
+                <ng-select id="objectifs"
+                           name="objectifs"
+                           placeholder="Selectionnez un objectif"
+                           [(ngModel)]="activityProjectToAdd.objectif"
+                           (change)="detectTaux()"
+                           [items]="objectifs"
+                           bindLabel="name">
+
+                </ng-select>
+              </div>
+
+              <div class="form-group col-sm-2">
+                <input id="taux" name="taux" type="number"
+                       class="form-control form-control-sm"
+                       min="0"
+                       max="100"
+                       placeholder="Taux"
+                       [(ngModel)]="taux">
+              </div>
+
+              <div>
+                <button class="btn btn-sm btn-primary"
+                        [disabled]="!f.valid"
+                        mwlConfirmationPopover
+                        [popoverTitle]="'Confirmation'"
+                        [popoverMessage]="'Êtes vous sur de vouloir ajouter/modifier cette activité ?'"
+                        confirmText="Oui"
+                        cancelText="Non"
+                        (confirm)="onSaveActivityProject()"
+                        placement="top">
+                  {{activityProjectToAdd.id?"Modifier":"Ajouter"}}
+                </button>
+                <button class="btn btn-sm btn-primary"
+                        (click)="vider()">
+                  Vider
+                </button>
+              </div>
+            </div>
+
+          </form>
+
+          <table class="table table-sm">
+            <thead>
+            <tr>
+              <th>Date</th>
+              <th>Durée</th>
+              <th>Nature</th>
+              <th>Client</th>
+              <th>Projet/Offre</th>
+              <th>Statut</th>
+              <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let a of pageActivities?.content | paginate: {
+                                                      id: 'activities',
+                                                      itemsPerPage: itemsPerPage,
+                                                      currentPage: currentPage,
+                                                      totalItems: pageActivities?.totalElements}">
+              <td><span class="badge badge-pill badge-light">{{a.dteStrt | date:"dd/MM/yyyy"}}</span>
+              </td>
+              <td><span class="badge badge-pill badge-dark">{{activityService.ShortconvertMinutesToHoursAndMinute(a.durtion)}}</span>
+              </td>
+              <td>{{a?.nature}}</td>
+              <td>{{a?.customer?.name}}</td>
+              <td>{{a?.project?.prjName?a?.project?.prjName:(a?.offre?.name?a?.offre?.name:'-')}}</td>
+
+              <td><span [class]="a.statut?'badge badge-pill badge-success':'badge badge-pill badge-info'">{{a.statut?'Realisé':'Planifié'}}</span>
+              </td>
+              <td>
+                <div class="btn-group" dropdown>
+                  <button dropdownToggle type="button" class="btn btn-outline-primary btn-sm dropdown-toggle">
+                    <i class="fa fa-cog"></i><span class="caret"></span>
+                  </button>
+                  <ul *dropdownMenu class="dropdown-menu" role="menu">
+                    <li role="menuitem">
+                      <button class="dropdown-item small" (click)="detectModal(a)"><i class="fa fa-eye"></i>
+                        Afficher
+                      </button>
+                    </li>
+                    <li role="menuitem">
+                      <button class="dropdown-item small" (click)="onEditMyActivity(a);"><i class="fa fa-edit"></i>
+                        Modifier
+                      </button>
+                    </li>
+                    <li role="menuitem">
+                      <button type="button" class="dropdown-item small" data-toggle="modal"
+                              (click)="selectActivity(a); dangerModal.show();">
+                        <i class="fa fa-remove"></i> Supprimer
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+          <pagination-controls
+            class="mypagination"
+            id="activities"
+            (pageChange)="gotoPage($event)"
+            maxSize="15"
+            directionLinks="true"
+            autoHide="true"
+            previousLabel="Précédant"
+            nextLabel="Suivant"
+            screenReaderPaginationLabel="Pagination"
+            screenReaderPageLabel="page"
+            screenReaderCurrentLabel="Vous etes sur la page">
+          </pagination-controls>
+          <div class="col-xs-12 col-12 d-sm-down-none">
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <!--/.col-->
+  </div>
+</div>
+
+<show-ap bsModal #activityProjectModal="bs-modal" [modal]="activityProjectModal"
+         [activityProject]="activityProject" class="modal fade" tabindex="-1" role="dialog"
+         aria-labelledby="myModalLabel" aria-hidden="true"></show-ap>
+
+<new-ap-without-test bsModal #activityProjectEquipeModal="bs-modal"
+                     [modal]="activityProjectEquipeModal"
+                     (refresh)="ngOnInit()"
+                     class="modal fade"
+                     tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                     aria-hidden="true"></new-ap-without-test>
+
+<div bsModal #dangerModal="bs-modal" class="modal fade"
+     tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+
+  <div class="modal-dialog modal-danger show-details" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Êtes-vous sûre ?</h4>
+        <button type="button" class="close" (click)="dangerModal.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body" *ngIf="activityProject!=null">
+        <div class="form-group row">
+          <div class="col-sm-2 nopadding-right"><strong>Date :</strong></div>
+          <div class="col-sm-3 nopadding">
+            <span class="badge badge-pill badge-light">{{activityProject?.dteStrt | date:"dd/MM/yy"}}</span>
+          </div>
+
+          <div class="col-sm-2 nopadding-right"><strong>Durée :</strong></div>
+          <div class="col-sm-3 nopadding">
+            <span class="badge badge-pill badge-dark">{{activityService.ShortconvertMinutesToHoursAndMinute(activityProject.durtion)}}</span>
+          </div>
+
+        </div>
+
+        <div class="form-group row">
+
+
+          <div class="col-sm-2 nopadding-right"><strong>Nature :</strong></div>
+          <div class="col-sm-3 nopadding">
+            {{activityProject?.nature}}
+          </div>
+
+          <div class="col-sm-2 nopadding-right"><strong>Produit :</strong></div>
+          <div class="col-sm-3 nopadding">
+            {{activityProject?.produit}}
+          </div>
+        </div>
+
+        <div class="form-group row">
+
+          <div class="col-sm-2 nopadding-right"><strong>Client :</strong></div>
+          <div class="col-sm-3 nopadding">
+            {{activityProject?.customer?.name}}
+          </div>
+
+          <div class="col-sm-2 nopadding-right"><strong>Projet :</strong></div>
+          <div class="col-sm-3 nopadding">
+            {{activityProject?.project?.prjName}}
+          </div>
+
+
+        </div>
+
+        <div class="form-group row">
+          <div class="col-sm-2 nopadding-right"><strong>Ville :</strong></div>
+          <div class="col-sm-3 nopadding">
+            {{activityProject?.ville}}
+          </div>
+          <div class="col-sm-2 nopadding-right"><strong>Lieu :</strong></div>
+          <div class="col-sm-3 nopadding">
+            {{activityProject?.lieu}}
+          </div>
+
+        </div>
+
+        <div class="form-group row">
+          <div class="col-sm-2 nopadding-right"><strong>Statut :</strong></div>
+          <div class="col-sm-3 nopadding">
+            <span [class]="activityProject.statut?'badge badge-pill badge-success':'badge badge-pill badge-info'">{{activityProject.statut?'Realisé':'Planifié'}}</span>
+          </div>
+        </div>
+
+      </div>
+
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-secondary" (click)="dangerModal.hide()">Non</button>
+        <button type="button" class="btn btn-sm btn-danger"
+                (click)="onDeleteMyActivity(activityProject); dangerModal.hide();">Supprimer
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+

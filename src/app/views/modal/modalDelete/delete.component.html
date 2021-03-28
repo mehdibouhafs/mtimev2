@@ -6,7 +6,8 @@
         <span aria-hidden="true">&times;</span>
       </button>
     </div>
-    <div class="modal-body">
+
+    <div class="modal-body" *ngIf="activity!=null">
       <div class="form-group row">
         <div class="col-sm-2 nopadding-right"><strong>Début :</strong></div>
         <div class="col-sm-3 nopadding">
@@ -18,7 +19,7 @@
         </div>
       </div>
 
-      <div class="form-group row">
+      <div class="form-group row" *ngIf="activity?.typeActivite!='Activité congé'">
         <div class="col-sm-2 nopadding-right"><strong>Durée :</strong></div>
         <div class="col-sm-3 nopadding">
           <span class="badge badge-pill badge-dark">{{ShortconvertMinutesToHoursAndMinute(activity.durtion)}}</span>
@@ -30,7 +31,7 @@
         </div>
       </div>
 
-      <div class="form-group row">
+      <div class="form-group row" *ngIf="activity?.typeActivite!='Activité congé'">
 
         <div class="col-sm-2 nopadding-right"><strong>Client :</strong></div>
         <div class="col-sm-3 nopadding">
@@ -45,7 +46,7 @@
 
       </div>
 
-      <div class="form-group row">
+      <div class="form-group row" *ngIf="activity?.typeActivite!='Activité congé'">
         <div class="col-sm-2 nopadding-right"><strong>Lieu :</strong></div>
         <div class="col-sm-3 nopadding">
           {{activity?.lieu}}
@@ -64,6 +65,103 @@
         </div>
       </div>
     </div>
+
+    <div class="modal-body" *ngIf="certification!=null">
+      <div class="form-group row">
+        <div class="col-sm-3 nopadding-right"><strong>Date :</strong></div>
+        <div class="col-sm-2 nopadding">
+          <span class="badge badge-pill badge-light">{{certification?.dateEch | date:"dd/MM/yy"}}</span>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <div class="col-sm-2 nopadding-right"><strong>Intitulé :</strong></div>
+        <div class="col-sm-3 nopadding">
+          <span>{{certification?.certName}}</span>
+        </div>
+        <div class="col-sm-3 nopadding-right"><strong>Participants :</strong></div>
+        <div class="col-sm-3 nopadding">
+          <span>{{certification?.candidats?.length}} candidats</span>
+        </div>
+      </div>
+
+      <div class="form-row" *ngIf="certification.candidats.length>0">
+        <table class="table table-sm">
+          <thead>
+          <tr>
+            <th>#</th>
+            <th>Photo</th>
+            <th>Nom</th>
+            <th>Prénom</th>
+            <th>Service</th>
+            <th>Niveau</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let c of certification.candidats; let  i=index;">
+            <td>{{i+1}}</td>
+            <td><img [src]="'assets/img/avatars/'+c.employe.username+'.jpg'"
+                     onerror="this.src='assets/img/avatars/default.jpg'" class="img-avatar" [alt]="c.employe.username"
+                     width="25px" height="25px"/></td>
+            <td>{{c?.employe?.lastName}}</td>
+            <td>{{c?.employe?.firstName}}</td>
+            <td>{{c?.employe?.service.servName}}</td>
+            <td>{{c?.niveau==""?'Non Renseigné':c?.niveau}}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="modal-body" *ngIf="formation!=null">
+      <div class="form-group row">
+        <div class="col-sm-2 nopadding-right"><strong>Début :</strong></div>
+        <div class="col-sm-2 nopadding">
+          <span class="badge badge-pill badge-light">{{formation?.dateStrt | date:"dd/MM/yy"}}</span>
+        </div>
+        <div class="col-sm-2 nopadding-right"><strong>Fin :</strong></div>
+        <div class="col-sm-2 nopadding">
+          <span class="badge badge-pill badge-light">{{formation?.dateEnd | date:"dd/MM/yy"}}</span>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <div class="col-sm-2 nopadding-right"><strong>Intitulé :</strong></div>
+        <div class="col-sm-3 nopadding">
+          <span>{{formation?.frmName}}</span>
+        </div>
+        <div class="col-sm-3 nopadding-right"><strong>Participants :</strong></div>
+        <div class="col-sm-3 nopadding">
+          <span>{{formation?.participants?.length}} participants</span>
+        </div>
+      </div>
+
+      <div class="form-row" *ngIf="formation?.candidats.length>0">
+        <table class="table table-sm">
+          <thead>
+          <tr>
+            <th>#</th>
+            <th>Photo</th>
+            <th>Nom</th>
+            <th>Prénom</th>
+            <th>Service</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let p of formation.candidats; let  i=index;">
+            <td>{{i+1}}</td>
+            <td><img [src]="'assets/img/avatars/'+p.employe.username+'.jpg'"
+                     onerror="this.src='assets/img/avatars/default.jpg'" class="img-avatar" [alt]="p.employe.username"
+                     width="25px" height="25px"/></td>
+            <td>{{p?.employe?.lastName}}</td>
+            <td>{{p?.employe?.firstName}}</td>
+            <td>{{p?.employe?.service?.servName}}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
     <div class="modal-footer">
       <button type="button" class="btn btn-sm btn-secondary" (click)="hideModal()">Non</button>
       <button type="button" class="btn btn-sm btn-danger" (click)="callFunctionDelete(); hideModal();">Supprimer</button>

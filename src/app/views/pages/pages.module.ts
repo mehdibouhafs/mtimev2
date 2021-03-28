@@ -11,6 +11,7 @@ import {FormsModule} from "@angular/forms";
 import {AuthenticationService} from "../../services/authentification.service";
 import {CommonModule} from "@angular/common";
 import { BrowserModule } from '@angular/platform-browser';
+import {NotificationsService} from "angular2-notifications";
 
 @NgModule({
   declarations: [
@@ -20,6 +21,6 @@ import { BrowserModule } from '@angular/platform-browser';
     RegisterComponent
   ],
   imports: [ PagesRoutingModule,FormsModule,HttpClientModule,CommonModule ],
-  providers: [AuthenticationService]
+  providers: [AuthenticationService, NotificationsService]
 })
 export class PagesModule { }

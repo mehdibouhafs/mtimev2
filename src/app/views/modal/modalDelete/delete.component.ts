@@ -1,4 +1,6 @@
 import {Component, EventEmitter, Input, Output} from "@angular/core";
+import {Certification} from "../../../model/model.certification";
+import {Formation} from "../../../model/model.formation";
 
 @Component({
   selector: 'delete-modal',
@@ -7,6 +9,8 @@ import {Component, EventEmitter, Input, Output} from "@angular/core";
 export class DeleteComponent {
   @Input() modal: any;
   @Input() activity: any;
+  @Input() certification:Certification;
+  @Input() formation:Formation;
 
   @Output()
   functionDelete = new EventEmitter<String>();

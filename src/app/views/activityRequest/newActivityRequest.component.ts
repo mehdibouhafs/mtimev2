@@ -1,4 +1,7 @@
-import {ChangeDetectorRef, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {
+  ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output,
+  ViewChild
+} from '@angular/core';
 import {AuthenticationService} from "../../services/authentification.service";
 import {NotificationsService} from "angular2-notifications";
 import {SocketService} from "../../services/socket.service";
@@ -14,8 +17,12 @@ import * as moment from "moment-timezone";
 import {RequestService} from "../../services/request.service";
 import {Request} from "../../model/model.request";
 import {FormControl, FormGroup} from "@angular/forms";
-
-;
+import {debounceTime, distinctUntilChanged, switchMap} from "rxjs/operators";
+import {VilleService} from "../../services/ville.service";
+import {ActionService} from "../../services/action.service";
+import {ProduitService} from "../../services/produit.service";
+import {NatureService} from "../../services/nature.service";
+import {User} from "../../model/model.user";
 
 @Component({
   selector: "new-activityRequest",
@@ -23,37 +30,86 @@ import {FormControl, FormGroup} from "@angular/forms";
 })
 export class NewActivityRequestComponent implements OnInit, OnDestroy {
 
+  public nature:any;
+  public lieu = [
+    {
+      name: "Sur site"
+    },
+    {
+      name: "A distance"
+    }
+  ];
+
+  public etat = [
+    {
+      name: "En cours de traitement",
+      val: false
+    },
+    {
+      name: "Cloturer",
+      val: true
+    }
+  ];
+
+  public role = [
+    {
+      name: "Principal",
+      val: true
+    },
+    {
+      name: "Secondaire",
+      val: false
+    }
+  ];
+
+  @Input() disabledInput: boolean = false;
+  @Input()  disabledInputRequests : boolean = true;
   @Input() modal;
   @Input() lastActivity;
+  @Input() activityRequest: ActivityRequest = new ActivityRequest();
+  @Input() requestOk: boolean;
+
+  @Output() refresh = new EventEmitter<string>();
+
+  customers: any;
+  requests: any;
+  ville:any;
+  produits:any;
 
   isCollapsed: boolean = false;
   iconCollapse: string = "icon-arrow-up";
-  @Input()
-  activityRequest: ActivityRequest = new ActivityRequest();
   frmName: any;
   mode: number = 1;
   message: string;
-  customers: any;
   currentDate: Date = new Date();
   disabledStatut: boolean = false;
   dureeFormated: string;
   error: number = 0;
   returnedError: string;
-  requestOk: boolean;
+
+  serviceName:string;
 
   duree: number;
   dureeConverted: string;
 
+  customerTypeahead = new EventEmitter<string>();
+
+  requestTypeahead = new EventEmitter<string>();
   @ViewChild('rqtExcde') rqtExcde;
-  @ViewChild('requestModal') requestModal;
+
+  durtion:any;
+
+  continuer:boolean=false;
+  maxDate : Date=new Date();
 
 
-  //activityRequest.dteStrt = new Date(); //new Date(2010, 11, 28, 14, 57);
-  //activityRequest.dteEnd = new Date(); //new Date(2010, 11, 28, 14, 57);
-
-  constructor(private activityService: ActivityService, private notificationService: NotificationsService,
+  constructor(private natureService:NatureService, private produitService:ProduitService, private villeService:VilleService, private activityService: ActivityService, private notificationService: NotificationsService,
               private socketService: SocketService, private customerService: CustomerService, private router: Router,
-              private authenticationService: AuthenticationService, private requestService: RequestService, private ref:ChangeDetectorRef) {
+              private authenticationService: AuthenticationService, private requestService: RequestService, private ref: ChangeDetectorRef) {
+  }
+
+  refreshActivity() {
+    this.refresh.emit("Refresh Activity");
   }
 
   hideModal() {
@@ -64,82 +120,96 @@ export class NewActivityRequestComponent implements OnInit, OnDestroy {
 
   }
 
-  detectModal() {
-    return this.requestModal.show();
-  }
-
   onTestSocket() {
 
   }
 
   ngOnInit() {
-    this.loadCustomers();
     this.activityRequest.user.username = this.authenticationService.getUserName();
-    this.activityRequest.dteStrt = new Date();
-    this.activityRequest.statut = false;
-    this.activityRequest.ville = "Fes";
+    this.activityRequest.request=null;
     this.activityRequest.statut = true;
-    this.activityRequest.nature = "Projet";
-    this.activityRequest.lieu = "Client";
     this.activityRequest.typeActivite = "Activité support";
-    this.activityRequest.comments = "Teste";
-    this.activityRequest.request.rqtExcde = "1111111112";
+    this.serviceName = this.authenticationService.getServName();
+    this.serverSideSearch();
+    this.chargerVilles();
+    this.chargerProduits();
+    this.chargerNatures();
+    this.durtion=null;
+
+  }
+
+  chargerNatures() {
+    this.natureService.getNatureParType("Activity_support").subscribe(
+      data=>{
+        this.nature = data["_embedded"]["nature"];
+      }, err=>{
+        console.log(err);
+      }
+    );
+  }
+
+  chargerVilles() {
+    this.villeService.getAllVilles().subscribe(
+      data=>{
+        this.ville=data["_embedded"]["villes"];
+      }
+    );
+  }
+
+  chargerProduits() {
+    this.produitService.getProduits().subscribe(
+      data=>{
+        this.produits=data["_embedded"]["produits"];
+      }
+    );
+  }
+
+  private serverSideSearch() {
+    this.customerTypeahead.pipe(
+      distinctUntilChanged(),
+      debounceTime(200),
+      switchMap(term => this.customerService.searchCustomer(term))
+    ).subscribe(x => {
+      this.ref.markForCheck();
+      this.customers = x["_embedded"]["customers"];
+    }, (err) => {
+      console.log(err);
+      this.customers = [];
+    });
   }
 
   toModeDupliquer() {
     this.duree = null;
     this.dureeConverted = null;
-    this.mode=1;
+    this.mode = 1;
+    this.activityRequest.createdBy = new User();
     this.activityRequest.id = null;
+    this.durtion=null;
+    this.continuer=false;
+    this.activityRequest.request=null;
+
   }
 
   toModeOne() {
     this.error = 0;
     this.mode = 1;
-    this.loadCustomers();
     this.activityRequest = new ActivityRequest();
     this.activityRequest.user.username = this.authenticationService.getUserName();
-    this.activityRequest.dteStrt = new Date();
-    this.activityRequest.ville = "Fes";
+    this.activityRequest.dteStrt = null;
     this.activityRequest.statut = true;
-    this.activityRequest.nature = "Projet";
-    this.activityRequest.lieu = "Client";
     this.activityRequest.typeActivite = "Activité support";
-    this.activityRequest.comments = "Teste";
-    this.activityRequest.request.rqtExcde = "1111111112";
+    this.duree = null;
+    this.dureeConverted = null;
     this.requestOk = false;
+    this.durtion=null;
+    this.continuer=false;
+    this.activityRequest.request=null;
+
   }
 
 
-  onDatesChanged() {
-    console.log("onDatesChanged ");
-    if (this.activityRequest.dteStrt != null && this.activityRequest.dteEnd != null) {
-      this.duree = this.activityService.diffBetwenTwoDateInMinutes(this.activityRequest.dteStrt, this.activityRequest.dteEnd);
-      this.dureeConverted = this.activityService.convertMinutesToHoursAndMinute(this.duree);
-      if (this.activityService.testDateBeforeNow(this.activityRequest.dteStrt, this.activityRequest.dteEnd) == true) {
-
-        this.activityRequest.statut = true;
-        this.disabledStatut = false;
-
-      } else {
-        this.activityRequest.statut = false;
-        this.disabledStatut = true;
-
-      }
-    }
-  }
 
 
-  loadCustomers() {
-    this.customerService.getCustomers().subscribe(
-      data => {
-        this.customers = data["_embedded"]["customers"];
-        console.log("customers " + JSON.stringify(this.customers));
-      }, err => {
-        this.authenticationService.logout();
-        this.router.navigateByUrl('/pages/login');
-      });
-  }
 
   collapsed(event: any): void {
     // console.log(event);
@@ -155,32 +225,77 @@ export class NewActivityRequestComponent implements OnInit, OnDestroy {
   }
 
   onSaveActivityRequest() {
-    this.activityRequest.createdAt = new Date();
-    this.activityRequest.updatedAt = new Date();
-    this.dureeFormated = this.activityService.diffBetwenTwoDateFormated(this.activityRequest.dteStrt, this.activityRequest.dteEnd);
-    console.log("Activity Support " + JSON.stringify(this.activityRequest));
-    console.log("diffBetwenTwoDateInMinutes " + this.activityService.diffBetwenTwoDateInMinutes(this.activityRequest.dteStrt, this.activityRequest.dteEnd));
-    //this.activityRequest.dteStrt = new Date(this.activityService.formatDate(this.activityRequest.dteStrt));
-    //this.activityRequest.dteEnd = new Date(this.activityService.formatDate(this.activityRequest.dteEnd));
-    console.log("Date SAved " + this.activityRequest.dteStrt);
-    this.activityRequest.hrStrt = moment(this.activityRequest.dteStrt).format("HH:mm");
-    this.activityRequest.hrEnd = moment(this.activityRequest.dteEnd).format("HH:mm");
-    this.activityRequest.durtion = this.activityService.diffBetwenTwoDateInMinutes(this.activityRequest.dteStrt, this.activityRequest.dteEnd);
-    console.log("duration " + this.activityRequest.durtion);
-    this.activityService.saveActivity(this.activityRequest)
-      .subscribe((data:ActivityRequest) => {
-        console.log("ok resp " + JSON.stringify(data));
-        this.activityRequest = data;
-        this.activityRequest.typeActivite = "Activité support";
-        this.mode = 2;
-        this.ref.detectChanges();
+    if(!this.continuer){
+      this.activityRequest.createdAt = new Date();
+      this.activityRequest.updatedAt = new Date();
 
-      }, (err: any) => {
-        console.log("error " + JSON.stringify(err));
-        this.returnedError = err.error.message;
-        this.error = 2;
+      var hours =  this.durtion.split(":")[0];
+      var minutes =this.durtion.split(":")[1];
 
-      });
+      this.activityRequest.durtion = Number(hours*60) + Number(minutes);
+      this.activityRequest.dteEnd=moment(this.activityRequest.dteStrt).add(hours,'hours').add( minutes,"minutes").toDate();
+
+      this.dureeFormated = this.activityService.diffBetwenTwoDateFormated(this.activityRequest.dteStrt, this.activityRequest.dteEnd);
+      this.activityRequest.hrStrt = moment(this.activityRequest.dteStrt).format("HH:mm");
+      this.activityRequest.hrEnd = moment(this.activityRequest.dteStrt).add(hours,'hours').add( minutes,"minutes").format("HH:mm");
+
+      this.activityService.saveActivity(this.activityRequest)
+        .subscribe((data: ActivityRequest) => {
+          console.log("ok resp " + JSON.stringify(data));
+          this.activityRequest = data;
+          this.activityRequest.typeActivite = "Activité support";
+          this.mode = 2;
+          this.refreshActivity();
+          this.ref.detectChanges();
+
+        }, (err: any) => {
+          console.log("error " + JSON.stringify(err));
+          this.returnedError = err.error.message;
+          this.error = 1;
+          this.ref.detectChanges();
+
+        });
+    }else{
+      this.activityRequest.createdAt = new Date();
+      this.activityRequest.updatedAt = new Date();
+
+      var hours =  this.durtion.split(":")[0];
+      var minutes =this.durtion.split(":")[1];
+
+      this.activityRequest.durtion = Number(hours*60) + Number(minutes);
+      this.activityRequest.dteEnd=moment(this.activityRequest.dteStrt).add(hours,'hours').add( minutes,"minutes").toDate();
+
+      this.dureeFormated = this.activityService.diffBetwenTwoDateFormated(this.activityRequest.dteStrt, this.activityRequest.dteEnd);
+      this.activityRequest.hrStrt = moment(this.activityRequest.dteStrt).format("HH:mm");
+      this.activityRequest.hrEnd = moment(this.activityRequest.dteStrt).add(hours,'hours').add( minutes,"minutes").format("HH:mm");
+
+      this.activityService.saveActivity(this.activityRequest)
+        .subscribe((data: ActivityRequest) => {
+          let lastActivity = this.activityRequest;
+          this.activityRequest=new ActivityRequest();
+          this.activityRequest.dteStrt=lastActivity.dteStrt;
+          this.activityRequest.request=null;
+          this.activityRequest.typeActivite = "Activité support";
+          this.activityRequest.user.username = this.authenticationService.getUserName();
+          this.duree = null;
+          this.dureeConverted = null;
+          this.activityRequest.createdBy = new User();
+          this.activityRequest.id = null;
+          this.durtion=null;
+          this.continuer=false;
+          this.activityRequest.durtion=null;
+          this.activityRequest.duration=null;
+          this.refreshActivity();
+          this.ref.detectChanges();
+
+        }, (err: any) => {
+          console.log("error " + JSON.stringify(err));
+          this.returnedError = err.error.message;
+          this.error = 1;
+          this.ref.detectChanges();
+
+        });
+    }
   }
 
 
@@ -191,6 +306,7 @@ export class NewActivityRequestComponent implements OnInit, OnDestroy {
         (data: Request) => {
           console.log("Request " + JSON.stringify(data));
           this.activityRequest.request = data;
+          this.activityRequest.customer = data.cpyInCde;
           this.requestOk = true;
           this.ref.detectChanges();
           //console.log("projects customer " + JSON.stringify(this.projects));
@@ -206,7 +322,35 @@ export class NewActivityRequestComponent implements OnInit, OnDestroy {
 
   }
 
+  enregisterContinuer(){
+    this.continuer=true;
 
+  }
+
+  onSelectCustomer($event) {
+
+    this.activityRequest.request=null;
+      this.requestService.getRequestByCustomerCodeAndService (this.activityRequest.customer.code,this.authenticationService.getServName()).subscribe(
+        (data: Array<Request>) => {
+        this.error=0;
+         this.requests= data;
+          this.disabledInputRequests=false;
+          this.ref.detectChanges();
+          //console.log("projects customer " + JSON.stringify(this.projects));
+        }, err => {
+          this.activityRequest.request=null;
+          this.returnedError = err.error.message;
+          this.error = 1;
+          console.log(err);
+        });
+
+  }
+
+  reject(){
+    if(this.durtion==="00:00"){
+      this.durtion=null;
+    }
+  }
 
 
 }

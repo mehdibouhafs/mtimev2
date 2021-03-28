@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 import { LocationStrategy, HashLocationStrategy } from '@angular/common';
 
 import { AppComponent } from './app.component';
-
 // Import containers
 import {
   FullLayoutComponent,
@@ -74,6 +73,9 @@ import {ActivityService} from "./services/activity.service";
 import {NewActivityCommercialComponent} from "./views/activityCommercial/newActivityCommercial.component";
 import {CalendarModule} from "angular-calendar";
 import {FormsModule} from "@angular/forms";
+import {UserService} from "./services/user.service";
+import {FormationService} from "./services/formation.service";
+import {CertificationService} from "./services/certification.service";
 
 @NgModule({
   imports: [
@@ -98,7 +100,7 @@ import {FormsModule} from "@angular/forms";
     provide: LocationStrategy,
     useClass: HashLocationStrategy
   },
-    AuthenticationService,SocketService,ActivityService
+    AuthenticationService,SocketService,ActivityService,UserService,FormationService,CertificationService
   ],
   bootstrap: [ AppComponent ]
 })

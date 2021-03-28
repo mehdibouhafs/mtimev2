@@ -1,0 +1,88 @@
+<div class="modal-dialog show-details" role="document">
+  <div class="modal-content">
+
+
+    <div class="modal-header">
+      <h4 class="modal-title">Activité Projet :</h4>
+    </div>
+
+    <div class="modal-body">
+
+      <div class="form-group row">
+        <div class="col-sm-2 nopadding-right"><strong>Date :</strong></div>
+        <div class="col-sm-3 nopadding">
+          <span class="badge badge-pill badge-light">{{activityProject?.dteStrt | date:"dd/MM/yy"}}</span>
+        </div>
+        <div class="col-sm-2 nopadding-right"><strong>Durée :</strong></div>
+        <div class="col-sm-3 nopadding">
+          <span
+            class="badge badge-pill badge-dark">{{ShortconvertMinutesToHoursAndMinute(activityProject.durtion)}}</span>
+        </div>
+
+      </div>
+
+      <div class="form-group row">
+
+        <div class="col-sm-2 nopadding-right"><strong>Nature :</strong></div>
+        <div class="col-sm-3 nopadding">
+          {{activityProject?.nature}}
+        </div>
+
+        <div class="col-sm-2 nopadding-right"><strong>Client :</strong></div>
+        <div class="col-sm-3 nopadding">
+          {{activityProject?.customer?.name}}
+        </div>
+
+
+      </div>
+
+      <div class="form-group row">
+
+        <div class="col-sm-4 nopadding-right"><strong>Projet / Offre :</strong></div>
+        <div class="col-sm-6 nopadding">
+          {{activityProject?.project?.prjName?activityProject?.project?.prjName:(activityProject?.offre?.name?activityProject?.offre?.name:'-')}}
+        </div>
+
+      </div>
+
+      <div class="form-group row">
+        <div class="col-sm-2 nopadding-right"><strong>Lieu :</strong></div>
+        <div class="col-sm-3 nopadding">
+          {{activityProject?.lieu}}
+        </div>
+        <div class="col-sm-2 nopadding-right"><strong>Ville :</strong></div>
+        <div class="col-sm-3 nopadding">
+          {{activityProject?.ville}}
+        </div>
+      </div>
+
+      <div class="form-group row">
+
+        <div class="col-sm-4 nopadding-right"><strong>Commentaire :</strong></div>
+        <div class="col-sm-7 nopadding">
+          {{activityProject?.comments}}
+        </div>
+
+      </div>
+
+      <div class="form-group row">
+
+        <div class="col-sm-2 nopadding-right"><strong>Statut :</strong></div>
+        <div class="col-sm-3 nopadding">
+          <span [class]="activityProject.statut?'badge badge-pill badge-success':'badge badge-pill badge-info'">{{activityProject?.statut==true?'Realisé':'Planifié'}}</span>
+        </div>
+
+      </div>
+
+
+
+    </div>
+
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-sm btn-primary" (click)="hideModal()"><i class="fa fa-check"></i> OK</button>
+    </div>
+
+
+  </div>
+</div>

@@ -9,34 +9,102 @@
     <div class="modal-body">
 
       <div class="form-group row">
-        <div class="col-sm-2 nopadding-right"><strong>Début :</strong></div>
+
+        <div class="col-sm-2 nopadding-right"><strong>Client :</strong></div>
         <div class="col-sm-3 nopadding">
-          <span class="badge badge-pill badge-light">{{activityRequest?.dteStrt | date:"dd/MM/yy HH:mm"}}</span>
+          {{activityRequest?.customer?.name}}
         </div>
-        <div class="col-sm-2 nopadding-right"><strong>Fin :</strong></div>
+
+        <div class="col-sm-2 nopadding-right"><strong>Demande :</strong></div>
         <div class="col-sm-3 nopadding">
-          <span class="badge badge-pill badge-light">{{activityRequest?.dteEnd | date:"dd/MM/yy HH:mm"}}</span>
+          {{activityRequest?.request?.rqtExcde}}  {{activityRequest?.request?.objDsc}}
+
         </div>
       </div>
 
       <div class="form-group row">
+
+        <div class="col-sm-2 nopadding-right"><strong>Description Demande :</strong></div>
+        <div class="col-sm-3 nopadding">
+          {{activityRequest?.request?.objexcde}}
+        </div>
+
+        <div class="col-sm-2 nopadding-right"><strong>Instance :</strong></div>
+        <div class="col-sm-3 nopadding">
+          {{activityRequest?.request?.objIdentVal}}
+        </div>
+      </div>
+
+      <div *ngIf="activityRequest?.request?.descriptionDemande!='' && activityRequest?.request?.descriptionDemande!=null" class="form-group row">
+        <div class="col-sm-3"><strong>Commentaire de la demande  :</strong></div>
+        <div class="col-sm-7 nopadding">
+          {{activityRequest?.request?.descriptionDemande}}
+        </div>
+      </div>
+
+
+      <div class="form-group row">
+        <div class="col-sm-2 nopadding-right"><strong>Date :</strong></div>
+        <div class="col-sm-3 nopadding">
+          <span class="badge badge-pill badge-light">{{activityRequest?.dteStrt | date:"dd/MM/yyyy"}}</span>
+        </div>
+
         <div class="col-sm-2 nopadding-right"><strong>Durée :</strong></div>
         <div class="col-sm-3 nopadding">
           <span class="badge badge-pill badge-dark">{{ShortconvertMinutesToHoursAndMinute(activityRequest.durtion)}}</span>
         </div>
 
-        <div class="col-sm-2 nopadding-right"><strong>Nature :</strong></div>
-        <div class="col-sm-3 nopadding">
-          {{activityRequest?.nature}}
-        </div>
       </div>
 
       <div class="form-group row">
-        <div class="col-sm-2 nopadding-right"><strong>Client :</strong></div>
+
+
+        <div class="col-sm-2 nopadding-right"><strong>Nature Activité :</strong></div>
         <div class="col-sm-3 nopadding">
-          {{activityRequest?.customer.name}}
+          {{activityRequest?.nature}}
         </div>
 
+
+      </div>
+
+      <div class="form-group row">
+
+        <div *ngIf="serviceName=='Value Software' || serviceName=='Value Système' || serviceName=='Value Réseaux et Sécurité'" class="col-sm-3 nopadding-right"><strong>Produits :</strong></div>
+        <div *ngIf="serviceName=='Value Software' || serviceName=='Value Système' || serviceName=='Value Réseaux et Sécurité'" class="col-sm-7 nopadding">
+            <span *ngFor="let p of activityRequest.produits; let i=index;">
+              <span *ngIf="i<activityRequest.produits.length-1">{{p.produit+" | "}}</span>
+              <span *ngIf="i==activityRequest.produits.length-1">{{p.produit}}</span>
+            </span>
+
+        </div>
+
+
+
+      </div>
+
+      <div class="form-group row">
+
+
+
+        <div class="col-sm-2 nopadding-right"><strong>Rôle :</strong></div>
+        <div class="col-sm-3 nopadding">
+          {{activityRequest.principal?"Principal":"Secondaire"}}
+        </div>
+
+
+        <div class="col-sm-2 nopadding-right"><strong>Etat :</strong></div>
+        <div class="col-sm-3 nopadding">
+          {{activityRequest.etat?"Cloturer":"En cours"}}
+        </div>
+
+      </div>
+
+      <div class="form-group row">
+
+        <div class="col-sm-2 nopadding-right"><strong>Lieu :</strong></div>
+        <div class="col-sm-3 nopadding">
+          {{activityRequest?.lieu}}
+        </div>
         <div class="col-sm-2 nopadding-right"><strong>Ville :</strong></div>
         <div class="col-sm-3 nopadding">
           {{activityRequest?.ville}}
@@ -44,24 +112,15 @@
 
       </div>
 
-      <div class="form-group row">
-        <div class="col-sm-2 nopadding-right"><strong>Lieu :</strong></div>
-        <div class="col-sm-3 nopadding">
-          {{activityRequest?.lieu}}
-        </div>
 
-        <div class="col-sm-2 nopadding-right"><strong>Statut :</strong></div>
-        <div class="col-sm-3 nopadding">
-          <span [class]="activityRequest.statut?'badge badge-pill badge-success':'badge badge-pill badge-info'">{{activityRequest?.statut==true?'Realisé':'Planifié'}}</span>
-        </div>
-      </div>
-
-      <div class="form-group row">
+      <div *ngIf="activityRequest?.comments!='' && activityRequest?.comments!=null" class="form-group row">
         <div class="col-sm-3"><strong>Commentaire:</strong></div>
         <div class="col-sm-7 nopadding">
           {{activityRequest?.comments}}
         </div>
       </div>
+
+
 
     </div>
 

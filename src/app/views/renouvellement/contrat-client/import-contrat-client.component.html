@@ -1,0 +1,54 @@
+<div class="card">
+  <div *ngIf="mode==1">
+    <div class="card-header">
+      <strong>Import contrat client</strong>
+    </div>
+
+    <div class="card-body">
+      <div class="container" style="width:400px">
+        <div style="color: blue; margin-bottom: 20px">
+          <h1>{{title}}</h1>
+          <h3>{{description}}</h3>
+        </div>
+
+        <form-upload></form-upload>
+
+        <br/>
+        <br/>
+
+        <list-upload></list-upload>
+
+
+      </div>
+    </div>
+
+    <div class="card-footer">
+
+      <button type="button" class="btn btn-sm btn-primary" (click)="importer()" >Importer</button>
+
+    </div>
+
+
+  </div>
+
+  <div *ngIf="mode==2">
+    <div class="card-header">
+      <strong>Confirmation</strong>
+    </div>
+    <div class="card-body">
+      </div>
+
+      <div class="modal-footer">
+      </div>
+
+
+  </div>
+</div>
+
+
+
+
+
+
+
+

@@ -8,14 +8,11 @@
         <h6 class="col-12 modal-title text-center">
           <p>Nouvelle Activité projet</p>
           <div *ngIf="lastActivity" class="badge badge-pill badge-light">
-            Dernière Activité : <span class="info">{{lastActivity?.typeActivite}} Du
-            {{lastActivity?.dteStrt | date: "dd/MM/yy HH:mm"}} à {{lastActivity?.dteEnd | date: "dd/MM/yy HH:mm"}}</span>
+            Dernière Activité : {{lastActivity?.typeActivite+", "+lastActivity?.nature}} Date
+            {{lastActivity?.dteStrt | date: "dd/MM/yyyy"}} },
+            {{lastActivity?.customer?.name}}
           </div>
           <div class="alert alert-danger" role="alert" *ngIf="error==1">
-            <span class="textalert">Oups! Vous ne pouvez pas réaliser une activité après cette date : <span
-            class="badge badge-warning">{{currentDate | date: "dd/MM/yyyy HH:mm" }}</span></span>
-          </div>
-          <div class="alert alert-danger" role="alert" *ngIf="error==2">
             Oups ! {{returnedError}}
           </div>
         </h6>
@@ -28,54 +25,19 @@
         <div class="modal-body">
 
           <div class="form-row">
-            <div class="form-group col-sm-6">
-              <label>Date de début :</label>
-
-              <div class="input-group">
-                <div class="input-group-prepend">
-                  <button class="btn btn-primary" type="button"><i class="fa fa-calendar"></i></button>
-                </div>
-                <input class="form-control" [owlDateTimeTrigger]="dt" [owlDateTime]="dt"
-                       placeholder="Date début"
-                       [(ngModel)]="activityProject.dteStrt" name="dteStrt" required (ngModelChange)="onDatesChanged()">
-                <owl-date-time #dt></owl-date-time>
-              </div>
-            </div>
 
             <div class="form-group col-sm-6">
-              <label>Date de fin :</label>
-
-
-              <div class="input-group">
-                <div class="input-group-prepend">
-                  <button class="btn btn-primary" type="button"><i class="fa fa-calendar"></i></button>
-                </div>
-                <input class="form-control" [min]="activityProject.dteStrt" [owlDateTimeTrigger]="dt1"
-                       [owlDateTime]="dt1" placeholder="Date et heure de fin"
-                       [(ngModel)]="activityProject.dteEnd" name="dteEnd" (ngModelChange)="onDatesChanged()" required>
-                <owl-date-time #dt1></owl-date-time>
-              </div>
-              <div *ngIf="dureeConverted" class="duree">
-                {{dureeConverted}}
-              </div>
-
-            </div>
-
-          </div>
-
-          <div class="form-row">
-
-            <div class="form-group col-sm-6">
-              <label for="client">Client :</label>
-              <ng-select id="client" [items]="customers"
+              <label for="customers">Client :</label>
+              <ng-select id="customers" [items]="customers"
                          bindLabel="name"
                          name="customer"
                          placeholder="Selectionner un client"
-                         [(ngModel)]="activityProject.customer"
+                         notFoundText="Aucun client trouvé"
+                         [typeahead]="customerTypeahead"
+                         typeToSearchText="Saisir client"
                          (change)="teste()"
-                         required>
-
-              </ng-select>
+                         [(ngModel)]="activityProject.customer"
+                         [required]="activityProject.nature!='Réunion'"></ng-select>
             </div>
 
             <div class="form-group col-sm-6">
@@ -83,79 +45,152 @@
               <ng-select id="project" [items]="projects"
                          bindLabel="prjName"
                          name="project"
+                         [disabled]="!activityProject.customer"
                          placeholder="Selectionner un projet"
+                         [addTag]="addTag"
+                         addTagText="Autre projet"
                          [(ngModel)]="activityProject.project"
-                         required>
+                         [required]="activityProject.nature!='Réunion'">
+                <ng-template ng-label-tmp let-item="item">
+                  {{item.prjId}}  {{item.prjName}}
+                </ng-template>
+                <ng-template ng-option-tmp let-item="item" let-search="searchTerm">
+                  {{item.prjId}}  {{item.prjName}}
+                </ng-template>
               </ng-select>
-              <p class="error" *ngIf="activityProject?.customer?.code == 0">Veuillez sélectionner un client</p>
-              <p class="duree" *ngIf="activityProject.project.durtionPrj">Durée restant :
-                {{activityProject?.project?.durtionPrj}}</p>
             </div>
 
           </div>
 
           <div class="form-row">
 
+            <div *ngIf="serviceName=='Value Software' || serviceName=='Value Système' || serviceName=='Value Réseaux et Sécurité'" class="form-group col-sm-6">
+              <label for="produit">Produit :</label>
+              <ng-select [items]="produits"
+                         id="produit"
+                         name="produit"
+                         placeholder="Produit"
+                         bindLabel="produit"
+                         [multiple]="true"
+                         groupBy="groupe"
+                         [(ngModel)]="activityProject.produits"
+                         [addTag]="true"
+                         required>
+
+              </ng-select>
+            </div>
+
             <div class="form-group col-sm-6">
-              <label for="nature">Nature :</label>
-              <select class="form-control" id="nature" [(ngModel)]="activityProject.nature" name="nature"
-                      #nature="ngModel" required>
-                <option>Projet</option>
-                <option>Réunion</option>
-                <option>Pilotage contrat</option>
-                <option>Encadrement / Plannification</option>
-              </select>
+              <label for="nature">Action :</label>
+              <ng-select id="nature" name="nature"
+                         [items]="nature"
+                         placeholder="Action"
+                         bindLabel="name"
+                         bindValue="name"
+                         [(ngModel)]="activityProject.nature"
+                         required>
+
+              </ng-select>
+            </div>
+
+
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-sm-6">
+              <label>Date  :</label>
+
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                </div>
+                <input class="form-control form-control-sm" [owlDateTimeTrigger]="dt" [owlDateTime]="dt" [max]="maxDate"
+                       placeholder="Date"
+                       [(ngModel)]="activityProject.dteStrt" name="dteStrt" required >
+                <owl-date-time [pickerType]="'calendar'" #dt></owl-date-time>
+              </div>
+            </div>
+
+            <div class="form-group col-sm-6">
+              <label for="duree">Durée :</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <div class="input-group-text"><i class="fa fa-clock-o"></i></div>
+                </div>
+                <input id="duree" name="duree" class="form-control form-control-sm" type="time" [(ngModel)]="activityProject.duration"  (change)="reject()"  required/>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          <div class="form-row">
+
+
+
+            <div class="form-group col-sm-6">
+              <label for="role">Rôle :</label>
+              <ng-select [items]="role"
+                         id="role"
+                         name="role"
+                         placeholder="Rôle"
+                         bindLabel="name"
+                         bindValue="val"
+                         [searchable]="false"
+                         [(ngModel)]="activityProject.principal"
+                         required>
+
+              </ng-select>
+
+
             </div>
 
             <div class="form-group col-sm-6">
               <label for="lieu">Lieu :</label>
-              <select class="form-control" id="lieu" [(ngModel)]="activityProject.lieu" name="lieu" required>
-                <option>Client</option>
-                <option>Munisys</option>
-                <option>Domicile</option>
-              </select>
+              <ng-select id="lieu"
+                         name="lieu"
+                         [items]="lieu"
+                         bindLabel="name"
+                         bindValue="name"
+                         placeholder="Lieu"
+                         [(ngModel)]="activityProject.lieu"
+                         required>
+              </ng-select>
             </div>
 
           </div>
 
+
+
           <div class="form-row">
+
+
 
             <div class="form-group col-sm-6">
               <label for="ville">Ville :</label>
-              <select class="form-control" id="ville" [(ngModel)]="activityProject.ville" name="ville" required
-                      #ville="ngModel">
-                <option>Casablanca</option>
-                <option>Fes</option>
-                <option>Agadir</option>
-              </select>
+              <ng-select id="ville"
+                         name="ville"
+                         placeholder="Ville"
+                         [items]="ville"
+                         bindLabel="name"
+                         bindValue="name"
+                         [addTag]="true"
+                         addTagText="Autre ville"
+                         [(ngModel)]="activityProject.ville"
+                         notFoundText="Aucune ville trouvée"
+                         required>
+
+              </ng-select>
             </div>
 
-          </div>
-
-          <div class="form-row">
-            <div class="form-group col-sm-6">
+            <div  class="form-group col-sm-6">
               <label for="comments">Commentaire :</label>
               <textarea minlength="1" id="comments" name="comments" #comments="ngModel"
                         [(ngModel)]="activityProject.comments" rows="9" class="form-control" placeholder="Content.."
                         style="margin-top: 0px; margin-bottom: 0px; height: 56px;" required></textarea>
-              <div *ngIf="comments.invalid && (comments.dirty || comments.touched)"
-                   class="error">
-                <div *ngIf="comments.errors.required">
-                  Commentaire est requis.
-                </div>
-                <div *ngIf="comments.errors.minlength">
-                  Un commentaire doit au minimum contenir 5 caracteres
-                </div>
-              </div>
-            </div>
 
-            <div class="form-group row col-sm-6 my-auto">
-              <label class="col-sm-3 col-form-label nopadding-right">Statut :</label>
-              <div class="col-sm-9 nopadding my-auto">
-                <span [class]="activityProject.statut?'badge badge-pill badge-success':'badge badge-pill badge-info'">{{activityProject.statut?'Réalisé':'Planifié'}}</span>
-              </div>
             </div>
-
 
           </div>
 
@@ -169,6 +204,10 @@
             class="fa fa-dot-circle-o"></i>
             Enregistrer
           </button>
+          <button [disabled]="!f.valid" (click)="enregisterContinuer()" class="btn btn-sm btn-warning"><i
+            class="fa fa-dot-circle-o"></i>
+            Enregistrer et Continuer
+          </button>
         </div>
       </form>
 
@@ -177,40 +216,84 @@
     <div *ngIf="mode==2">
 
       <div class="modal-header">
-        <h4 class="modal-title">Confirmation N° : {{activityProject?.id}}</h4>
+        <h4 class="modal-title">Confirmation</h4>
       </div>
 
       <div class="modal-body">
 
         <div class="form-group row">
-          <div class="col-sm-2 nopadding-right"><strong>Début :</strong></div>
+
+
+          <div class="col-sm-2 nopadding-right"><strong>Client :</strong></div>
           <div class="col-sm-3 nopadding">
-            <span class="badge badge-pill badge-light">{{activityProject?.dteStrt | date:"dd/MM/yy HH:mm"}}</span>
+            {{activityProject?.customer?.name}}
           </div>
-          <div class="col-sm-2 nopadding-right"><strong>Fin :</strong></div>
+          <div class="col-sm-2 nopadding-right"><strong>Projet :</strong></div>
           <div class="col-sm-3 nopadding">
-            <span class="badge badge-pill badge-light">{{activityProject?.dteEnd | date:"dd/MM/yy HH:mm"}}</span>
+            {{activityProject?.project?.prjName}}
+          </div>
+
+
+        </div>
+
+        <div class="form-group row">
+          <div *ngIf="serviceName=='Value Software' || serviceName=='Value Système' || serviceName=='Value Réseaux et Sécurité'" class="col-sm-2 nopadding-right"><strong>Produits :</strong></div>
+          <div *ngIf="serviceName=='Value Système' || serviceName=='Value Réseaux et Sécurité'" class="col-sm-3 nopadding">
+            <span *ngFor="let p of activityProject.produits; let i=index;">
+              <span *ngIf="i<activityProject.produits.length">{{p.produit+" | "}}</span>
+              <span *ngIf="i==activityProject.produits.length">{{p.produit}}</span>
+            </span>
           </div>
         </div>
 
         <div class="form-group row">
+
+
+          <div class="col-sm-2 nopadding-right"><strong>Action :</strong></div>
+          <div class="col-sm-3 nopadding">
+            {{activityProject?.nature}}
+          </div>
+
+          <div class="col-sm-2 nopadding-right"><strong>Date :</strong></div>
+          <div class="col-sm-3 nopadding">
+            <span class="badge badge-pill badge-light">{{activityProject?.dteStrt | date:"dd/MM/yyyy"}}</span>
+          </div>
+
+
+
+
+        </div>
+
+        <div class="form-group row">
+
           <div class="col-sm-2 nopadding-right"><strong>Durée :</strong></div>
           <div class="col-sm-3 nopadding">
           <span
             class="badge badge-pill badge-dark">{{activityService.ShortconvertMinutesToHoursAndMinute(activityProject.durtion)}}</span>
           </div>
-          <div class="col-sm-2 nopadding-right"><strong>Client :</strong></div>
+
+          <div class="col-sm-2 nopadding-right"><strong>Rôle :</strong></div>
           <div class="col-sm-3 nopadding">
-            {{activityProject?.customer?.name}}
+            <div *ngIf="activityProject?.principal">
+             Principale
+            </div>
+            <div *ngIf="!activityProject?.principal">
+              Secondaire
+            </div>
+
           </div>
 
         </div>
 
+
+
         <div class="form-group row">
-          <div class="col-sm-2 nopadding-right"><strong>Projet :</strong></div>
+
+          <div class="col-sm-2 nopadding-right"><strong>Lieu :</strong></div>
           <div class="col-sm-3 nopadding">
-            {{activityProject?.project?.prjName}}
+            {{activityProject?.lieu}}
           </div>
+
 
           <div class="col-sm-2 nopadding-right"><strong>Ville :</strong></div>
           <div class="col-sm-3 nopadding">
@@ -218,19 +301,9 @@
           </div>
         </div>
 
-        <div class="form-group row">
-          <div class="col-sm-2 nopadding-right"><strong>Lieu :</strong></div>
-          <div class="col-sm-3 nopadding">
-            {{activityProject?.lieu}}
-          </div>
-          <div class="col-sm-2 nopadding-right"><strong>Statut :</strong></div>
-          <div class="col-sm-3 nopadding">
-            <span [class]="activityProject.statut?'badge badge-pill badge-success':'badge badge-pill badge-info'">{{activityProject?.statut==true?'Realisé':'Planifié'}}</span>
-          </div>
 
-        </div>
 
-        <div class="form-group row">
+        <div *ngIf="activityProject?.comments!='' && activityProject?.comments!=null" class="form-group row">
           <div class="col-sm-3"><strong>Commentaire:</strong></div>
           <div class="col-sm-7 nopadding">
             {{activityProject?.comments}}
@@ -253,5 +326,105 @@
 
 
   </div>
+
 </div>
+<!--
+<div bsModal #myModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" (click)="myModal.hide()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <h5 class="card-title text-center">Selectionnez le type d'activité :</h5>
+
+        <div class="list-group">
+          <button type="button" *ngFor="let activityAuthorized of activitiesAuthorized"
+                  (click)="myModal.hide(); onSelectModal(activityAuthorized);"
+                  class="list-group-item list-group-item-action">
+            <i [class]="detectIcon(activityAuthorized)"></i> {{activityAuthorized}}
+          </button>
+        </div>
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<new-activtyProject bsModal #newactivityProjectModal="bs-modal" [modal]="newactivityProjectModal"
+                    [activityProject]="activityProjectToAdd"
+                    [lastActivity]="lastActivity"
+                    (refresh)="ngOnInit()"
+                    class="modal fade"
+                    tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></new-activtyProject>
+
+<new-activtyAvantVente bsModal #newactivityAvantVenteModal="bs-modal" [modal]="newactivityAvantVenteModal"
+                       [activityAvantVente]="activityAvantVenteToAdd"
+                       [lastActivity]="lastActivity"
+                       (refresh)="ngOnInit()"
+                       class="modal fade"
+                       tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                       aria-hidden="true"></new-activtyAvantVente>
+
+
+<new-activtyCommercial bsModal #newactivityCommercialModal="bs-modal" [modal]="newactivityCommercialModal"
+                       [activityCommercial]="activityCommercialToAdd"
+                       [lastActivity]="lastActivity"
+                       (refresh)="ngOnInit()"
+                       class="modal fade"
+                       tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                       aria-hidden="true"></new-activtyCommercial>
+
+<new-activityHoliday bsModal #newactivityHolidayModal="bs-modal" [modal]="newactivityHolidayModal"
+                     [activityHoliday]="activityHolidayToAdd"
+                     [lastActivity]="lastActivity"
+                     (refresh)="ngOnInit()"
+                     class="modal fade"
+                     tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                     aria-hidden="true"></new-activityHoliday>
+
+<new-activityRecouvrement bsModal #newactivityRecouvrementModal="bs-modal" [modal]="newactivityRecouvrementModal"
+                          [activityRecouvrement]="activityRecouvrementToAdd"
+                          [lastActivity]="lastActivity"
+                          (refresh)="ngOnInit()"
+                          class="modal fade"
+                          tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                          aria-hidden="true"></new-activityRecouvrement>
+
+<new-activityRequest bsModal #newactivityRequestModal="bs-modal" [modal]="newactivityRequestModal"
+                     [activityRequest]="activityRequestToAdd"
+                     [lastActivity]="lastActivity"
+                     (refresh)="ngOnInit()"
+                     class="modal fade"
+                     tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                     aria-hidden="true"></new-activityRequest>
+
+<new-activity-si bsModal #newactivitySIModal="bs-modal" [modal]="newactivitySIModal"
+                 [activitySI]="activitySIToAdd"
+                 [lastActivity]="lastActivity"
+                 (refresh)="ngOnInit()"
+                 class="modal fade"
+                 tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                 aria-hidden="true"></new-activity-si>
+
+<new-activityPM bsModal #newactivityPMModal="bs-modal" [modal]="newactivityPMModal"
+                [activityPM]="activityPMToAdd"
+                [lastActivity]="lastActivity"
+                (refresh)="ngOnInit()"
+                class="modal fade"
+                tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true"></new-activityPM>
+
+<new-activityDevCompetence bsModal #newactivityDevCompetenceModal="bs-modal" [modal]="newactivityDevCompetenceModal"
+                           [activityDevCompetence]="activityDevCompetenceToAdd"
+                           [lastActivity]="lastActivity"
+                           (refresh)="ngOnInit()"
+                           class="modal fade"
+                           tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                           aria-hidden="true"></new-activityDevCompetence>-->
+
 

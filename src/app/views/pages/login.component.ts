@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
 import {AuthenticationService} from "../../services/authentification.service";
+import {NotificationsService} from "angular2-notifications";
 
 @Component({
   templateUrl: 'login.component.html'
@@ -11,7 +12,7 @@ export class LoginComponent implements OnInit{
 
    title = "app";
 
-  constructor(private authService:AuthenticationService,private router:Router) { }
+  constructor(private authService:AuthenticationService,private router:Router,private  notificationService:NotificationsService) { }
 
   ngOnInit() {
     this.authService.logout();
@@ -24,6 +25,12 @@ export class LoginComponent implements OnInit{
           this.mode = 2;
           let jwtToken = resp.headers.get("authorization");
           this.authService.saveToken(jwtToken);
+          /*const toast= this.notificationService.info("Bienvenue", "Nous sommes heureux de vous revoir sur MRH", {
+            timeOut: 7000,
+            showProgressBar: false,
+            pauseOnHover: true,
+            clickToClose: false,
+            clickIconToClose: true});*/
           this.router.navigateByUrl('/dashboard');
 
         },

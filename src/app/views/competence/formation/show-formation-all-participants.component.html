@@ -1,0 +1,76 @@
+<div class="modal-dialog" role="document">
+  <div class="modal-content">
+
+
+    <div class="modal-header">
+      <h4 class="modal-title">Détails de la formation</h4>
+    </div>
+
+    <div class="modal-body">
+
+      <div class="form-group row">
+        <div class="col-sm-3 nopadding-right"><strong>Date :</strong></div>
+        <div class="col-sm-9 nopadding">
+          <span *ngFor="let d of formation.dates">{{d.date+" | "}}</span>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <div class="col-sm-2 nopadding-right"><strong>Intitulé :</strong></div>
+        <div class="col-sm-3 nopadding">
+          <span>{{formation?.frmName}}</span>
+        </div>
+        <div class="col-sm-2 nopadding-right"><strong>Technologie:</strong></div>
+        <div class="col-sm-3 nopadding">
+          <span>{{formation?.technologie?.nomTechnologie}}</span>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <div class="col-sm-2 nopadding-right"><strong>Editeur :</strong></div>
+        <div class="col-sm-3 nopadding">
+          <span>{{formation?.editeur?.nomEditeur}}</span>
+        </div>
+        <div class="col-sm-2 nopadding-right"><strong>Participants :</strong></div>
+        <div class="col-sm-3 nopadding">
+          <span>{{formation?.candidats?.length}} participants</span>
+        </div>
+      </div>
+
+      <div class="form-row" *ngIf="formation?.candidats.length>0">
+        <table class="table table-sm">
+          <thead>
+          <tr>
+            <th>#</th>
+            <th>Photo</th>
+            <th>Nom</th>
+            <th>Prénom</th>
+            <th>Service</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let p of formation.candidats; let  i=index;">
+            <td>{{i+1}}</td>
+            <td><img [src]="'assets/img/avatars/'+p.employe.username+'.jpg'"
+                     onerror="this.src='assets/img/avatars/default.jpg'" class="img-avatar" [alt]="p.employe.username"
+                     width="25px" height="25px"/></td>
+            <td>{{p?.employe?.lastName}}</td>
+            <td>{{p?.employe?.firstName}}</td>
+            <td>{{p?.employe?.service?.servName}}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-sm btn-primary" (click)="modal.hide()"><i class="fa fa-check"></i>
+        OK
+      </button>
+    </div>
+  </div>
+</div>
+
+
+

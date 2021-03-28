@@ -25,6 +25,8 @@ import localeFr from '@angular/common/locales/fr';
 import { registerLocaleData } from '@angular/common';
 import {ActivityModule} from "../activity/activity.module";
 import {AllcalendarComponent} from "./myCalendar/allcalendar.component";
+import {CalendarGroupComponent} from "./myCalendar/calendar-group.component";
+import {UserService} from "../../services/user.service";
 
 registerLocaleData(localeFr);
 
@@ -58,7 +60,13 @@ registerLocaleData(localeFr);
     ActivityModule
 
   ],
-  declarations: [ CalendarComponent,MyCalendarComponent,AllcalendarComponent ],
-  providers: [AuthenticationService,ActivityService]
+  declarations: [
+    CalendarHeaderComponent,
+    CalendarComponent,
+    MyCalendarComponent,
+    AllcalendarComponent,
+    CalendarGroupComponent,
+  ],
+  providers: [AuthenticationService,ActivityService, UserService]
 })
 export class CalendarModule2 { }

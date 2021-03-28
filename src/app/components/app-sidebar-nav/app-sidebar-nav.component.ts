@@ -1,7 +1,7 @@
-import { Component, ElementRef, Input, OnInit, Renderer2 } from '@angular/core';
+import {Component, ElementRef, Input, OnInit, Renderer2} from '@angular/core';
 
 // Import navigation elements
-import { navigation } from './../../_nav';
+import {navigation} from './../../_nav';
 
 @Component({
   selector: 'app-sidebar-nav',
@@ -37,78 +37,350 @@ export class AppSidebarNavComponent implements OnInit {
     return item.title ? true : false
   }
 
-  constructor() { }
+  constructor() {
+  }
 
   ngOnInit() {
-    this.navigation.push(
-      {
-        name: 'Dashboard',
-        url: '/dashboard',
-        icon: 'icon-chart'
-      }
-    );
-    this.roles.forEach(oneAuthority=>{
-      if (oneAuthority=="read_tickets")
-        this.navigation.push(
-          {
-            name: 'Tickets',
-            url: '/tickets',
-            icon: 'icon-check'
-          }
-        );
+    this.navigation = [];
+    if (this.roles.length > 0)
+      this.chargerNavigation();
+  }
+
+  chargerNavigation() {
+    let found: boolean = false;
+    this.navigation.forEach(nav => {
+      if (nav.name == 'Dashboard')
+        found = true;
     });
-    this.navigation.push(
-      {
-        title: true,
-        name: 'Gérer activités'
-      },
-      {
-        name: 'Nouvelle Activité',
-        url: '/activity/new-activity',
-        icon: 'icon-plus'
-      },
-      {
-        name: 'Mes activités',
-        url: '/activity/my-activities',
-        icon: 'icon-list'
+    if (!found) {
+      this.navigation.push(
+        {
+          name: 'Dashboard',
+          url: '/dashboard',
+          icon: 'icon-chart'
+        }
+      );
+    }
+
+    found = false;
+    this.roles.forEach(oneAuthority => {
+      if (oneAuthority == "owner") {
+        this.navigation.forEach(nav => {
+          if (nav.name == 'Statistiques')
+            found = true;
+        });
+        if (!found)
+          this.navigation.push(
+            {
+              name: 'Statistiques',
+              url: '/dashboard/dashboard-group',
+              icon: 'icon-chart'
+            }
+          );
       }
-    );
-    this.roles.forEach(oneAuthority=>{
-      if (oneAuthority=="ADMIN")
+    });
+
+    found = false;
+    this.roles.forEach(oneAuthority => {
+      if (oneAuthority == "read_tickets") {
+        this.navigation.forEach(nav => {
+          if (nav.name == 'Tickets')
+            found = true;
+        });
+        if (!found)
+          this.navigation.push(
+            {
+              name: 'Tickets',
+              url: '/tickets',
+              icon: 'icon-check'
+            }
+          );
+      }
+    });
+
+    found = false;
+    this.roles.forEach(oneAuthority => {
+      if (oneAuthority == "renouvellement") {
+        this.navigation.forEach(nav => {
+          if (nav.name == 'Renouvellement')
+            found = true;
+        });
+        if (!found)
+          this.navigation.push(
+            {
+              title: true,
+              name: 'Renouvellement'
+            },
+            {
+              name: 'Renouvellement',
+              url: '/renouvellement',
+              icon: 'fa fa-bell'
+            }
+          );
+      }
+    });
+
+    found = false;
+    this.roles.forEach(oneAuthority => {
+      if (oneAuthority == "gerer_objectif") {
+        this.navigation.forEach(nav => {
+          if (nav.name == 'Objectifs')
+            found = true;
+        });
+        if (!found)
+          this.navigation.push(
+            {
+              title: true,
+              name: 'Objectifs'
+            },
+            {
+              name: 'Objectifs',
+              url: '/objectif',
+              icon: 'fa fa-bell'
+            }
+          );
+      }
+    });
+
+    found = false;
+    this.roles.forEach(oneAuthority => {
+      if (oneAuthority == "view_my_activity") {
+        this.navigation.forEach(nav => {
+          if (nav.name == 'Mes activités')
+            found = true;
+        });
+        if (!found)
+          this.navigation.push(
+            {
+              title: true,
+              name: 'Gérer activités'
+            },
+            {
+              name: 'Mes activités',
+              url: '/activity/my-activities',
+              icon: 'icon-list'
+            }
+          );
+      }
+    });
+
+    found = false;
+    this.roles.forEach(oneAuthority => {
+      if (oneAuthority == "planifier_activity") {
+        this.navigation.forEach(nav => {
+          if (nav.name == 'Activités responsable')
+            found = true;
+        });
+        if (!found)
+          this.navigation.push(
+            {
+              name: 'Activités responsable',
+              url: '/activity-direction',
+              icon: 'icon-list'
+            },
+          );
+      }
+    });
+
+    found = false;
+    this.roles.forEach(oneAuthority => {
+      if (oneAuthority == "project_v2") {
+
+        this.navigation.forEach(nav => {
+          if (nav.name == 'Mes activités projet')
+            found = true;
+        });
+        if (!found)
+          this.navigation.push(
+            {
+              name: 'Mes activités projet',
+              url: '/activity/my-activity-projet',
+              icon: 'icon-list'
+            },
+          );
+      }
+    });
+
+    found = false;
+    this.roles.forEach(oneAuthority => {
+      if (oneAuthority == "owner_cablage") {
+        this.navigation.forEach(nav => {
+          if (nav.name == 'Gestion des activités')
+            found = true;
+        });
         this.navigation.push(
           {
-            name: 'Toutes les activités',
-            url: '/activity/all-activities',
+            name: 'Gestion des activités',
+            url: '/cablage/activity',
             icon: 'icon-list'
           }
         );
-    });
-    this.navigation.push(
-      {
-        title: true,
-        name: 'Calendrier'
-      },
-      {
-        name: 'Mon calendrier',
-        url: '/calendar/my-calendar',
-        icon: 'fa fa-calendar'
       }
-    );
-    this.roles.forEach(oneAuthority=>{
-      if (oneAuthority=="ADMIN")
-        this.navigation.push(
-          {
-            name: 'Admin calendrier',
-            url: '/calendar/all-calendar',
-            icon: 'fa fa-calendar'
-          }
-        );
+    });
+
+    found = false;
+    this.roles.forEach(oneAuthority => {
+      if (oneAuthority == "owner") {
+        this.navigation.forEach(nav => {
+          if (nav.name == 'Activités du groupe')
+            found = true;
+        });
+        if (!found)
+          this.navigation.push(
+            {
+              name: 'Activités du groupe',
+              url: '/activity/activity-service',
+              icon: 'fa fa-group'
+            }
+          );
+      }
+    });
+
+    found = false;
+    this.roles.forEach(oneAuthority => {
+      if (oneAuthority == "ADMIN") {
+        this.navigation.forEach(nav => {
+          if (nav.name == 'Toutes les activités')
+            found = true;
+        });
+        if (!found)
+          this.navigation.push(
+            {
+              name: 'Toutes les activités',
+              url: '/activity/all-activities',
+              icon: 'icon-list'
+            }
+          );
+      }
+    });
+
+
+    found = false;
+    this.navigation.forEach(nav => {
+      if (nav.name == 'Calendrier')
+        found = true;
+    });
+    if (!found)
+      this.navigation.push(
+        {
+          title: true,
+          name: 'Calendrier'
+        },
+        {
+          name: 'Mon calendrier',
+          url: '/calendar/my-calendar',
+          icon: 'fa fa-calendar'
+        }
+      );
+
+    found = false;
+    this.roles.forEach(oneAuthority => {
+      if (oneAuthority == "owner") {
+        this.navigation.forEach(nav => {
+          if (nav.name == 'Calendrier du groupe')
+            found = true;
+        });
+        if (!found)
+          this.navigation.push(
+            {
+              name: 'Calendrier du groupe',
+              url: '/calendar/calendar-group',
+              icon: 'fa fa-calendar'
+            }
+          );
+      }
+    });
+
+    found = false;
+    this.roles.forEach(oneAuthority => {
+      if (oneAuthority == "ADMIN") {
+        this.navigation.forEach(nav => {
+          if (nav.name == 'Calendrier admin')
+            found = true;
+        });
+        if (!found)
+          this.navigation.push(
+            {
+              name: 'Calendrier admin',
+              url: '/calendar/all-calendar',
+              icon: 'fa fa-calendar'
+            }
+          );
+      }
+    });
+
+
+    found = false;
+    this.navigation.forEach(nav => {
+      if (nav.name == 'Compétence')
+        found = true;
+    });
+    if (!found)
+      this.navigation.push(
+        {
+          title: true,
+          name: 'Compétence'
+        },
+        {
+          name: 'Mes Formations',
+          url: '/competence/my-formations',
+          icon: 'fa fa-graduation-cap'
+        },
+        {
+          name: 'Mes Certifications',
+          url: '/competence/my-certification',
+          icon: 'fa fa-certificate'
+        }
+      );
+
+    this.roles.forEach(oneAuthority => {
+      if (oneAuthority == "owner") {
+        this.navigation.forEach(nav => {
+          if (nav.name == 'Groupe')
+            found = true;
+        });
+        if (!found)
+          this.navigation.push(
+            {
+              name: 'Groupe',
+              url: '/competence/management',
+              icon: 'fa fa-graduation-cap'
+            }
+          );
+      }
+    });
+
+
+    this.roles.forEach(oneAuthority => {
+      if (oneAuthority == "gestion_competence") {
+        this.navigation.forEach(nav => {
+          if (nav.name == 'Gestion de compétence')
+            found = true;
+        });
+        if (!found)
+          this.navigation.push(
+            {
+              title: true,
+              name: 'Gestion de compétence'
+            },
+            {
+              name: 'Gérer Formations',
+              url: '/competence/all-formations',
+              icon: 'fa fa-graduation-cap'
+            },
+            {
+              name: 'Gérer Certifications',
+              url: '/competence/all-certifications',
+              icon: 'fa fa-certificate'
+            }
+          );
+      }
     });
   }
 
 }
 
-import { Router } from '@angular/router';
+import {Router} from '@angular/router';
 import {AuthenticationService} from "../../services/authentification.service";
 import {HttpClient} from "@angular/common/http";
 
@@ -126,7 +398,7 @@ import {HttpClient} from "@angular/common/http";
         <app-sidebar-nav-dropdown [link]='item'></app-sidebar-nav-dropdown>
       </li>
     </ng-template>
-    `
+  `
 })
 export class AppSidebarNavItemComponent {
   @Input() item: any;
@@ -147,7 +419,8 @@ export class AppSidebarNavItemComponent {
     return this.router.isActive(this.thisUrl(), false)
   }
 
-  constructor( private router: Router )  { }
+  constructor(private router: Router) {
+  }
 
 }
 
@@ -155,9 +428,9 @@ export class AppSidebarNavItemComponent {
   selector: 'app-sidebar-nav-link',
   template: `
     <a *ngIf="!isExternalLink(); else external"
-      [ngClass]="hasVariant() ? 'nav-link nav-link-' + link.variant : 'nav-link'"
-      routerLinkActive="active"
-      [routerLink]="[link.url]">
+       [ngClass]="hasVariant() ? 'nav-link nav-link-' + link.variant : 'nav-link'"
+       routerLinkActive="active"
+       [routerLink]="[link.url]">
       <i *ngIf="isIcon()" class="{{ link.icon }}"></i>
       {{ link.name }}
       <span *ngIf="isBadge()" [ngClass]="'badge badge-' + link.badge.variant">{{ link.badge.text }}</span>
@@ -190,7 +463,8 @@ export class AppSidebarNavLinkComponent {
     return this.link.icon ? true : false
   }
 
-  constructor() { }
+  constructor() {
+  }
 }
 
 @Component({
@@ -219,7 +493,8 @@ export class AppSidebarNavDropdownComponent {
     return this.link.icon ? true : false
   }
 
-  constructor() { }
+  constructor() {
+  }
 }
 
 @Component({
@@ -229,7 +504,8 @@ export class AppSidebarNavDropdownComponent {
 export class AppSidebarNavTitleComponent implements OnInit {
   @Input() title: any;
 
-  constructor(private el: ElementRef, private renderer: Renderer2) { }
+  constructor(private el: ElementRef, private renderer: Renderer2) {
+  }
 
   ngOnInit() {
     const nativeElement: HTMLElement = this.el.nativeElement;
@@ -238,12 +514,12 @@ export class AppSidebarNavTitleComponent implements OnInit {
 
     this.renderer.addClass(li, 'nav-title');
 
-    if ( this.title.class ) {
+    if (this.title.class) {
       const classes = this.title.class;
       this.renderer.addClass(li, classes);
     }
 
-    if ( this.title.wrapper ) {
+    if (this.title.wrapper) {
       const wrapper = this.renderer.createElement(this.title.wrapper.element);
 
       this.renderer.appendChild(wrapper, name);

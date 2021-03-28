@@ -2,11 +2,12 @@ import {Injectable} from "@angular/core";
 import {AuthenticationService} from "./authentification.service";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Project} from "../model/model.project";
+import {host} from "./host";
 
 @Injectable()
 export class ProjectService {
 
-  private host:String = "http://localhost:8080";
+  private host = host;
 
   constructor(public  http:HttpClient,private autehntificationService:AuthenticationService){
 

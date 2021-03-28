@@ -3,50 +3,83 @@ import {HttpClient, HttpHandler, HttpHeaders} from "@angular/common/http";
 import {headersToString} from "selenium-webdriver/http";
 import {JwtHelper} from "angular2-jwt";
 import {Router} from "@angular/router";
+import {UserService} from "./user.service";
+import {host} from "./host";
+import * as SecureLS from "./../../../node_modules/secure-ls/dist/secure-ls.js";
 
 @Injectable()
-export class AuthenticationService{
+export class AuthenticationService {
 
-  private host:string = "http://localhost:8080";
+
+  private host = host;
+
+  private ls = new SecureLS({
+    isCompression: false
+  });
+
   private jwtToken = null;
-  private roles : Array<any>;
-  private rolesParsed : Array<string> = [];
-  private imgProfil:string;
-  private name : string;
+  private roles: Array<any>;
+  private rolesParsed: Array<string> = [];
+  private imgProfil: string;
+  private name: string;
 
-  constructor (private  http:HttpClient){
+  private idService: number;
+  private direction: string;
+  private servName: string;
+  private logged: boolean;
 
+  constructor(private  http: HttpClient) {
   }
 
-  login(user){
-    return this.http.post(this.host+"/login",user,{observe:'response'});
+  login(user) {
+    return this.http.post(this.host + "/login", user, {observe: 'response'});
   }
 
-  saveToken(jwt:string){
+  saveToken(jwt: string) {
     this.jwtToken = jwt;
-    localStorage.setItem('token',jwt);
-    let jwtHelper  = new JwtHelper();
+    this.ls.set('token',jwt);
+    let jwtHelper = new JwtHelper();
     this.roles = jwtHelper.decodeToken(this.jwtToken).roles;
-    this.imgProfil = jwtHelper.decodeToken(this.jwtToken).sub;
-    localStorage.setItem('imgProfil',this.imgProfil+".jpg");
-    localStorage.setItem('name',this.imgProfil);
-
-    this.roles.forEach(oneauthority=>{
+    this.imgProfil = jwtHelper.decodeToken(this.jwtToken).sub + ".jpg";
+    this.name = jwtHelper.decodeToken(this.jwtToken).sub;
+    //this.name="rkarche";
+    this.idService = jwtHelper.decodeToken(this.jwtToken).service.id;
+    this.servName = jwtHelper.decodeToken(this.jwtToken).service.servName;
+    this.direction = jwtHelper.decodeToken(this.jwtToken).service.direction.name;
+    this.ls.set('imgProfil', this.imgProfil);
+    this.ls.set('name', this.name);
+    this.roles.forEach(oneauthority => {
       this.rolesParsed.push(oneauthority.authority);
     });
-    localStorage.setItem('roles', JSON.stringify(this.rolesParsed));
+    this.ls.set('roles', JSON.stringify(this.rolesParsed));
+    this.ls.set('servName', this.servName);
+    this.ls.set('idService', this.idService);
+    this.ls.set('direction', this.direction);
+    this.ls.set('connected', true);
   }
 
-  loadToken(){
-    this.jwtToken = localStorage.getItem('token');
+  getUser(username: string) {
+    return this.http.get(this.host + "/getUser?username=" + username, {headers: new HttpHeaders({'Authorization': this.getToken()})});
   }
 
-  loadImgProfil(){
-    this.imgProfil = localStorage.getItem('imgProfil');
+  loadToken() {
+    this.jwtToken = this.ls.get('token');
   }
 
-  loadName(){
-    this.name = localStorage.getItem('name');
+  loadImgProfil() {
+    this.imgProfil = this.ls.get('imgProfil');
+  }
+
+  loadName() {
+    this.name = this.ls.get('name');
+  }
+
+  loadService() {
+    this.idService = +this.ls.get('idService');
+  }
+
+  loadServName() {
+    this.servName = this.ls.get('servName');
   }
 
   getTasks() {
@@ -55,56 +88,76 @@ export class AuthenticationService{
       {headers: new HttpHeaders({'Authorization': this.jwtToken})});
   }
 
-  getToken(){
+  getToken() {
     if (this.jwtToken == null) this.loadToken();
     return this.jwtToken;
   }
 
-  getImgProfil(){
+  getImgProfil() {
     if (this.imgProfil == null) this.loadImgProfil();
     return this.imgProfil;
   }
 
-  getUserName(){
+  getUserName() {
     if (this.name == null) this.loadName();
     return this.name;
   }
 
-  getImgProfile(){
+  getImgProfile() {
     if (this.jwtToken == null) this.loadToken();
     return this.jwtToken;
   }
 
+  getIdService() {
+    if (this.idService == null) this.loadService();
+    return this.idService;
+  }
 
-  logout(){
+  getServName() {
+    if (this.servName == null) this.loadServName();
+    return this.servName;
+  }
+
+  isLogged() {
+    if (this.ls.get('connected')==true)
+      return true;
+    else
+      return false;
+  }
+
+  logout() {
     this.jwtToken = null;
     this.name = null;
     this.imgProfil = null;
-    localStorage.removeItem('token');
-    localStorage.removeItem('imgProfil');
-    localStorage.removeItem('name');
-    localStorage.removeItem('roles');
+    this.direction = null;
+    this.idService = null;
+    this.servName = null;
+    this.rolesParsed = [];
+    this.roles = null;
+    this.ls.set('connected', false);
+    this.ls.removeAll();
   }
 
-  isAdmin(){
-    for(let r of this.roles){
-      if(r.authority == 'ADMIN') return true;
+  isAdmin() {
+    for (let r of this.roles) {
+      if (r.authority == 'ADMIN') return true;
     }
     return false;
   }
 
   loadRoles() {
-    this.rolesParsed = JSON.parse(localStorage.getItem('roles'));
+    if (this.ls.get('roles')!='' && this.ls.get('roles')!=null)
+      this.rolesParsed = JSON.parse(this.ls.get('roles'));
   }
 
   getRoles() {
-    if(this.rolesParsed == null || this.rolesParsed.length == 0)
+    if (this.rolesParsed == null || this.rolesParsed.length == 0)
       this.loadRoles();
     return this.rolesParsed;
   }
 
-  saveTask(task){
+  saveTask(task) {
     console.log(task);
-    return this.http.post(this.host+'/tasks',task,{headers: new HttpHeaders({'Authorization': this.jwtToken})});
+    return this.http.post(this.host + '/tasks', task, {headers: new HttpHeaders({'Authorization': this.jwtToken})});
   }
 }

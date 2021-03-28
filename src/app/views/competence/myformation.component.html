@@ -1,0 +1,75 @@
+<div class="animated fadeIn">
+  <div class="row">
+    <div class="col-lg-10 mx-auto">
+      <div class="card">
+        <div class="card-header">
+          <i class="fa fa-align-justify"></i> Mes Formations
+        </div>
+        <div class="card-body">
+          <div class="form-group row">
+            <div class="col-md-4">
+              <div class="input-group">
+                <input id="input2-group2" name="input2-group2" class="form-control form-control-sm"
+                       placeholder="Chercher" type="text"
+                       [(ngModel)]="motCle">
+                <span class="input-group-append">
+                          <button type="button" class="btn btn-sm btn-primary" (click)="chercher()"><i
+                            class="fa fa-search"></i></button>
+                        </span>
+              </div>
+            </div>
+          </div>
+          <table class="table table-sm">
+            <thead>
+            <tr>
+              <th>Formation</th>
+              <th>Technologie</th>
+              <th>Editeur</th>
+              <th>Détails</th>
+            </tr>
+            </thead>
+            <tr *ngFor="let f of formations?.content | paginate: {
+                                                      id: 'formations',
+                                                      itemsPerPage: itemsPerPage,
+                                                      currentPage: currentPage,
+                                                      totalItems: formations?.totalElements}">
+              <td>{{f?.frmName}}</td>
+              <td>{{f?.technologie?.nomTechnologie}}</td>
+              <td>{{f?.editeur?.nomEditeur}}</td>
+              <td>
+                <button *ngIf="detectStatus(f)=='Accepted'" class="btn btn-outline-primary btn-sm"
+                        (click)="selectFormation(f); showFormation.show();">
+                  <i class="fa fa-eye"></i>
+                </button>
+              </td>
+            </tr>
+          </table>
+          <pagination-controls
+            class="mypagination"
+            id="formations"
+            (pageChange)="gotoPage($event)"
+            maxSize="15"
+            directionLinks="true"
+            autoHide="true"
+            previousLabel="Précédant"
+            nextLabel="Suivant"
+            screenReaderPaginationLabel="Pagination"
+            screenReaderPageLabel="page"
+            screenReaderCurrentLabel="Vous etes sur la page">
+          </pagination-controls>
+          <div class="col-xs-12 col-12 d-sm-down-none">
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <!--/.col-->
+  </div>
+</div>
+
+<show-formation bsModal #showFormation="bs-modal"
+                    [modal]="showFormation"
+                    [formation]="selectedFormation"
+                    class="modal fade"
+                    tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"></show-formation>
+

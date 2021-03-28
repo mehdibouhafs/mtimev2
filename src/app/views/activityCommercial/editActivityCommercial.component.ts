@@ -1,26 +1,30 @@
-import {ChangeDetectorRef, Component, Input} from "@angular/core";
+import {AfterViewInit, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from "@angular/core";
 import {ActivityService} from "../../services/activity.service";
 import {CustomerService} from "../../services/customer.service";
 import {AuthenticationService} from "../../services/authentification.service";
 import {Router} from "@angular/router";
 import {ActivityCommercial} from "../../model/model.activityCommercial";
-import moment = require("moment");
+import {debounceTime, distinctUntilChanged, switchMap} from "rxjs/operators";
+import {VilleService} from "../../services/ville.service";
+import {NatureService} from "../../services/nature.service";
+import * as moment from "moment";
 
 @Component({
   selector: 'edit-activity-commercial',
   templateUrl: 'editActivityCommercial.component.html'
 })
 
-export class EditActivityCommercialComponent {
+export class EditActivityCommercialComponent implements OnInit {
+
+  @Output() refresh = new EventEmitter<string>();
+
 
   @Input() modal;
   @Input() activityCommercial;
-  @Input() pageActivities: any;
-  @Input() index:any;
-  @Input() toDo:boolean = false;
+  @Input() toDo: boolean = false;
   @Input() disabledStatut = false;
+  @Input() customers: any;
   message: string;
-  customers: any;
   projects: any;
   currentDate: Date = new Date();
   dureeFormated: string;
@@ -29,14 +33,61 @@ export class EditActivityCommercialComponent {
   returnedError: string;
 
   duree: number;
-  dureeConverted: string;
+  @Input() dureeConverted: string;
+  ville:any;
+  natures:any;
 
-  constructor(private activityService: ActivityService, private customerService: CustomerService, private router: Router, private authenticationService: AuthenticationService, private ref:ChangeDetectorRef) {
+  customerTypeahead = new EventEmitter<string>();
 
+  constructor(private natureService:NatureService, private villeService:VilleService, private activityService: ActivityService, private customerService: CustomerService, private router: Router, private authenticationService: AuthenticationService, private ref: ChangeDetectorRef) {
+
+  }
+
+  ngOnInit() {
+    if(!this.authenticationService.isLogged())
+      this.router.navigateByUrl('/pages/login');
+    else {
+      this.serverSideSearch();
+      this.chargerVilles();
+      this.chargerNatures();
+    }
+  }
+
+  chargerNatures() {
+    this.natureService.getNatureParType("Activity_commerciale").subscribe(
+      data=>{
+        this.natures = data["_embedded"]["nature"];
+      }, err=>{
+        console.log(err);
+      }
+    );
+  }
+
+  chargerVilles() {
+    this.villeService.getAllVilles().subscribe(
+      data=>{
+        this.ville=data["_embedded"]["villes"];
+      }
+    );
+  }
+
+  private serverSideSearch() {
+    this.customerTypeahead.pipe(
+      distinctUntilChanged(),
+      debounceTime(200),
+      switchMap(term => this.customerService.searchCustomer(term))
+    ).subscribe(x => {
+      this.ref.markForCheck();
+      this.customers = x["_embedded"]["customers"];
+    }, (err) => {
+      console.log(err);
+      this.customers = [];
+    });
   }
 
   hideModal() {
     this.modal.hide();
+    this.error = 0;
   }
 
   onDatesChanged() {
@@ -56,16 +107,8 @@ export class EditActivityCommercialComponent {
     }
   }
 
-
-  loadCustomers() {
-    this.customerService.getCustomers().subscribe(
-      data => {
-        this.customers = data["_embedded"]["customers"];
-        console.log("customers " + JSON.stringify(this.customers));
-      }, err => {
-        this.authenticationService.logout();
-        this.router.navigateByUrl('/pages/login');
-      });
+  refreshActivity() {
+    this.refresh.emit("Refresh Activity");
   }
 
   onEditActivityCommercial() {
@@ -76,10 +119,12 @@ export class EditActivityCommercialComponent {
     this.activityService.updateActivity(this.activityCommercial)
       .subscribe((data: ActivityCommercial) => {
         this.mode = 2;
-        this.pageActivities.content.splice(this.index, 1, this.activityCommercial);
+        this.refreshActivity();
         this.ref.detectChanges();
-      }), err => {
-      console.log(JSON.parse(err.body).message);
-    };
+      }, err => {
+        this.returnedError = err.error.message;
+        this.error = 1;
+        console.log(JSON.parse(err.body).message);
+      });
   }
 }

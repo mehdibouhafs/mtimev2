@@ -17,6 +17,9 @@
       "testTsconfig": "tsconfig.spec.json",
       "prefix": "app",
       "styles": [
+        "../node_modules/primeng/resources/themes/omega/theme.css",
+        "../node_modules/primeng/resources/primeng.min.css",
+        "../node_modules/primeicons/primeicons.css",
         "../node_modules/flag-icon-css/css/flag-icon.css",
         "../node_modules/font-awesome/css/font-awesome.css",
         "../node_modules/simple-line-icons/css/simple-line-icons.css",
@@ -32,7 +35,8 @@
         "../node_modules/chart.js/dist/Chart.js",
         "../node_modules/chart.js/dist/Chart.min.js",
         "../node_modules/sockjs-client/dist/sockjs-0.3.4.min.js",
-        "../node_modules/stompjs/lib/stomp.js"
+        "../node_modules/stompjs/lib/stomp.js",
+        "../node_modules/secure-ls/dist/secure-ls.js"
       ],
       "environmentSource": "environments/environment.ts",
       "environments": {

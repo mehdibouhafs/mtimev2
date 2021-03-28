@@ -3,16 +3,42 @@ import {AuthenticationService} from "./authentification.service";
 import {Activity} from "../model/model.activity";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import * as moment from "moment-timezone";
+import {host} from "./host";
+import {User} from "../model/model.user";
 
 @Injectable()
 export class ActivityService{
 
-  private host:string = "http://localhost:8080";
+  private host = host;
 
   constructor(private authenticationService:AuthenticationService,private  http:HttpClient){}
 
+  saveListActivity(listActivity:Array<Activity>) {
+    listActivity.forEach(activity=>{
+      activity.createdBy.username = this.authenticationService.getUserName();
+    });
+    return this.http.post(this.host+'/save-list-activity',listActivity,{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
+  }
+
+  saveListActivityDirection(listActivity:Array<Activity>) {
+    return this.http.post(this.host+'/save-list-activity-direction',listActivity,{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
+  }
+
+  saveActivityWithoutTest(activity:Activity) {
+
+    activity.createdBy = new User();
+    activity.createdBy.username = this.authenticationService.getUserName();
+    return this.http.post(this.host+'/save-activity-without-test',activity,{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
+  }
+
+  findMyActivityProject(mc:string,page:number,size:number,start:string) {
+    return this.http.get(this.host+"/findMyActivityProject?username="+this.authenticationService.getUserName()+"&start="+start+"&motCle="+mc+"&size="+size+"&page="+page,{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
+  }
+
   getAllMyActivitiesByDates(dteStrt:string,dteEnd:string){
     return this.http.get(this.host+'/findAllMyActivitiesByDates?username='+this.authenticationService.getUserName()+"&dteStrt="+dteStrt+"&dteEnd="+dteEnd,{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
+    //return this.http.get(this.host+'/findAllMyActivitiesByDates?username=jmeskar'+"&dteStrt="+dteStrt+"&dteEnd="+dteEnd,{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
+
   }
 
   getAllMyActivitiesByDatesForDay(dteStrt:string,dteEnd:string){
@@ -25,6 +51,19 @@ export class ActivityService{
 
   getAllActivitiesByDatesForDay(dteStrt:string,dteEnd:string){
     return this.http.get(this.host+'/findAllActivitiesByDatesForDay?dteStrt='+dteStrt+"&dteEnd="+dteEnd,{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
+  }
+
+  getAllActivitiesByDatesUser(username:string, dteStrt:string,dteEnd:string){
+    return this.http.get(this.host+'/findAllActivitiesByDatesAndUser?username='+username+'&dteStrt='+dteStrt+"&dteEnd="+dteEnd,{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
+  }
+
+
+  getAllActivitiesByDatesAndService(username:string, dteStrt:string,dteEnd:string){
+    return this.http.get(this.host+'/findAllActivitiesByDatesAndService?idService='+this.authenticationService.getIdService()+'&username='+username+'&dteStrt='+dteStrt+"&dteEnd="+dteEnd,{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
+  }
+
+  getAllActivitiesByDatesForDayAndService(username:string, dteStrt:string,dteEnd:string){
+    return this.http.get(this.host+'/findAllActivitiesByDatesForDayAndService?idService='+this.authenticationService.getIdService()+'&username='+username+'&dteStrt='+dteStrt+"&dteEnd="+dteEnd,{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
   }
 
 
@@ -49,6 +88,8 @@ export class ActivityService{
   }
 
   saveActivity(activity:Activity){
+    activity.createdBy = new User();
+    activity.createdBy.username = this.authenticationService.getUserName();
     return this.http.post(this.host+'/activities',activity,{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
   }
 
@@ -57,7 +98,6 @@ export class ActivityService{
   }
 
   updateActivity(activity:Activity){
-    console.log("activity a updaté "+JSON.stringify(activity));
     return this.http.put(this.host+'/activities/'+activity.id,activity,{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
   }
 
@@ -71,6 +111,23 @@ export class ActivityService{
 
   getMyActivityHoliday(page:number, size:number) {
     return this.http.get(this.host+"/myactivityholiday?username="+this.authenticationService.getUserName()+"&size="+size+"&page="+page,{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})})
+  }
+
+  getActivityHolidayForUser(username:string, page:number, size:number) {
+    return this.http.get(this.host+"/myactivityholiday?username="+username+"&size="+size+"&page="+page,{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})})
+  }
+
+  getActivityRequestByTicket(rqtExcde:string, page:number, size:number) {
+    return this.http.get(this.host+"/getActivityRequestByTicket?rqtExcde="+rqtExcde+"&size="+size+"&page="+page,{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})})
+
+  }
+
+  getActivityByService(username:string,mc:string,page:number,size:number, typeSelected:any) {
+    return this.http.get(this.host+"/getActivityByService?idService="+this.authenticationService.getIdService()+"&username="+username+"&motCle="+mc+"&size="+size+"&page="+page+"&type="+typeSelected.toString(),{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
+  }
+
+  getActivityPlanifiedDirection(username:string,mc:string,page:number,size:number) {
+    return this.http.get(this.host+"/getActivityPlanifiedDirection?username="+username+"&motCle="+mc+"&size="+size+"&page="+page,{headers: new HttpHeaders({'Authorization': this.authenticationService.getToken()})});
   }
 
   formatDate(date:any){
@@ -102,7 +159,7 @@ export class ActivityService{
 
   testDateBeforeNow(dteStrt:Date,dteEnd:Date){
       var now = new Date();
-      if((dteStrt <= now) && (dteEnd <= now)){
+      if( moment(dteStrt) <= moment(now) && moment(dteEnd) <= moment(now) ){
         return true;
       }else{
         return false;

@@ -1,0 +1,146 @@
+<div class="animated fadeIn">
+
+  <div class="form-row">
+    <div class="form-group col-sm-4">
+    <label for="users">Utilisateur :</label>
+      <ng-select id="users" name="users"
+                 [items]="users"
+                 bindValue="username"
+                 [hideSelected]="true"
+                 [(ngModel)]="selectedUser"
+                 (change)="ngOnInit()"
+                 placeholder="Selectionnez un utilisateur"
+                 notFoundText="Aucun utilisateur trouvé"
+                 [typeahead]="usersTypeahead"
+                 typeToSearchText="Saisir le nom d'utilisateur">
+
+        <ng-template ng-label-tmp let-item="item">
+          <img [src]="'assets/img/avatars/'+item.username+'.jpg'"
+               onerror="this.src='assets/img/avatars/default.jpg'" width="20px" height="20px">
+          {{item.firstName+' '+item.lastName}}
+        </ng-template>
+        <ng-template ng-option-tmp let-item="item">
+          <img [src]="'assets/img/avatars/'+item.username+'.jpg'"
+               onerror="this.src='assets/img/avatars/default.jpg'" width="20px" height="20px">
+          {{item.firstName+' '+item.lastName}}
+        </ng-template>
+      </ng-select>
+    </div>
+  </div>
+
+
+  <div class="row">
+    <div class="col-md-4">
+      <div class="metric">
+        <span class="icon"><i class="fa fa-bar-chart"></i></span>
+        <p>
+          <span class="number text-right">{{statistics?.realisedActivitiesOnthisMonth}}</span>
+          <span class="title">Activités réalisés</span>
+        </p>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="metric">
+        <span class="icon"><i class="fa fa-star"></i></span>
+        <p>
+          <span class="number text-right">{{statistics?.activitiesRealisedOnWeekEndThisMonth}}</span>
+          <span class="title">Activités en week end</span>
+        </p>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="metric">
+        <span class="icon"><i class="fa fa-line-chart"></i></span>
+        <p>
+          <span class="number text-right">{{statistics?.productiviteThisMonth.toFixed(1)}} %</span>
+          <span class="title">Charge de Travail</span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-columns cols-2">
+
+    <div *ngIf="pagesHoliday?.length>0">
+      <div class="card">
+        <div class="card-header">
+          <i class="fa fa-align-justify"></i> Activités congé
+        </div>
+        <div class="card-body">
+          <table class="table table-sm table-responsive table-hover">
+            <thead>
+            <tr>
+              <th>Type</th>
+              <th>Debut</th>
+              <th>Fin</th>
+              <th>Durée</th>
+              <th>Statut</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr [class]="a.statut?'table-success':'table-light'" *ngFor="let a of pageActivitiesHoliday?.content | paginate: {
+                                                      id: 'activitiesHoliday',
+                                                      itemsPerPage: itemsPerPageHoliday,
+                                                      currentPage: currentPageHoliday,
+                                                      totalItems: pageActivitiesHoliday?.totalElements}">
+              <td>{{detectAbrevi(a.typeActivite)}}</td>
+              <td><span class="badge badge-pill badge-light">{{a.dteStrt | date:"dd/MM/yy HH:mm"}}</span>
+              </td>
+              <td><span class="badge badge-pill badge-light">{{a.dteEnd | date:"dd/MM/yy HH:mm"}}</span>
+              </td>
+              <td><span class="badge badge-pill badge-dark">{{activityService.ShortconvertMinutesToHoursAndMinute(a.durtion)}}</span>
+              </td>
+              <td><span [class]="a.statut?'badge badge-pill badge-success':'badge badge-pill badge-info'">{{a.statut?'Realisé':'Planifié'}}</span>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+          <pagination-controls
+            class="mypagination"
+            id="activitiesHoliday"
+            (pageChange)="gotoPageHoliday($event)"
+            maxSize="15"
+            directionLinks="true"
+            autoHide="true"
+            previousLabel="Précédant"
+            nextLabel="Suivant"
+            screenReaderPaginationLabel="Pagination"
+            screenReaderPageLabel="page"
+            screenReaderCurrentLabel="Vous etes sur la page">
+          </pagination-controls>
+          <div class="col-xs-12 col-12 d-sm-down-none">
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div *ngIf="statistics" class="card-columns cols-2">
+
+
+    <div class="chart-wrapper">
+      <canvas baseChart class="chart"
+              [chartType]="lineChartType"
+              [labels]="lineChartLabels"
+              [datasets]="lineChartData"
+              [options]="optionsLine">
+
+      </canvas>
+    </div>
+
+
+    <div class="chart-wrapper">
+      <canvas baseChart class="chart"
+              [chartType]="barChartType"
+              [labels]="barChartLabels"
+              [datasets]="barChartData"
+              [options]="optionsbar">
+
+      </canvas>
+    </div>
+
+  </div>
+
+</div>

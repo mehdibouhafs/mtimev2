@@ -1,0 +1,456 @@
+<div class="card">
+  <div *ngIf="mode==1">
+    <div class="card-header">
+      <strong>Nouveau contrat client</strong>
+    </div>
+
+    <form #f="ngForm" (ngSubmit)="onSaveContrat()">
+      <div class="card-body">
+        <div class="form-row">
+          <div class="form-group col-3">
+            <label for="name">Nom contrat :</label>
+            <input id="name" name="name"
+                   type="text" class="form-control form-control-sm"
+                   placeholder="Nom contrat"
+                   [(ngModel)]="contrat.ctrtName" required>
+          </div>
+          <div class="form-group col-2">
+            <label for="date_debut">Date de début :</label>
+            <input id="date_debut" name="date_debut"
+                   type="date" class="form-control form-control-sm"
+                   placeholder="Date de début"
+                   [(ngModel)]="contrat.dteStrt" required>
+          </div>
+          <div class="form-group col-2">
+            <label for="date_fin">Date de fin :</label>
+            <input id="date_fin" name="date_fin"
+                   type="date" class="form-control form-control-sm"
+                   placeholder="Date de fin"
+                   [min]="contrat.dteStrt"
+                   [(ngModel)]="contrat.dteEnd" required>
+          </div>
+          <div class="form-group col-3">
+            <label for="customers">Client :</label>
+            <ng-select id="customers" [items]="customers"
+                       bindLabel="name"
+                       name="customer"
+                       placeholder="Selectionner un client"
+                       notFoundText="Aucun client trouvé"
+                       [typeahead]="customerTypeahead"
+                       typeToSearchText="Saisir un client"
+                       [(ngModel)]="contrat.customer"
+                       required></ng-select>
+          </div>
+          <div class="form-group col-2">
+            <label for="pilotes">Pilote :</label>
+            <ng-select id="pilotes" [items]="pilotes"
+                       bindLabel="name"
+                       bindValue="name"
+                       name="pilotes"
+                       placeholder="Pilote"
+                       [(ngModel)]="contrat.pilote"
+                       required></ng-select>
+          </div>
+        </div>
+
+        <p-table [value]="contrat.ctrctCustomerProducts">
+          <ng-template pTemplate="caption">
+            Liste des produits
+          </ng-template>
+          <ng-template pTemplate="header">
+
+            <tr>
+              <th>
+                <ng-select id="references" [items]="products"
+                           name="references"
+                           placeholder="Référence"
+                           [addTag]="addTag"
+                           addTagText="Référence"
+                           bindLabel="ref"
+                           [typeahead]="productTypeahead"
+                           typeToSearchText="Saisir un produit"
+                           [(ngModel)]="ctrctCustomerProduct.product"></ng-select>
+              </th>
+              <th>
+                <input id="designation" name="designation" *ngIf="ctrctCustomerProduct.product"
+                       type="text" class="form-control form-control-sm"
+                       [ngModel]="ctrctCustomerProduct?.product?.desig"
+                       (ngModelChange)="ctrctCustomerProduct.product.desig=$event"
+                       placeholder="Désignation">
+                <span *ngIf="!ctrctCustomerProduct.product">
+                  Désignation
+                </span>
+              </th>
+              <th>
+                <input id="editeur" name="editeur" *ngIf="ctrctCustomerProduct.product"
+                       type="text" class="form-control form-control-sm"
+                       [ngModel]="ctrctCustomerProduct?.product?.editeur"
+                       (ngModelChange)="ctrctCustomerProduct.product.editeur=$event"
+                       placeholder="Editeur">
+                <span *ngIf="!ctrctCustomerProduct.product">
+                  Editeur
+                </span>
+              </th>
+              <th>
+
+                <ng-select id="distributeur"  *ngIf="ctrctCustomerProduct.product"
+                           [items]="distributeurs"
+                           name="distributeur"
+                           placeholder="Distributeur"
+                           [addTag]="addTag"
+                           addTagText="Distributeur"
+                           bindLabel="name"
+                           [typeahead]="distributeurTypeahead"
+                           typeToSearchText="Séléctionner un distributeur"
+                           (ngModelChange)="ctrctCustomerProduct.product.distributeur=$event"
+                           [ngModel]="ctrctCustomerProduct?.product?.distributeur"></ng-select>
+
+                <!--
+                <input id="distributeur" name="distributeur" *ngIf="ctrctCustomerProduct.product"
+                       type="text" class="form-control form-control-sm"
+                       [ngModel]="ctrctCustomerProduct?.product?.distributeur?.name"
+                       (ngModelChange)="ctrctCustomerProduct.product.distributeur=$event"
+                       placeholder="Distributeur 2">-->
+                <span *ngIf="!ctrctCustomerProduct.product">
+                  Distributeur
+                </span>
+              </th>
+              <th>
+                <input id="quantite" name="quantite"
+                       type="number" min="1" class="form-control form-control-sm"
+                       [(ngModel)]="ctrctCustomerProduct.qte"
+                       placeholder="Quantité">
+              </th>
+              <th style="width:8em">
+                <button type="button"
+                        [disabled]="!ctrctCustomerProduct?.product?.ref || !ctrctCustomerProduct?.product?.desig || !ctrctCustomerProduct?.product?.editeur || !ctrctCustomerProduct?.product?.distributeur || !ctrctCustomerProduct.qte"
+                        class="btn btn-sm btn-primary" (click)="addProductToList()">
+                  <i class="fa fa-plus"></i>
+                </button>
+              </th>
+            </tr>
+
+
+          </ng-template>
+
+          <ng-template pTemplate="body" let-item>
+
+            <tr>
+              <td pEditableColumn>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <input type="text" [name]="'ref'+item.product.ref" [(ngModel)]="item.product.ref" required>
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{item.product.ref}}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td pEditableColumn>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <input type="text" [name]="'desig'+item.product.ref" [(ngModel)]="item.product.desig" required>
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{item.product.desig}}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td pEditableColumn>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <input type="text" [name]="'editeur'+item.product.ref" [(ngModel)]="item.product.editeur" required>
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{item.product.editeur}}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td pEditableColumn>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+
+                    <ng-select id="distributeurs" [items]="distributeurs"
+                               name="distributeur"
+                               placeholder="Distributeur"
+                               [addTag]="addTag"
+                               addTagText="Distributeur"
+                               bindLabel="name"
+                               [typeahead]="distributeurTypeahead"
+                               typeToSearchText="Séléctionner un distributeur"
+                               [(ngModel)]="item.product.distributeur"></ng-select>
+
+                    <input type="text"
+                           [name]="'distributeur'+item.product.ref"
+                           [(ngModel)]="item.product.distributeur.name"
+                           required>
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{item.product.distributeur.name}}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td pEditableColumn>
+                <p-cellEditor>
+                  <ng-template pTemplate="input">
+                    <input type="number" min="1" [name]="'qte'+item.product.ref"
+                           [(ngModel)]="item.qte"
+                           (change)="validationForm()"
+                           required>
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{item.qte}}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td>
+                <button type="button"
+                        [class]="item.qte>=item.ctrctCustomerProductSeries.length?'btn btn-sm btn-primary':'btn btn-sm btn-danger'"
+                        (click)="toAddSeries(item)">
+                  <span *ngIf="item.qte>=item.ctrctCustomerProductSeries.length">SN</span>
+                  <i *ngIf="item.qte<item.ctrctCustomerProductSeries.length" class="fa fa-warning"></i>
+                </button>
+                <button type="button" class="btn btn-sm btn-danger"
+                        mwlConfirmationPopover
+                        [popoverTitle]="popoverTitle"
+                        [popoverMessage]="popoverMessage"
+                        confirmText="Oui"
+                        cancelText="Non"
+                        placement="left"
+                        (confirm)="remove(item)">
+                  <i class="fa fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+          </ng-template>
+
+        </p-table>
+
+
+      </div>
+      <div class="card-footer">
+        <button type="submit" [disabled]="!f.valid || contrat.ctrctCustomerProducts.length==0 || !validation"
+                class="btn btn-sm btn-primary">
+          Enregistrer
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div *ngIf="mode==2">
+    <div class="card-header">
+      <strong>Confirmation</strong>
+    </div>
+    <div class="card-body">
+
+
+      <div class="form-row">
+        <div class="form-group col-3">
+          <label for="nameConfirmation"><strong>Nom contrat :</strong></label>
+          <input id="nameConfirmation" name="nameConfirmation"
+                 type="text" readonly class="form-control-plaintext"
+                 [(ngModel)]="contrat.ctrtName">
+        </div>
+        <div class="form-group col-2">
+          <label for="date_debutConfirmation"><strong>Date de début :</strong></label>
+          <input id="date_debutConfirmation" name="date_debutConfirmation"
+                 type="date" readonly class="form-control-plaintext"
+                 [(ngModel)]="contrat.dteStrt">
+        </div>
+        <div class="form-group col-2">
+          <label for="date_finConfirmation"><strong>Date de fin :</strong></label>
+          <input id="date_finConfirmation" name="date_finConfirmation"
+                 type="date" readonly class="form-control-plaintext"
+                 [(ngModel)]="contrat.dteEnd">
+        </div>
+        <div class="form-group col-3">
+          <label for="customersConfirmation"><strong>Client :</strong></label>
+          <input type="text" id="customersConfirmation"
+                 name="customerConfirmation" readonly class="form-control-plaintext"
+                 [(ngModel)]="contrat.customer.name">
+        </div>
+        <div class="form-group col-2">
+          <label for="pilotesConfirmation"><strong>Pilote :</strong></label>
+          <input type="text" id="pilotesConfirmation"
+                 name="pilotesConfirmation" readonly class="form-control-plaintext"
+                 [(ngModel)]="contrat.pilote">
+        </div>
+      </div>
+
+      <p-table [value]="contrat.ctrctCustomerProducts">
+        <ng-template pTemplate="caption">
+          Liste des produits
+        </ng-template>
+        <ng-template pTemplate="header">
+
+          <tr>
+            <th>
+              Référence
+            </th>
+            <th>
+              Designation
+            </th>
+            <th>
+              Editeur
+            </th>
+            <th>
+              Distributeur
+            </th>
+            <th>
+              Quantité
+            </th>
+            <th>
+              Détails
+            </th>
+          </tr>
+
+
+        </ng-template>
+
+        <ng-template pTemplate="body" let-item>
+
+          <tr>
+            <td>
+
+              {{item.product.ref}}
+
+            </td>
+            <td>
+
+              {{item.product.desig}}
+
+            </td>
+            <td>
+
+              {{item.product.editeur}}
+
+            </td>
+            <td>
+
+              {{item.product.distributeur}}
+
+            </td>
+            <td>
+              {{item.qte}}
+            </td>
+            <td>
+              <button type="button" class="btn btn-sm btn-primary" (click)="toAddSeries(item)">
+                SN
+              </button>
+            </td>
+          </tr>
+        </ng-template>
+
+      </p-table>
+
+
+    </div>
+
+    <div class="card-footer">
+      <button type="button" class="btn btn-sm btn-primary" (click)="toModeOne()">
+        Ok
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<div bsModal #addSeries="bs-modal" class="modal fade"
+     tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h4 class="modal-title">Produits</h4>
+      </div>
+
+      <div class="modal-body">
+
+
+        <div class="form-row">
+          <div class="form-group col-8">
+            <div class="input-group input-group-sm">
+              <div class="input-group-prepend">
+                <div class="input-group-text inpu">
+                  SN
+                </div>
+              </div>
+              <input type="text" class="form-control form-control-sm" name="sn"
+                     [(ngModel)]="sn"
+                     placeholder="Numéro de série" required>
+              <div class="input-group-append">
+
+                <button type="button"
+                        [disabled]="!sn || this.selectedProduct.ctrctCustomerProductSeries.length>=this.selectedProduct.qte"
+                        class="btn btn-sm btn-primary"
+                        (click)="addSerie()">
+                  <i class="fa fa-plus"></i>
+                </button>
+
+              </div>
+            </div>
+          </div>
+          <div class="form-group col-4">
+            <div>
+              {{this.selectedProduct.ctrctCustomerProductSeries.length+'/'+this.selectedProduct.qte+' sn ajoutés'}}
+            </div>
+          </div>
+        </div>
+
+        <div class="alert alert-danger" role="alert" *ngIf="selectedProduct.qte<selectedProduct.ctrctCustomerProductSeries.length">
+          Merci de supprimer {{selectedProduct.ctrctCustomerProductSeries.length-selectedProduct.qte}} numéros de série !
+        </div>
+
+        <p-table *ngIf="selectedProduct.ctrctCustomerProductSeries.length>0"
+                 [value]="selectedProduct.ctrctCustomerProductSeries" [paginator]="true" [rows]="10">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>SN - Reférence : {{selectedProduct.product.ref}}</th>
+              <th *ngIf="mode==1" style="width:4em">Action</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+            <tr>
+              <td pEditableColumn>
+                <p-cellEditor>
+                  <ng-template pTemplate="input" *ngIf="mode==1">
+                    <input type="text" [(ngModel)]="rowData.sn" required>
+                  </ng-template>
+                  <ng-template pTemplate="output">
+                    {{rowData?.sn}}
+                  </ng-template>
+                </p-cellEditor>
+              </td>
+              <td *ngIf="mode==1">
+                <button class="btn btn-sm btn-primary" type="button" (click)="removeSN(rowData)">
+                  <i class="fa fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+
+
+      </div>
+
+      <div class="modal-footer">
+
+        <button type="button" class="btn btn-sm btn-primary"
+                (click)="addSeries.hide()">
+          OK
+        </button>
+
+      </div>
+
+
+    </div>
+  </div>
+
+
+</div>
+
+
+
+
+

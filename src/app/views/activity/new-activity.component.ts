@@ -2,6 +2,8 @@ import {Component, Input, OnInit, ViewChild} from "@angular/core";
 import {ActivityService} from "../../services/activity.service";
 import {Activity} from "../../model/model.activity";
 import {AuthenticationService} from "../../services/authentification.service";
+import {CustomerService} from "../../services/customer.service";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-new-activity',
@@ -16,45 +18,52 @@ export class NewActivityComponent implements OnInit {
   @ViewChild('activityRecouvrementModal') activityRecouvrementModal;
   @ViewChild('activityRequestModal') activityRequestModal;
   @ViewChild('activitySIModal') activitySIModal;
+  @ViewChild('activityDevCompetenceModal') activityDevCompetenceModal;
 
-  activitiesAuthorozed = [];
+  activitiesAuthorized = [];
 
 
   lastActivity: any;
+  customers:any;
 
-  constructor(private activityService: ActivityService, private authenticationService: AuthenticationService) {
+  constructor(private activityService: ActivityService, private customerService:CustomerService, private authenticationService: AuthenticationService, private router:Router) {
 
   }
 
   ngOnInit() {
     this.chargerActivitiesAuthorized();
+    this.loadCustomers();
   }
 
   chargerActivitiesAuthorized() {
     this.authenticationService.getRoles().forEach(authority => {
       switch (authority) {
         case "write_si_activity": {
-          this.activitiesAuthorozed.push('activitySI');
+          this.activitiesAuthorized.push('activitySI');
           break;
         }
         case "write_recouvrement_activity": {
-          this.activitiesAuthorozed.push('activityRecouvrement');
+          this.activitiesAuthorized.push('activityRecouvrement');
           break;
         }
         case "write_request_activity": {
-          this.activitiesAuthorozed.push('activityRequest');
+          this.activitiesAuthorized.push('activityRequest');
           break;
         }
         case "write_project_activity": {
-          this.activitiesAuthorozed.push('activityProject');
+          this.activitiesAuthorized.push('activityProject');
           break;
         }
         case "write_commercial_activity": {
-          this.activitiesAuthorozed.push('activityCommercial');
+          this.activitiesAuthorized.push('activityCommercial');
           break;
         }
         case "write_holiday_activity": {
-          this.activitiesAuthorozed.push('activityHoliday');
+          this.activitiesAuthorized.push('activityHoliday');
+          break;
+        }
+        case "write_dev_competence_activity": {
+          this.activitiesAuthorized.push('ActivitéDevCompetence');
           break;
         }
       }
@@ -67,6 +76,17 @@ export class NewActivityComponent implements OnInit {
         this.lastActivity = data;
       }, err => {
         console.log(err);
+      });
+  }
+
+  loadCustomers(){
+    this.customerService.getCustomers().subscribe(
+      data=>{
+        this.customers = data["_embedded"]["customers"];
+        console.log("customers " + JSON.stringify(this.customers));
+      },err=>{
+        this.authenticationService.logout();
+        this.router.navigateByUrl('/pages/login');
       });
   }
 
@@ -102,28 +122,42 @@ export class NewActivityComponent implements OnInit {
         this.activityCommercialModal.show();
         break;
       }
+
+      case "activityDevCompetence": {
+        this.activityDevCompetenceModal.show();
+        break;
+      }
     }
   }
 
   detectIcon(type: string) {
     switch (type) {
-      case "activityRequest": {
+      case "Activité support": {
         return "fa fa-bullhorn";
       }
-      case "activityProject": {
+      case "Activité projet": {
         return "fa fa-product-hunt";
       }
-      case "activityRecouvrement": {
+      case "Activité recouvrement": {
         return "fa fa-briefcase";
       }
-      case "activityHoliday": {
+      case "Activité congé": {
         return "fa fa-plane";
       }
-      case "activityCommercial": {
+      case "Activité commerciale": {
         return "fa fa-shopping-cart";
       }
-      case "activitySI": {
+      case "Activité SI": {
         return "fa fa-support";
+      }
+      case "Activité PM": {
+        return "fa fa-wrench";
+      }
+      case "Activité avant vente": {
+        return "fa fa-magnet";
+      }
+      case "Activité dev competence": {
+        return "fa fa-graduation-cap";
       }
     }
   }
@@ -147,6 +181,9 @@ export class NewActivityComponent implements OnInit {
       }
       case "activitySI": {
         return "Activité Support SI";
+      }
+      case "activityDevCompetence": {
+        return "Activité dev competence";
       }
     }
   }
