@@ -45,6 +45,7 @@ import {ActivityPM} from "../../../model/model.activityPM";
 import {ActivityAvantVente} from "../../../model/model.activityAvantVente";
 import {ActivityDevCompetence} from "../../../model/model.activityDevCompetence";
 import {ProduitService} from "../../../services/produit.service";
+import {ProjectService} from "../../../services/project.service";
 
 const colors: any = {
   red: {
@@ -231,6 +232,8 @@ export class MyCalendarComponent implements OnInit {
 
   events$: Observable<CalendarEvent[]>;
 
+  disabledStatus: boolean = false;
+
 
   activeDayIsOpen: boolean = false;
 
@@ -257,7 +260,7 @@ export class MyCalendarComponent implements OnInit {
   ];
 
 
-  constructor( private modal1: NgbModal, private activityService: ActivityService, private authenticationService: AuthenticationService, private router:Router, private ref:ChangeDetectorRef) {
+  constructor(private projectService: ProjectService, private modal1: NgbModal, private activityService: ActivityService, private authenticationService: AuthenticationService, private router:Router, private ref:ChangeDetectorRef) {
   }
 
   ngOnInit() {
@@ -377,8 +380,22 @@ export class MyCalendarComponent implements OnInit {
       }
     });
   }
+  chargerProjects(name) {
+    this.projects = [];
+    if (name!= null) {
+      this.projectService.getProjectsByCustomer(name).subscribe(
+        data => {
+          this.projects = data;
+          console.log("dev");
+          console.log(data);
+          //console.log("projects customer " + JSON.stringify(this.projects));
+        }, err => {
+          console.log(err);
+        });
+    }}
 
   onSelectModal(modalSelected: string) {
+    console.log('onSelectModal2');
     switch (modalSelected) {
       case "Activité projet": {
         if(this.startDate ) {
@@ -389,6 +406,8 @@ export class MyCalendarComponent implements OnInit {
 
 
           this.activityProjectToAdd.duration = null;
+
+
         }
         this.newactivityProjectModal.show();
         break;
@@ -587,18 +606,41 @@ export class MyCalendarComponent implements OnInit {
     this.refresh.next();
   }
 
+  convertMinutesToHoursAndMinute(duree:number) {
+    let days:number, hours:any, minutes:any;
+
+
+    hours = Math.floor(duree/60);
+
+    if(hours<10){
+      hours = '0'+hours;
+    }
+
+    duree = duree%60;
+
+    minutes = duree;
+    if(minutes<10){
+      minutes = '0'+minutes;
+    }
+
+      return hours + ':' + minutes;
+
+  }
+
   handleEvent(action: string, event: CalendarEvent): void {
 
     this.selectActivity(event);
-
+    console.log('onSelectModal');
     switch (action) {
       case "Edited": {
         switch (event.meta.activity.typeActivite) {
           case "Activité SI": {
+
             this.editactivitySIModal.show();
             break;
           }
           case "Activité projet": {
+
             this.editactivityProjectModal.show();
             break;
           }
@@ -731,12 +773,15 @@ export class MyCalendarComponent implements OnInit {
 
   selectActivity(event: any) {
     this.eventSelected = event;
-    this.dureeConverted = this.activityService.convertMinutesToHoursAndMinute(this.activityService.diffBetwenTwoDateInMinutes(event.meta.activity.dteStrt, event.meta.activity.dteEnd));
     switch (event.meta.activity.typeActivite) {
+
+
       case "Activité support" : {
         this.activityRequest = JSON.parse(JSON.stringify(event.meta.activity));
         this.activityRequest.dteStrt = new Date(event.meta.activity.dteStrt);
         this.activityRequest.dteEnd = new Date(event.meta.activity.dteEnd);
+        this.dureeConverted = this.convertMinutesToHoursAndMinute(this.activityRequest.durtion);
+        this.activityRequest.duration=this.dureeConverted;
         break;
       }
 
@@ -744,6 +789,8 @@ export class MyCalendarComponent implements OnInit {
         this.activityPM = JSON.parse(JSON.stringify(event.meta.activity));
         this.activityPM.dteStrt = new Date(event.meta.activity.dteStrt);
         this.activityPM.dteEnd = new Date(event.meta.activity.dteEnd);
+        this.dureeConverted = this.convertMinutesToHoursAndMinute(this.activityPM.durtion);
+        this.activityRequest.duration=this.dureeConverted;
         break;
       }
 
@@ -751,6 +798,8 @@ export class MyCalendarComponent implements OnInit {
         this.activityCommercial = JSON.parse(JSON.stringify(event.meta.activity));
         this.activityCommercial.dteStrt = new Date(event.meta.activity.dteStrt);
         this.activityCommercial.dteEnd = new Date(event.meta.activity.dteEnd);
+        this.dureeConverted = this.convertMinutesToHoursAndMinute(this.activityCommercial.durtion);
+        this.activityCommercial.duration=this.dureeConverted;
         break;
       }
 
@@ -758,13 +807,20 @@ export class MyCalendarComponent implements OnInit {
         this.activityRecouvrement = JSON.parse(JSON.stringify(event.meta.activity));
         this.activityRecouvrement.dteStrt = new Date(event.meta.activity.dteStrt);
         this.activityRecouvrement.dteEnd = new Date(event.meta.activity.dteEnd);
+
         break;
       }
 
       case "Activité projet": {
+        console.log(JSON.stringify(event.meta.activity))
         this.activityProject = JSON.parse(JSON.stringify(event.meta.activity));
         this.activityProject.dteStrt = new Date(event.meta.activity.dteStrt);
         this.activityProject.dteEnd = new Date(event.meta.activity.dteEnd);
+        this.chargerProjects(this.activityProject.customer.code);
+
+        this.dureeConverted = this.convertMinutesToHoursAndMinute(this.activityProject.durtion);
+        console.log('duration '+ this.dureeConverted);
+        this.activityProject.duration=this.dureeConverted;
         break;
       }
 
@@ -772,6 +828,9 @@ export class MyCalendarComponent implements OnInit {
         this.activityAvantVente = JSON.parse(JSON.stringify(event.meta.activity));
         this.activityAvantVente.dteStrt = new Date(event.meta.activity.dteStrt);
         this.activityAvantVente.dteEnd = new Date(event.meta.activity.dteEnd);
+        this.dureeConverted = this.convertMinutesToHoursAndMinute(this.activityAvantVente.durtion);
+        this.activityAvantVente.duration=this.dureeConverted;
+
         break;
       }
 
@@ -789,6 +848,8 @@ export class MyCalendarComponent implements OnInit {
         this.activityHoliday = JSON.parse(JSON.stringify(event.meta.activity));
         this.activityHoliday.dteStrt = new Date(event.meta.activity.dteStrt);
         this.activityHoliday.dteEnd = new Date(event.meta.activity.dteEnd);
+        this.dureeConverted = this.convertMinutesToHoursAndMinute(this.activityHoliday.durtion);
+        this.activityHoliday.duration=this.dureeConverted;
         break;
       }
 
@@ -797,6 +858,8 @@ export class MyCalendarComponent implements OnInit {
         this.activityDevCompetence = JSON.parse(JSON.stringify(event.meta.activity));
         this.activityDevCompetence.dteStrt = new Date(event.meta.activity.dteStrt);
         this.activityDevCompetence.dteEnd = new Date(event.meta.activity.dteEnd);
+        this.dureeConverted = this.convertMinutesToHoursAndMinute(this.activityDevCompetence.durtion);
+        this.activityDevCompetence.duration=this.dureeConverted;
         break;
       }
 

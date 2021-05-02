@@ -70,15 +70,18 @@ export class EditActivityProjectComponent implements OnInit {
 
   constructor(private natureService:NatureService, private produitService: ProduitService, private villeService:VilleService, private activityService: ActivityService, private notificationService: NotificationsService, private customerService: CustomerService, private router: Router,
               private authenticationService: AuthenticationService, private projectService: ProjectService, private ref: ChangeDetectorRef) {
-
+    console.log(" editActivityProject");
   }
 
   ngOnInit() {
+    console.log(" editActivityProject");
     if(!this.authenticationService.isLogged())
       this.router.navigateByUrl('/pages/login');
     else {
       this.serviceName = this.authenticationService.getServName();
+      console.log(" editActivityModal");
       this.serverSideSearch();
+
       this.chargerVilles();
       this.chargerProduits();
       this.chargerNatures();
@@ -123,6 +126,18 @@ export class EditActivityProjectComponent implements OnInit {
       console.log(err);
       this.customers = [];
     });
+
+    if (this.activityProject.customer != null) {
+      this.projectService.getProjectsByCustomer(this.activityProject.customer.code).subscribe(
+        data => {
+          this.projects = data;
+        }, err => {
+          this.authenticationService.logout();
+          this.router.navigateByUrl('/pages/login');
+
+        });
+    }
+
   }
 
   refreshActivity() {

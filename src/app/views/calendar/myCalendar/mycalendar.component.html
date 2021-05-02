@@ -220,10 +220,14 @@
                             tabindex="-1" role="dialog"
                             aria-labelledby="myModalLabel" aria-hidden="true"></edit-activity-recouvrement>
 
+
 <edit-activity-project bsModal #editactivityProjectModal="bs-modal"
                        [modal]="editactivityProjectModal"
-                       [dureeConverted]="dureeConverted"
                        [activityProject]="activityProject"
+                       [projects]="projects"
+                       [dureeConverted]="dureeConverted"
+                       [toDo]="true"
+                       [disabledStatut]="disabledStatus"
                        (refresh)="ngOnInit()"
                        class="modal fade" tabindex="-1" role="dialog"
                        aria-labelledby="myModalLabel" aria-hidden="true"></edit-activity-project>
